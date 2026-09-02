@@ -78,23 +78,31 @@ listener's allowlist, so figures embedded from this origin resize correctly in
 production. Resize and analytics have **separate** allowlists and both must be
 confirmed after deployment.
 
-### The one check that must be run after the first deploy
+### The transport check, if the host ever changes
 
 Blobs are pre-compressed `.bin.gz` and inflated in the browser with
-`DecompressionStream`, which requires the host to serve them **as bytes**. If
-Pages sets `Content-Encoding: gzip`, the browser inflates them first and
+`DecompressionStream`, which requires the host to serve them **as bytes**. If a
+host sets `Content-Encoding: gzip`, the browser inflates them first and
 `DecompressionStream` then fails on already-inflated bytes — every figure would
-render a fail state. Verify once, as soon as Pages is live:
+render a fail state.
+
+GitHub Pages was confirmed correct on 2 September 2026, so nothing needs doing
+today. Run this again on any new host, or after any change to payload serving:
 
 ```
 curl -sI https://center-for-global-development.github.io/bilateral-oda-modelling/data/static-v2.2.9-swe-exit-scope/manifest.json
 curl -sI https://center-for-global-development.github.io/bilateral-oda-modelling/data/static-v2.2.9-swe-exit-scope/cube/baseline__gross.bin.gz
 ```
 
-The `.bin.gz` response must **not** carry a `Content-Encoding: gzip` header. If it
-does, stop and re-plan the payload transport; the fix is not a front-end change.
-Opening `preview.html` on the live site is the same check by eye: seventeen charts
-means the transport is correct, and a wall of fail states means it is not.
+The `.bin.gz` response must **not** carry a `Content-Encoding: gzip` header. Note
+`Vary: Accept-Encoding` on these responses: check with a browser's header set,
+`-H "Accept-Encoding: gzip, deflate, br, zstd"`, and not only with curl's default,
+or you may be reading a variant no reader is served.
+
+If `Content-Encoding: gzip` does appear, stop and re-plan the payload transport;
+the fix is not a front-end change. Opening `preview.html` on the live site is the
+same check by eye: seventeen charts means the transport is correct, and a wall of
+fail states means it is not.
 
 ### Embedding a figure in the digital note
 
@@ -330,14 +338,23 @@ The client is **fail-closed**, per the binary contract in the manifest:
 * on any failure the figure renders a visible fail state. It never draws an empty
   chart, which would read as "no data" — a different and wrong claim.
 
-### Known deployment risk
+### Transport requirement, verified on GitHub Pages
 
 Blobs are pre-compressed `.bin.gz` and inflated in the browser with
-`DecompressionStream`. This assumes the host serves them **as bytes**, with
+`DecompressionStream`. This requires the host to serve them **as bytes**, with
 `Content-Type: application/gzip` and no `Content-Encoding: gzip`. If a host sets
 `Content-Encoding: gzip`, the browser decompresses first and `DecompressionStream`
-then fails on already-inflated bytes. Verified correct on Python's `http.server`;
-**must be re-checked on the first GitHub Pages deploy.**
+then fails on already-inflated bytes.
+
+**Confirmed correct on GitHub Pages on 2 September 2026.** Pages serves the blobs
+as `Content-Type: application/gzip` with no `Content-Encoding` header, under a
+browser `Accept-Encoding: gzip, deflate, br, zstd` as well as without it; the
+served bytes are `sha256`-identical to the committed file and still carry the
+gzip magic number. All seventeen figures set `CGD_READY === true` and draw marks
+on the live site. Also verified correct on Python's `http.server`.
+
+Re-check it on any **new** host, and after any change to how the payload is
+served. The check is in *Preview and hosting* above.
 
 ## The 2024 convention
 
