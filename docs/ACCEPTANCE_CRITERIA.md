@@ -51,9 +51,25 @@ Every general rule in the brief is shared-layer behaviour. Implement once in `sh
 
 ### 0.4 Footnotes
 
-- [ ] Brief and succinct. Where numerous, render as a collapsible `Notes` block.
-- [ ] Every figure carries: constant 2024 US$; the unallocable-ODA note.
-- [ ] Collapsed by default where collapsible, except conditional statements that explain an otherwise-broken-looking state, which surface on the face of the figure.
+**Revised 2 September 2026 on CGD instruction.** The previous rule — numerous
+notes rendered as a collapsible `Notes` block, collapsed by default — produced
+up to nine footnotes per figure, several of them describing the model's
+internals, and is superseded. Notes are now cut to the minimum and set as one
+running paragraph. See *Notes* in `README.md`.
+
+- [ ] One running paragraph, not a stack of lines, and no collapsible block.
+      Each entry is a complete sentence ending in its own full stop.
+- [ ] As few sentences as the figure can bear: only what stops it being misread.
+      Nothing describing the emitter, the solver's internals, winsorising
+      thresholds, or per-figure drawing caps.
+- [ ] Every figure carries constant 2024 US$. The unallocable-ODA note is
+      carried only where a figure's denominator or coverage makes it material,
+      not on all seventeen.
+- [ ] Counts, never rosters: a note gives the NUMBER of affected recipients and
+      never a comma-separated list of their names.
+- [ ] No fact that already appears in the figure's own summary line.
+- [ ] Conditional statements that explain an otherwise-broken-looking state
+      surface on the face of the figure, in their own paragraph above the notes.
 
 ### 0.5 Responsive and accessible
 

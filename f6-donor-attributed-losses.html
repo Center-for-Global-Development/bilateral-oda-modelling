@@ -106,14 +106,12 @@
        own: the reader wants the names, and the fact that the axis is recomputed is
        in the notes. */
     document.getElementById('notes').replaceChildren(UI.notes({notes:[
-      'The axis is logarithmic, because attributed cuts span more than four orders of magnitude and a linear axis left every row below the largest three as an invisible sliver. Segment boundaries, not segment widths, carry the values: each donor share is in the tooltip and the row total is in the right-hand column.',
-      'The axis starts at 0.01% of GNI. A cut smaller than that is drawn at the axis floor rather than given its own decade, because at that size the attribution is rounding noise against the national accounts.',
-      `The advanced option excludes recipients losing more than ${M.percent(OUTLIER_THRESHOLD)} of GNI and recomputes the axis without them.`,'Cuts are donor-recipient reductions floored at zero before aggregation; increases from other donors do not offset the attribution shown.',
-      'Marshall Islands is an exceptional 2024 case: its baseline includes large US Compact payments, including a trust-fund contribution. Its cut relative to 2024 should not be read as a fall from a normal annual aid level.',
+      'The axis is logarithmic and starts at 0.01% of GNI; smaller cuts are drawn at the axis floor.',
+      'Cuts are donor-recipient reductions floored at zero, so increases from other donors do not offset them.',
+      'Marshall Islands is an exceptional 2024 case: its baseline includes large US Compact payments, so its cut should not be read as a fall from a normal annual aid level.',
       M.denominatorNote(payload,'gni'),
-      'Donor segment order is fixed globally for the selected allocation rule, and the five named donors are the largest cutters worldwide under that rule.',
-      UI.STANDARD_NOTES.prices,UI.STANDARD_NOTES.unallocable,UI.STANDARD_NOTES.baselineYear
-    ].filter(Boolean),source:`Source: CGD modelling, ${payload.release}.`}));
+      UI.STANDARD_NOTES.prices
+    ].filter(Boolean).filter(Boolean),source:`Source: CGD modelling, ${payload.release}.`}));
   }
   let seq=0;async function schedule(){const n=++seq;tooltip.hidden=true;try{await ensure(state.get());if(n!==seq)return;render();}catch(error){if(n===seq)P.renderFailState(chartArea,error); window.CGD_READY = true;}}
   await ensure(state.get());render();document.getElementById('fullscreenBtn').addEventListener('click',()=>document.fullscreenElement?document.exitFullscreen():root.requestFullscreen?.());window.ODA_F6={state,rows:()=>rowsFor(state.get()),partition:()=>partition(state.get()),OUTLIER_THRESHOLD,detail:()=>donorDetail(state.get().selected,state.get())};

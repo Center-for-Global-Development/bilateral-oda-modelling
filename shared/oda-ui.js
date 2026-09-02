@@ -251,6 +251,142 @@
     return selfSync(state, group);
   }
 
+  /* --- hover tip ------------------------------------------------------------
+     A small immediate tooltip for controls and legend keys, as distinct from a
+     figure's own data tooltip.
+
+     `title` was doing this job and doing it badly: browsers delay it about a
+     second, it never appears on touch at all, and it cannot be styled. A legend
+     key whose description arrives a second after the pointer has moved on has
+     not described anything. One shared element, created once, so seventeen
+     figures cannot grow seventeen variants. */
+
+  let tipNode = null;
+
+  function tipElement() {
+    if (!tipNode || !tipNode.isConnected) {
+      tipNode = element('div', { className: 'oda-hovertip', attributes: { role: 'tooltip' } });
+      tipNode.hidden = true;
+      document.body.append(tipNode);
+    }
+    return tipNode;
+  }
+
+  function hideHoverTip() {
+    if (tipNode) tipNode.hidden = true;
+  }
+
+  /**
+   * Show `textOf()` beside `el` on hover, focus and tap.
+   * @param {Element} el
+   * @param {function|string} textOf
+   */
+  function hoverTip(el, textOf) {
+    const read = () => (typeof textOf === 'function' ? textOf() : textOf);
+
+    function show() {
+      const text = read();
+      if (!text) return;
+      const tip = tipElement();
+      tip.textContent = text;
+      tip.hidden = false;
+      /* Positioned in viewport coordinates against a fixed element, then
+         clamped to the viewport so a key at the right-hand end of a legend does
+         not push its description off-screen (skill §C-6). */
+      const box = el.getBoundingClientRect();
+      const width = tip.offsetWidth, height = tip.offsetHeight;
+      const left = Math.min(window.innerWidth - width - 6, Math.max(6, box.left));
+      const above = box.top - height - 6;
+      tip.style.left = `${left}px`;
+      tip.style.top = `${above >= 6 ? above : box.bottom + 6}px`;
+    }
+
+    el.addEventListener('pointerenter', show);
+    el.addEventListener('focus', show);
+    el.addEventListener('pointerleave', hideHoverTip);
+    el.addEventListener('blur', hideHoverTip);
+    return el;
+  }
+
+  /* --- filter legend --------------------------------------------------------
+     A legend whose keys are also the filter. Four figures asked for the same
+     thing (F4, F5, F9, F11) and F12 replaces a whole redundant dropdown with
+     it, so it is built once here.
+
+     The hidden set is carried in state as a '|'-joined string rather than an
+     array or a Set. createState compares patch values with === to decide what
+     to reset; a fresh array is never === the previous one, so an array would
+     make every legend click look like a change to every dependent key and
+     reset the reader's page and selection. */
+
+  function hiddenSet(value) {
+    return new Set(String(value || '').split('|').filter(Boolean));
+  }
+
+  function hiddenValue(set) {
+    return [...set].sort().join('|');
+  }
+
+  /**
+   * Render a clickable legend into `host`, rebuilt on each figure render.
+   *
+   * @param {object}   options
+   * @param {Element}  options.host
+   * @param {string[]} options.keys      keys present in the current view, in order
+   * @param {object}   options.state
+   * @param {string}  [options.stateKey] state key holding the hidden set
+   * @param {function} options.colourOf  key -> colour
+   * @param {function} [options.labelOf] key -> label (defaults to the key)
+   * @param {function} [options.tipOf]   key -> hover description
+   */
+  function filterLegend({ host, keys, state, stateKey = 'hidden',
+                          colourOf, labelOf = k => k, tipOf = null }) {
+    host.replaceChildren();
+    const hidden = hiddenSet(state.get()[stateKey]);
+    const visibleCount = keys.filter(k => !hidden.has(String(k))).length;
+
+    for (const rawKey of keys) {
+      const key = String(rawKey);
+      const off = hidden.has(key);
+      /* The last visible key cannot be switched off. Allowing it would leave an
+         empty chart, which reads as "no data for this selection" — a different
+         and wrong claim (skill §C-3). */
+      const isLastVisible = !off && visibleCount === 1;
+
+      const swatch = element('span', { className: 'swatch' });
+      swatch.style.background = colourOf(rawKey);
+      const button = element('button', {
+        className: off ? 'legend-item muted' : 'legend-item',
+        attributes: {
+          type: 'button',
+          'aria-pressed': String(!off),
+          'aria-label': `${labelOf(rawKey)}${off ? ', hidden' : ', shown'}`
+        }
+      }, [swatch, element('span', { text: String(labelOf(rawKey)) })]);
+
+      if (isLastVisible) button.setAttribute('aria-disabled', 'true');
+
+      button.addEventListener('click', () => {
+        const next = hiddenSet(state.get()[stateKey]);
+        if (next.has(key)) next.delete(key);
+        else if (!isLastVisible) next.add(key);
+        else return;
+        state.set({ [stateKey]: hiddenValue(next) });
+      });
+
+      if (tipOf) {
+        hoverTip(button, () => {
+          const description = tipOf(rawKey);
+          const action = off ? 'Hidden — select to show.' : 'Select to hide.';
+          return description ? `${description} ${action}` : action;
+        });
+      }
+
+      host.append(button);
+    }
+    return host;
+  }
+
   /* --- notes (Part 0.4) -----------------------------------------------------
      Brief and succinct; collapsible when numerous, collapsed by default.
      Conditional statements that would otherwise make a figure look broken are
@@ -258,47 +394,51 @@
 
   const STANDARD_NOTES = {
     prices: 'All values are in constant 2024 US dollars.',
-    unallocable: 'A share of bilateral ODA cannot be allocated to a recipient country, ' +
-      'and is not represented here.',
-    imputedSectors: 'Sector shares are imputed from the donor’s observed 2024 sector mix.',
-    peersFixed: 'Peer donors are projected under the selected allocation rule and then held fixed.',
-    baselineYear: '2024 is observed rather than modelled, so it is identical under every ' +
-      'allocation rule.',
+    unallocable: 'Some bilateral ODA cannot be allocated to a recipient country and is not shown.',
+    imputedSectors: 'Sector shares are imputed from the donor’s 2024 sector mix.',
+    peersFixed: 'Other donors are held at the selected allocation rule.',
+    baselineYear: '2024 is observed, not modelled, so it is the same under every allocation rule.',
     /* Used by the figures whose measure is defined against 2024, or whose whole
        subject is variation between allocation rules. Both are degenerate at
        2024 — zero loss, or ten identical columns — so those figures offer the
-       projection years and say so, rather than showing an empty comparison. */
-    projectionYears: 'The year control covers the projection years 2025–2028. 2024 is the ' +
-      'observed baseline this figure measures against, and is identical under every ' +
-      'allocation rule, so it is not a selectable year here.'
+       projection years only. */
+    projectionYears: 'Years shown are 2025–2028, measured against observed 2024.'
   };
 
   /**
+   * Notes as ONE running paragraph, plus the source.
+   *
+   * These used to be a stack of separate <p> lines behind a collapsed "Notes"
+   * disclosure — up to seven of them per figure, several restating the model's
+   * internals ("winsorised at the 95th percentile", "structurally zero in the
+   * current CRS extract", "at most 12 groups are drawn individually"). A reader
+   * of a CGD digital note is not debugging the emitter, and a seven-line
+   * footnote block reads as a warning that the figure cannot be trusted.
+   *
+   * So each figure now carries the fewest sentences that stop it being
+   * misread, set as a single block. `visible` stays its own paragraph because
+   * those are live statements about the current view (which recipients could
+   * not be drawn, and why) rather than standing footnotes; merging them into
+   * the footnote block would bury a caveat that changes as the reader clicks.
+   *
    * @param {object}   options
-   * @param {string[]} options.visible lines that stay on the face of the figure
-   * @param {string[]} options.notes   lines inside the collapsible block
-   * @param {string}  [options.source] source line, always last
+   * @param {string[]} options.visible live statements about the current view
+   * @param {string[]} options.notes   standing notes, joined into one paragraph
+   * @param {string}  [options.source] source, appended to that paragraph
    */
-  function notes({ visible = [], notes: hidden = [], source } = {}) {
+  function notes({ visible = [], notes: standing = [], source } = {}) {
     const root = element('div', { className: 'notes' });
 
-    for (const line of visible) {
-      root.append(element('p', { text: line }));
-    }
+    /* Sentences are joined with a space, so each entry must be a complete
+       sentence ending in its own full stop — which is how they are all written. */
+    const join = lines => lines.map(line => String(line).trim()).filter(Boolean).join(' ');
 
-    const inside = hidden.slice();
-    if (source) inside.push(source);
-    if (!inside.length) return root;
+    const live = join(visible);
+    if (live) root.append(element('p', { text: live }));
 
-    if (inside.length === 1) {
-      root.append(element('p', { text: inside[0] }));
-      return root;
-    }
+    const body = join([...standing, source].filter(Boolean));
+    if (body) root.append(element('p', { text: body }));
 
-    const details = element('details');
-    details.append(element('summary', { text: 'Notes' }));
-    for (const line of inside) details.append(element('p', { text: line }));
-    root.append(details);
     return root;
   }
 
@@ -306,17 +446,42 @@
      The general rules require a popup to close on an outside click; Escape and a
      focus return are added because the house accessibility floor needs them. */
 
+  /* Open dismissables, innermost last. Only the innermost responds to an outside
+     click or to Escape.
+
+     Without the stack, dismissing a STACKED drill-down closed the whole stack.
+     Each dialog listened for a pointerdown outside its own card, and the inner
+     dialog's backdrop covers the outer card, so a click meant for "go back to
+     the list" landed on the inner backdrop — which is outside BOTH cards. Both
+     listeners fired, and the reader was returned to the chart having lost their
+     place in a paged list they had navigated to. Only the top of the stack now
+     acts, so one click closes one layer. */
+  const dismissStack = [];
+
   function attachDismiss(popup, onClose, { returnFocusTo } = {}) {
-    function onPointerDown(event) { if (!popup.contains(event.target)) close(); }
+    const entry = { popup };
+
+    function isTop() { return dismissStack[dismissStack.length - 1] === entry; }
+    function onPointerDown(event) {
+      if (!isTop()) return;
+      if (!popup.contains(event.target)) close();
+    }
     function onKeyDown(event) {
-      if (event.key === 'Escape') { event.stopPropagation(); close(); }
+      if (event.key !== 'Escape' || !isTop()) return;
+      event.stopPropagation();
+      close();
     }
     function close() {
+      const at = dismissStack.indexOf(entry);
+      if (at >= 0) dismissStack.splice(at, 1);
       document.removeEventListener('pointerdown', onPointerDown, true);
       document.removeEventListener('keydown', onKeyDown, true);
+      hideHoverTip();
       if (returnFocusTo && returnFocusTo.isConnected) returnFocusTo.focus();
       onClose();
     }
+
+    dismissStack.push(entry);
     /* Deferred, so the click that opened the popup does not immediately close it. */
     requestAnimationFrame(() => {
       document.addEventListener('pointerdown', onPointerDown, true);
@@ -440,7 +605,23 @@
     function pages() { return Math.max(1, Math.ceil(items.length / pageSize)); }
     function draw() {
       page = Math.max(0, Math.min(pages() - 1, page));
-      body.replaceChildren(...items.slice(page * pageSize, (page + 1) * pageSize).map(renderRow));
+      const rows = items.slice(page * pageSize, (page + 1) * pageSize).map(renderRow);
+      /* The last page is padded to a full page of rows. A short final page made
+         the dialog shrink as the reader paged into it and grow again on the way
+         back, which moves the pager buttons out from under the cursor mid-click
+         and, in the phone layout where the card is anchored to the top of the
+         frame, resizes the iframe on every page turn. The spacers are inert:
+         hidden from assistive technology and holding only a non-breaking space
+         so they take exactly one row's height. */
+      const shortfall = items.length > pageSize ? pageSize - rows.length : 0;
+      for (let i = 0; i < shortfall; i += 1) {
+        const spacer = element('div', {
+          className: 'oda-rank-row oda-rank-spacer',
+          attributes: { 'aria-hidden': 'true' }
+        }, [element('span', { text: ' ' })]);
+        rows.push(spacer);
+      }
+      body.replaceChildren(...rows);
       output.textContent = `${page + 1} of ${pages()}`;
       back.disabled = page === 0;
       forward.disabled = page >= pages() - 1;
@@ -458,15 +639,59 @@
    * `ratio` is the value as a share of 2024, so the track is comparable between
    * rows — it is never rescaled to a row's own range.
    */
-  function rankRow(labelText, ratio, onClick) {
+  function rankRow(labelText, ratio, onClick, { lost = null, lostDomain = null } = {}) {
     const track = element('div', { className: 'oda-track' });
     const dot = element('i');
-    dot.style.left = `calc(${Math.max(0, Math.min(100, ratio * 100))}% - 4px)`;
+    const position = Math.max(0, Math.min(100, ratio * 100));
+
+    /* Where `lost` is supplied the dot is SIZED by the US$ volume lost, so the
+       row carries both facts a reader needs: how much of the 2024 total went
+       (position on the track) and how much money that is (size). Two pairs can
+       both have lost 90% while one is US$40m and the other US$0.03m, and the
+       track position alone made those identical.
+
+       The size is on a LOG scale, and the tooltip says so. Losses here span more
+       than four orders of magnitude — the same range that puts F4's and F6's
+       axes on logs — and area-proportional sizing over that range is useless in
+       practice: with a US$500m maximum, a US$0.03m loss came out at 7.08px
+       against a 7px floor, so a whole page of small pairs was a row of
+       identical dots. On a log scale every page separates, and the exact figure
+       is in the tooltip and in the row's own text, which is where a reader takes
+       a value from anyway. */
+    let size = 8;
+    if (Number.isFinite(lost) && lost > 0 && lostDomain) {
+      const [low, high] = lostDomain;
+      if (high > 0 && low > 0 && high > low) {
+        const t = (Math.log10(lost) - Math.log10(low)) / (Math.log10(high) - Math.log10(low));
+        size = 7 + 11 * Math.max(0, Math.min(1, t));
+      } else {
+        size = 12;
+      }
+    }
+    dot.style.width = `${size}px`;
+    dot.style.height = `${size}px`;
+    dot.style.top = `${9 - size / 2}px`;
+    dot.style.left = `calc(${position}% - ${size / 2}px)`;
+
+    if (Number.isFinite(lost)) {
+      const text = `${M.usd(lost)} lost, ${M.percent(1 - ratio, { decimals: 1 })} of its 2024 total. `
+        + 'Dot size shows the amount lost, on a log scale.';
+      dot.setAttribute('aria-label', text);
+      hoverTip(dot, text);
+    }
+
     track.append(dot);
     const cut = element('small', { text: `${Math.round((1 - ratio) * 100)}% of 2024 lost` });
+    /* The label is clamped to two lines (see .oda-rank-label in oda-figure.css)
+       and carries its full text on hover. A pair name runs to things like
+       "Democratic Republic of the Congo — Population policies/programmes and
+       reproductive health", which wrapped to three or four lines and made the
+       row — and so the whole dialog — a different height on every page. */
     const head = onClick
-      ? element('button', { text: labelText, attributes: { type: 'button' } })
-      : element('span', { text: labelText });
+      ? element('button', { className: 'oda-rank-label', text: labelText, attributes: { type: 'button' } })
+      : element('span', { className: 'oda-rank-label', text: labelText });
+    head.setAttribute('title', labelText);
+    hoverTip(head, labelText);
     if (onClick) head.addEventListener('click', onClick);
     return element('div', { className: 'oda-rank-row' }, [head, track, cut]);
   }
@@ -494,21 +719,35 @@
    * @param {number}   options.year
    * @param {Element} [options.returnFocusTo]
    */
+  /** [smallest positive loss, largest loss] — the log domain for dot sizing. */
+  function lostRange(rows) {
+    const positive = rows.map(row => row.lost).filter(v => Number.isFinite(v) && v > 0);
+    if (!positive.length) return null;
+    return [Math.min(...positive), Math.max(...positive)];
+  }
+
   function orphanDrilldown({ payload, host, title, pairs, scenario, year, returnFocusTo }) {
     const P = window.ODAPayload;
     const dialog = modal(title, { host, returnFocusTo });
     dialog.card.append(element('p', {
       className: 'notes',
-      text: 'Each dot is the share of the recipient-sector’s 2024 bilateral ODA still ' +
-            `projected in ${year}. Select one to see which donors moved.`
+      text: 'Each dot sits at the share of the recipient-sector’s 2024 bilateral ODA still ' +
+            `projected in ${year}; its size shows the amount lost, on a log scale. ` +
+            'Select one to see which donors moved.'
     }), trackAxis());
+
+    /* One domain across the whole list, so dot sizes are comparable between
+       rows and between pages. Scaling each page to its own range would make the
+       largest loss on every page look the same size. */
+    const lostDomain = lostRange(pairs);
 
     const listHost = element('div');
     dialog.card.append(listHost);
     pagedList(listHost, pairs, pair => rankRow(
       `${payload.recipientName(pair.recipient)} — ${payload.sectorName(pair.sector)}`,
       pair.ratio,
-      event => openDonors(pair, event.currentTarget)
+      event => openDonors(pair, event.currentTarget),
+      { lost: pair.lost, lostDomain }
     ));
 
     async function openDonors(pair, trigger) {
@@ -532,8 +771,9 @@
         }
         const ranked = [...rows.values()]
           .filter(row => row.base > 0)
-          .map(row => ({ ...row, ratio: row.now / row.base }))
+          .map(row => ({ ...row, ratio: row.now / row.base, lost: row.base - row.now }))
           .sort((a, b) => Math.abs(1 - b.ratio) - Math.abs(1 - a.ratio));
+        const donorDomain = lostRange(ranked);
 
         body.replaceChildren();
         if (!ranked.length) {
@@ -546,7 +786,8 @@
           trackAxis());
         const rowsHost = element('div');
         body.append(rowsHost);
-        pagedList(rowsHost, ranked, row => rankRow(payload.donorName(row.donor), row.ratio, null));
+        pagedList(rowsHost, ranked, row => rankRow(payload.donorName(row.donor), row.ratio, null,
+          { lost: row.lost, lostDomain: donorDomain }));
       } catch (error) {
         P.renderFailState(body, error);
       }
@@ -569,6 +810,7 @@
     pagerActions,
     createState, selfSync, controlGroup, scenarioSelect, measureToggle, yearControl,
     sortSelect, applySort, pager, notes, STANDARD_NOTES, attachDismiss,
+    hoverTip, hideHoverTip, filterLegend, hiddenSet,
     modal, trapFocus, pagerRow, pagedList, rankRow, trackAxis, orphanDrilldown
   };
 })();

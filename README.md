@@ -288,6 +288,173 @@ whose value matches no option, and blank space left on a control row. Run it fro
 the repo root: it globs `f*.html` from the working directory, so running it from
 inside `qa/` audits nothing and reports zero issues.
 
+## Notes
+
+**Notes are one running paragraph, and as short as the figure can bear.** They
+were a stack of separate `<p>` lines behind a collapsed *Notes* disclosure — up
+to nine per figure, several restating the model's internals ("winsorised at the
+95th percentile", "structurally zero in the current CRS extract", "at most 12
+groups are drawn individually"). A reader of a CGD digital note is not debugging
+the emitter, and a nine-line footnote block reads as a warning that the figure
+cannot be trusted. `UI.notes` now emits one paragraph and no disclosure, so each
+entry must be a complete sentence ending in its own full stop.
+
+Two rules keep them that way:
+
+* **No rosters.** A note reports a COUNT, never a comma-separated list of every
+  affected recipient. `denominatorNote` and `incomeGroupNote` used to end with
+  thirteen country names in one sentence, and F5 carried three such lists at
+  once. The count is what tells a reader how much of the picture is missing; a
+  reader who needs to know which ones can select them.
+* **Live statements are not footnotes.** `visible` keeps its own paragraph,
+  because those are statements about the current view — which recipients could
+  not be drawn, and why — and they change as the reader clicks. Anything whose
+  count already appears in the figure's own summary line does not belong in the
+  notes at all.
+
+## DAC membership
+
+**The EU is a full member of the OECD Development Assistance Committee.**
+`donor_meta` in the payload records EU Institutions as `dac_member: 0` with
+`eu_institution: 1`, which put the largest non-sovereign provider in the model
+under "Non-DAC providers" on F1 and called it a "Non-DAC provider" in F2's
+tooltip. Both were wrong; the corrected count is 33 members, being 32 countries
+plus the EU.
+
+The correction lives in `ODAModel.isDacMember()` / `dacLabel()`, not in the
+payload: the payload is emitted upstream and every blob is hash-verified in the
+browser, so the figure layer cannot edit it. It is expressed in terms of the
+`eu_institution` flag rather than a hard-coded donor code. **No figure may read
+`donor_meta.dac_member` directly.** The upstream field should be fixed in the
+emitter; until it is, this is the only place that knows.
+
+A consequence: F1's All / DAC / Non-DAC filter is gone. The 17 statically-held
+donors are also excluded from that figure now, and they were exactly the 17
+non-DAC countries, so every donor F1 can show is a DAC member — "All" and "DAC"
+would have selected the same 33 and "Non-DAC" none.
+
+## Sector order
+
+Every sector list a reader picks from is ordered **by name**, through
+`ODAModel.sectorsAlphabetical()`. The sector axis is in CRS code order, which
+groups sectors by DAC family: meaningful to someone who knows the CRS and
+arbitrary to everyone else, since in a 21-item dropdown there is no way to guess
+that "Humanitarian aid" sits last. Sector *colours* are pinned by code in
+`set-config.js`, so reordering a list repaints nothing.
+
+## Legends that are also filters
+
+`UI.filterLegend` renders a legend whose keys switch their series on and off
+(F4, F5, F9 and F11 for income groups; F12 uses the same pattern to highlight an
+allocation rule). Three things about it are load-bearing:
+
+* **The legend is built from the data present, not the data drawn.** Build it
+  from the drawn rows and a switched-off group vanishes from the legend, leaving
+  the reader no control to switch it back on.
+* **The last visible key cannot be switched off**, because an empty chart reads
+  as "no data for this selection" — a different and wrong claim.
+* **The hidden set is a `'|'`-joined string in state, not an array.**
+  `createState` compares patch values with `===` to decide what to reset, and a
+  fresh array is never `===` the previous one, so an array would make every
+  legend click look like a change to every dependent key and reset the reader's
+  page and selection.
+
+Filtering must also land at the right point in the pipeline. F9's y axis is a
+recipient's share of allocable bilateral ODA, computed over *every* recipient;
+filtering before that division would renormalise the shares to the visible
+subset, so hiding high-income recipients would silently inflate everyone else's
+share of global ODA.
+
+Legend keys and other controls describe themselves through `UI.hoverTip`, not
+`title`. Browsers delay `title` about a second, it never appears on touch, and it
+cannot be styled — a legend key whose description arrives after the pointer has
+moved on has not described anything. A legend key that is a `<button>` also
+carries the 24px WCAG tap target, which it did not need as a `<span>`.
+
+## Focus on an SVG mark
+
+Clicking or tabbing a chart mark used to throw a large rectangle across the
+figure. That was the browser's default focus ring: on an SVG element the ring is
+drawn round the element's **bounding box**, not its shape, so a flow line from
+Washington to Kabul produced a rectangle covering most of F3's map. The shared
+rule in `oda-figure.css` replaces it with a gold stroke following the mark's own
+outline, scoped to `:focus-visible` so it appears for keyboard focus and not for
+a mouse click. A figure needing something different for a particular mark adds a
+**more specific** rule (see the `.map-svg` rules in F3) and never re-enables
+`outline`.
+
+## Stacked drill-downs
+
+`attachDismiss` keeps a stack, and only the innermost dialog responds to an
+outside click or to Escape. Without it, dismissing a stacked drill-down closed
+the whole stack: each dialog listened for a pointerdown outside its own card,
+and the inner dialog's backdrop covers the outer card, so a click meant for "go
+back to the list" landed on the inner backdrop — outside *both* cards. Both
+listeners fired and the reader was returned to the chart having lost their place
+in a paged list.
+
+`pagedList` also pads its last page to a full page of rows, and
+`.oda-rank-label` clamps a row label to two lines. Between them the dialog is the
+same height on every page. It used to grow and shrink as the reader paged —
+partly from a short final page, mostly because a pair name like "Democratic
+Republic of the Congo — Population policies/programmes and reproductive health"
+wrapped to four lines — which moves the pager buttons out from under the cursor
+mid-click.
+
+A drill-down dot is **sized by the US$ volume lost, on a log scale**, and says
+so. Position on the track is the share of the 2024 total still projected; size is
+the amount. Two pairs can both have lost 90% while one is US$40m and the other
+US$0.03m, and position alone made those identical. The scale is log because
+these losses span more than four orders of magnitude — the same range that puts
+F4's and F6's axes on logs — and area-proportional sizing over that range is
+useless in practice: against a US$500m maximum a US$0.03m loss came out at
+7.08px against a 7px floor, so a whole page of small pairs was a row of
+identical dots.
+
+## Scenario names
+
+Each allocation rule carries three names, for three jobs. `label` is the axis key
+(`S2A`); `name` is the full editorial name, for dropdowns and tooltips; `short`
+is for a chart's own label column. Seven of the ten full names open with
+"Prioritisation of" or "Prioritisation by", so in F14's label column every row
+truncated to `S5 — Prioritisation of macroeconomic…` and the rules could be told
+apart only by their codes. F14 uses `short` and titles the column
+*Prioritisation scenarios*, so the shared idea sits in the heading once instead
+of being repeated down ten rows. `ODAModel.scenarioRank()` gives the published
+order, which F14 lists in rather than re-sorting by value on every change of
+metric and year.
+
+## The F16 pin
+
+A pin is a frozen snapshot, so **every** part of a pinned mark reads from the
+pinned row — including the radius scale. Freezing the pinned row's own values
+was not enough: the bubble radius encodes the peer funding gap, the gap is a
+function of the objective weights, and the scale's domain is the maximum gap in
+the current data. So dragging the objective triangle rescaled every radius and
+the pinned rings resized even though their own values had not moved.
+
+While a comparison is pinned, the radius domain is therefore **held** at the
+value it had when the pin was taken. That also keeps the two marks comparable:
+giving the pinned rings a private frozen scale would have stopped them moving but
+put ring and bubble on different scales, so their relative sizes would have meant
+nothing — the one thing a before-and-after pin is for. One held scale gives
+both: the rings stay still, and the live bubbles still grow and shrink, because
+their gap genuinely changes with the objective.
+
+### Why the objective sometimes appears to do nothing
+
+`allocateDesired` distributes the **difference** between the target envelope and
+the 2024 portfolio it starts from. Where those two are close, the weights have
+almost nothing to redistribute and every recipient stays near its 2024 level
+whatever the reader does with the triangle.
+
+EU Institutions is exactly that case: in 2026–2028 its discretionary envelope is
+within 1% of its 2024 portfolio (US$11.34bn against US$11.28bn), which is why its
+recommended allocation for Malaysia sits at the 2024 value of US$4.81m under
+every objective setting. That is the documented method working, not a fault —
+but it reads as a dead control, so the summary line now states the two totals and
+how close they are whenever the gap is under 5%.
+
 ## Checkboxes
 
 The box goes **inside** its label, and the label carries the 24px WCAG 2.2 target.
@@ -299,11 +466,25 @@ so nest rather than tune. `shared/oda-figure.css` styles `.advanced-line label` 
 
 ## Number formatting
 
-`ODAModel.trimZeros` strips decimal zeros that carry no information, and the
-decimal point with them: `24.0%` becomes `24%`, `US$15.0bn` becomes `US$15bn`,
-`0.10%` becomes `0.1%`. Significant zeros are untouched (`0.01%` keeps both). It
-runs inside `usd()` and `percent()`, so every figure formatting through those gets
-it; figures whose axes format through d3 (F9, F14, F16) call it explicitly.
+One decimal place more than the obvious choice, and **a real value never formats
+as zero**. Whole millions were hiding real flows: a US$0.3m recipient-sector
+flow — an ordinary size for a small sector in a small country — came out as
+`US$0m`, so F3's flow tooltips read `US$0` for every line into Angola's
+communications sector and the reader could not tell a small flow from no flow at
+all. That is the missing-data-rendered-as-zero defect wearing a rounding costume.
+
+So `usd()` gives millions one decimal place, spends a second one below US$1m
+where one is not enough, and renders anything under US$0.005m as `<US$0.01m`
+rather than a figure that reads as nothing. Billions carry two places.
+`percent()` defaults to one place rather than none.
+
+`ODAModel.trimZeros` then takes back every place that carries no information,
+and the decimal point with it: `24.0%` becomes `24%`, `US$15.00bn` becomes
+`US$15bn`, `0.10%` becomes `0.1%`. Significant zeros are untouched (`0.01%`
+keeps both). That is what stops the extra precision becoming clutter — it shows
+up only where it changes what the reader learns. It runs inside `usd()` and
+`percent()`, so every figure formatting through those gets it; figures whose axes
+format through d3 (F9, F14, F16) call it explicitly.
 
 ## The `nan` income group
 

@@ -185,22 +185,21 @@
   const noPriorityNode = document.getElementById('noPriorityNote');
   document.getElementById('notes').append(UI.notes({
     notes:[
-      'Allocations and the donor envelope are grant-equivalent. Peer coverage and the country viability test use gross ODA, converted with the selected donor-year realised gross-to-grant-equivalent ratio.',
-      'Policy-held corridors, including Ukraine and executable exits or zero pins, stay at their audited projected values. Other announced country allocations and country floors are deliberately not applied, so the tool may imply funding for a country from which the donor has announced an exit.',
-      'The recommendation is solved at recipient level over the donor’s observed 2024 portfolio. Any later sector reporting would impute the donor’s observed 2024 sector mix; this tool does not choose sectors.',
-      'The tool applies the guarded country viability floor. Published figures apply a cell floor; both use 10th-percentile constructions from the same 2024 distributions, but the thresholds differ.',
-      'Peer donors follow the selected system-wide allocation rule and are then held fixed; they are never re-optimised.',
-      'Objective weights apply to separately normalised peer-coverage protection scores, not to raw need masses.',
-      'Where a recipient has no need mass for a weighted objective, the published methodology governs. A recipient that is not a least developed country receives no priority from that objective and is named rather than imputed: it stays in the portfolio and remains fundable. A least developed country would instead take the methodology’s imputation from the observed least-developed-country distribution, which needs inputs the browser payload does not carry, so that combination is blocked rather than approximated. No recipient is in that state in this release.',
-      'Selecting a recipient opens a sector diagnostic: where the donor already worked in that recipient in 2024, and how much its peers are changing their own funding of those sectors. It is descriptive only — the tool allocates by recipient and does not choose sectors — and nothing in it feeds back into the recommendation.',
-      UI.STANDARD_NOTES.prices,UI.STANDARD_NOTES.unallocable
+      'Allocations and the donor envelope are grant-equivalent.',
+      'Announced country allocations and country floors are deliberately not applied, so the tool may imply funding for a country from which the donor has announced an exit.',
+      'Peer donors follow the selected allocation rule and are then held fixed; they are never re-optimised.',
+      'The recommendation is solved at recipient level over the donor\u2019s observed 2024 portfolio; it does not choose sectors.',
+      UI.STANDARD_NOTES.prices
     ],
     source:`Source: CGD modelling, ${payload.release}.`
   }));
-  /* After the notes list exists, not before it: the disclosure is built by
-     UI.notes and there is nothing to move into until then. */
-  const notesDetails = document.querySelector('#notes details');
-  if (notesDetails && noPriorityNode) notesDetails.append(noPriorityNode);
+  /* After the notes block exists, not before it. This looked for
+     `#notes details`; notes are now one paragraph with no disclosure, so the
+     live region attaches to the notes block itself. Left as a separate node
+     rather than folded into the paragraph because its content is
+     state-dependent and the paragraph is built once. */
+  const notesBlock = document.querySelector('#notes .notes');
+  if (notesBlock && noPriorityNode) notesBlock.append(noPriorityNode);
 
   await ensureScenario(defaults.scenario,true);
   /* The observer is registered only AFTER the first scenario blob is in memory.
@@ -399,7 +398,14 @@
       candidates.sort((a,b)=>d3.ascending(a.score,b.score)||d3.ascending(a.value,b.value)||d3.ascending(a.r,b.r));closed.add(candidates[0].i);
     }
     const recommended=new Map();support.forEach(r=>recommended.set(r,pins.has(r)?pins.get(r):allocation[free.indexOf(r)]||0));
-    return{recommended,pins,envelope,pinnedTotal,discretionary:target,ratio,closed:new Set([...closed].map(i=>free[i]))};
+    /* `anchorTotal` is the 2024 portfolio over the recipients the solver can
+       actually move. It is returned because it BOUNDS the objective's influence:
+       allocateDesired distributes the difference between the target and this
+       total, so where the two are close, the weights have almost nothing to
+       redistribute and every recipient stays near its 2024 level. That is the
+       method working as documented, but it looks like a broken control unless
+       the figure says so -- see the summary line. */
+    return{recommended,pins,envelope,pinnedTotal,discretionary:target,anchorTotal:d3.sum(anchor),ratio,closed:new Set([...closed].map(i=>free[i]))};
   }
 
   function derive(s,weights){
@@ -423,7 +429,7 @@
   function render(s){
     const weights=currentWeights(),current=derive(s,weights);rows=current.rows;
     if(comparison?.context&&(comparison.context.scenario!==s.scenario||comparison.context.donor!==s.donor||comparison.context.year!==s.year))comparison=null;
-    if(comparison&&!comparison.rows){const issue=missingIssue(s.donor,comparison.weights);if(issue)comparison=null;else comparison={...comparison,...derive(s,comparison.weights)}}
+    if(comparison&&!comparison.rows){const issue=missingIssue(s.donor,comparison.weights);if(issue)comparison=null;else{comparison={...comparison,...derive(s,comparison.weights)};comparison.gapMax=d3.max(comparison.rows,d=>d.gap)||1;}}
     syncObjective();updateUrl(s);renderNotes(s,current);renderChart(s,current);renderSummary(s,current);syncPinButton(current);window.CGD_READY=true;
   }
 
@@ -575,8 +581,20 @@
        rather than standing as two more lines under the chart. */
     const fixedNote=`Note that the focus donor’s projected ODA envelope is fixed, and peers’ allocation behaviour is fixed by announced commitments and scenario projections.`;
     const committedNote=`${fmtUsd(current.solution.pinnedTotal)} of ${payload.donorName(s.donor)}’s ${fmtUsd(current.solution.envelope)} projected envelope is already committed and cannot move.`;
+    /* Without this, a donor-year whose envelope happens to land on its 2024
+       portfolio reads as a dead control: the reader drags the objective triangle,
+       watches almost every recommended allocation stay put, and concludes the tool
+       is broken. EU Institutions in 2026-28 is exactly that case -- the
+       discretionary envelope is within 1% of the 2024 portfolio -- which is why
+       its Malaysia recommendation sits at the 2024 value whatever the weights. */
+    const anchorTotal=current.solution.anchorTotal||0,
+      headroom=Math.abs(current.solution.discretionary-anchorTotal),
+      headroomShare=anchorTotal>EPS?headroom/anchorTotal:1,
+      headroomNote=(anchorTotal>EPS&&headroomShare<.05)
+        ?` This objective redistributes the difference between the discretionary envelope (${fmtUsd(current.solution.discretionary)}) and the 2024 portfolio it starts from (${fmtUsd(anchorTotal)}). Those are within ${M.percent(headroomShare)} of each other here, so there is little to move and most recipients stay near their 2024 level whatever the weights.`
+        :'';
     const up=current.rows.filter(r=>r.change>EPS),down=current.rows.filter(r=>r.change<-EPS),toward=d3.sum(up,r=>r.change),away=-d3.sum(down,r=>r.change),moved=(toward+away)/2,share=current.solution.discretionary>EPS?moved/current.solution.discretionary:0;
-    document.getElementById('summary').textContent=(current.solution.discretionary<=EPS?`No allocation can move for ${payload.donorName(s.donor)} in ${s.year} under ${s.scenario}.`:`${weightPhrase(currentWeights())}, this objective moves about ${fmtUsd(moved)} — ${M.percent(share)} of this donor’s discretionary envelope — toward ${up.length} recipients and away from ${down.length}.`)+` ${fixedNote} ${committedNote}`;
+    document.getElementById('summary').textContent=(current.solution.discretionary<=EPS?`No allocation can move for ${payload.donorName(s.donor)} in ${s.year} under ${s.scenario}.`:`${weightPhrase(currentWeights())}, this objective moves about ${fmtUsd(moved)} — ${M.percent(share)} of this donor’s discretionary envelope — toward ${up.length} recipients and away from ${down.length}.`)+` ${fixedNote} ${committedNote}${headroomNote}`;
   }
 
   function renderChart(s,current){
@@ -584,7 +602,22 @@
     if(!document.getElementById('chart')){const fresh=document.createElementNS('http://www.w3.org/2000/svg','svg');fresh.id='chart';fresh.setAttribute('role','img');fresh.setAttribute('aria-labelledby','panelTitle');area.replaceChildren(fresh)}
     const data=current.rows,w=Math.max(280,Math.floor(area.clientWidth||width)),h=w<430?430:490,m={top:48,right:18,bottom:58,left:w<430?64:76},plotW=w-m.left-m.right,plotH=h-m.top-m.bottom,maxX=Math.max(10,d3.max(data,d=>Math.max(d.projected,d.recommended))||10),xFloor=.03,x=d3.scaleLog([xFloor,maxX*1.15],[m.left,w-m.right]).clamp(true),view=s.view;
     const rawAbs=d3.max(data,d=>Math.abs(d.change))||1,absMax=Math.max(1,rawAbs*1.15),y=view==='pct'?d3.scaleLog([.1,10],[h-m.bottom,m.top]).clamp(true):d3.scaleSymlog().constant(Math.max(.05,absMax/30)).domain([-absMax,absMax]).range([h-m.bottom,m.top]);
-    const gapMax=d3.max(data,d=>d.gap)||1,r=d3.scaleSqrt([0,gapMax],[4,w<430?12:17]);
+    /* While a comparison is pinned, the bubble-radius DOMAIN is held at the value
+       it had when the pin was taken. Freezing the pinned row's gap was not enough
+       on its own: this domain is the maximum peer funding gap in the current data,
+       the gap is a function of the objective weights, so dragging the triangle
+       rescaled every radius and the pinned rings resized even though their own
+       value had not moved.
+
+       Holding it also keeps the two marks COMPARABLE. Giving the pinned rings a
+       private frozen scale would have stopped them moving but put ring and bubble
+       on two different scales, so their relative sizes would have meant nothing --
+       which is the one thing a before-and-after pin is for. One held scale gives
+       both: the rings stay still, and the live bubbles still grow and shrink,
+       because their gap genuinely changes with the objective. */
+    const liveGapMax=d3.max(data,d=>d.gap)||1,
+      gapMax=(comparison&&comparison.gapMax)||liveGapMax,
+      r=d3.scaleSqrt([0,gapMax],[4,w<430?12:17]);
     const svg=d3.select('#chart').attr('viewBox',`0 0 ${w} ${h}`).attr('height',h).style('height',`${h}px`);svg.selectAll('*').remove();
     const tickCandidates=[.03,.05,.1,.2,.5,1,2,5,10,20,50,100,200,500,1000,2000,5000,10000].filter(v=>v>=xFloor&&v<=maxX*1.15),xTicks=C.thinTicks(tickCandidates,w<430?4:6),yTicks=view==='pct'?[.2,.5,1,2,5,10]:y.ticks(w<430?5:7);
     svg.append('g').attr('class','axis').attr('transform',`translate(0,${h-m.bottom})`).call(d3.axisBottom(x).tickValues(xTicks).tickFormat(v=>v<.1?d3.format('.2f')(v):v<1?d3.format('.1f')(v):d3.format('~s')(v)).tickSizeOuter(0));
@@ -592,7 +625,39 @@
     const zeroY=y(view==='pct'?1:0);svg.append('line').attr('x1',m.left).attr('x2',w-m.right).attr('y1',zeroY).attr('y2',zeroY).attr('stroke','var(--cgd-dark-gray)').attr('stroke-dasharray','4 3');svg.append('text').attr('x',w-m.right).attr('y',zeroY-5).attr('text-anchor','end').attr('class','small-text ref-label').text('no change');
     svg.append('text').attr('class','axis-title').attr('x',(m.left+w-m.right)/2).attr('y',h-7).attr('text-anchor','middle').text(w<430?'Projected allocation (GE US$m, log)':'Projected allocation before this objective (grant-equivalent US$m, log scale)');
     svg.append('text').attr('class','axis-title').attr('x',m.left).attr('y',13).text(view==='pct'?(w<430?'Recommended change (log ratio)':'Recommended change (log-ratio scale)'):(w<430?'Recommended change (GE US$m, symlog)':'Recommended change (grant-equivalent US$m, symlog scale)'));
-    if(comparison?.rows){const by=new Map(comparison.rows.map(d=>[d.recipient,d]));svg.append('g').selectAll('line').data(data.filter(d=>by.has(d.recipient)&&!d.held)).join('line').attr('x1',d=>x(Math.max(xFloor,d.projected))).attr('x2',d=>x(Math.max(xFloor,d.projected))).attr('y1',d=>pointY(d,view,y)).attr('y2',d=>pointY(by.get(d.recipient),view,y)).attr('stroke','var(--cgd-blue)').attr('stroke-opacity',.25);svg.append('g').selectAll('circle').data(data.filter(d=>by.has(d.recipient)&&!d.held)).join('circle').attr('cx',d=>x(Math.max(xFloor,d.projected))).attr('cy',d=>pointY(by.get(d.recipient),view,y)).attr('r',d=>r(d.gap)+2).attr('fill','none').attr('stroke','var(--cgd-blue)').attr('stroke-width',1.2).attr('opacity',.65)}
+    if(comparison?.rows){const by=new Map(comparison.rows.map(d=>[d.recipient,d]));
+      const paired=data.filter(d=>by.has(d.recipient)&&!d.held);
+      /* A PIN IS A FROZEN SNAPSHOT, so every part of its mark reads from the
+         pinned row. The ring took its y from the pinned row but its RADIUS from
+         the current one -- and the radius encodes the peer funding gap, which is
+         a function of the objective weights. So the pinned bubbles resized as the
+         reader dragged the triangle, which is precisely what a pin is supposed to
+         hold still: you could not tell whether a ring had grown because you had
+         moved the objective or because the pin said so. */
+      const pinned=d=>by.get(d.recipient);
+      /* The connector joins each pinned ring to where that recipient sits now.
+         Both share an x -- the audited projection does not depend on the weights --
+         so it is a vertical leader, and it was at .25 opacity, which at 1px was
+         invisible against the grid. */
+      svg.append('g').selectAll('line').data(paired).join('line')
+        .attr('x1',d=>x(Math.max(xFloor,d.projected))).attr('x2',d=>x(Math.max(xFloor,d.projected)))
+        .attr('y1',d=>pointY(d,view,y)).attr('y2',d=>pointY(pinned(d),view,y))
+        .attr('stroke','var(--cgd-blue)').attr('stroke-width',1).attr('stroke-opacity',.55)
+        .attr('stroke-dasharray','2 2');
+      svg.append('g').selectAll('circle').data(paired).join('circle')
+        .attr('cx',d=>x(Math.max(xFloor,d.projected))).attr('cy',d=>pointY(pinned(d),view,y))
+        .attr('r',d=>r(pinned(d).gap)+2).attr('fill','none').attr('stroke','var(--cgd-blue)')
+        .attr('stroke-width',1.2).attr('opacity',.75)
+        /* The rings had no tooltip and no keyboard stop at all, so the pinned
+           value -- the whole point of pinning -- could not be read off the chart.
+           `pointer-events: all` is needed because the ring is unfilled. */
+        .attr('pointer-events','all').attr('tabindex',0).attr('role','img')
+        .attr('aria-label',d=>pinTooltipText(pinned(d)))
+        .on('pointerenter',(event,d)=>showPinTooltip(event,pinned(d)))
+        .on('pointermove',event=>positionTooltip(event))
+        .on('pointerleave',()=>hideTooltip())
+        .on('focus',(event,d)=>showPinTooltip(event,pinned(d)))
+        .on('blur',()=>hideTooltip())}
     const marks=svg.append('g').selectAll('circle.current').data(data).join('circle').attr('class','current point').attr('cx',d=>x(Math.max(xFloor,d.projected))).attr('cy',d=>d.held?zeroY:pointY(d,view,y)).attr('r',d=>r(d.gap)).attr('fill',d=>d.held?'#fff':d.change>=0?'var(--cgd-light-teal)':'var(--cgd-gold)').attr('stroke',d=>d.held?'var(--cgd-dark-gray)':'#fff').attr('stroke-dasharray',d=>d.held?'3 2':null).attr('stroke-width',d=>d.held?1.5:1).attr('tabindex',0).attr('aria-label',d=>tooltipText(d)).on('pointerenter',(event,d)=>showTooltip(event,d)).on('pointermove',event=>positionTooltip(event)).on('pointerleave',()=>hideTooltip()).on('focus',(event,d)=>showTooltip(event,d)).on('blur',()=>hideTooltip()).on('click',function(event,d){event.stopPropagation();hideTooltip();openSectorDiagnostic(d.recipient,this)}).on('keydown',function(event,d){if(event.key==='Enter'||event.key===' '){event.preventDefault();hideTooltip();openSectorDiagnostic(d.recipient,this)}});
     /* Selecting a mark opens the sector diagnostic rather than pinning the
        tooltip; the dialog carries its own Escape and outside-click dismissal
@@ -618,6 +683,26 @@
      only sub-US$10m values need the extra precision this tool works at. */
   function fmtUsd(v){if(!Number.isFinite(v))return M.MISSING_TEXT;if(Math.abs(v)<10&&v!==0)return`US$${d3.format('.2~f')(v)}m`;return M.usd(v)}
   function pctChange(d){if(d.projected<=EPS)return d.recommended<=EPS?'0%':'new/reopened';return`${d.change/d.projected>0?'+':''}${d3.format('.1f')(d.change/d.projected*100)}%`}
+  /* What the pin was taken UNDER, not just what it says: a reader comparing two
+     objective settings needs the weights and the scenario/donor/year the snapshot
+     was frozen at, or the ring is an unlabelled second dot. */
+  function pinContextText(){
+    if(!comparison)return'';
+    const w=comparison.weights||{},c=comparison.context||{};
+    const parts=[`poverty ${M.percent(w.poverty||0)}`,`humanitarian ${M.percent(w.humanitarian||0)}`,
+                 `fiscal ${M.percent(w.fiscal||0)}`];
+    return `Pinned at ${parts.join(', ')}`+(c.scenario?`, under ${M.scenarioInfo(c.scenario).label} in ${c.year}.`:'.');
+  }
+  function pinTooltipText(d){return`${d.name}, pinned comparison. Recommended allocation `
+    +`${fmtUsd(d.recommended)}. Change ${pctChange(d)}. Peer funding gap ${fmtUsd(d.gap)}. ${pinContextText()}`}
+  function showPinTooltip(event,d){const tip=document.getElementById('tooltip');
+    tip.replaceChildren(element('strong',{text:`${d.name} — pinned`}),
+      element('div',{className:'tooltip-grid'},[
+        element('span',{text:'Recommended allocation'}),element('b',{text:fmtUsd(d.recommended)}),
+        element('span',{text:'Change implied'}),element('b',{text:pctChange(d)}),
+        element('span',{text:'Peer funding gap'}),element('b',{text:fmtUsd(d.gap)})]),
+      element('div',{className:'notes',text:pinContextText()}));
+    tip.hidden=false;positionTooltip(event)}
   function tooltipText(d){return`${d.name}. Projected allocation ${fmtUsd(d.projected)}. Change ${pctChange(d)}. Recommended allocation ${fmtUsd(d.recommended)}. Peer funding gap ${fmtUsd(d.gap)}. Income group ${d.income}.`}
   function showTooltip(event,d){const tip=document.getElementById('tooltip');tip.replaceChildren(element('strong',{text:d.name}),element('div',{className:'tooltip-grid'},[element('span',{text:'Projected allocation'}),element('b',{text:fmtUsd(d.projected)}),element('span',{text:'Change implied'}),element('b',{text:d.held?'0% (policy-held)':pctChange(d)}),element('span',{text:'Recommended allocation'}),element('b',{text:fmtUsd(d.recommended)}),element('span',{text:'Peer funding gap'}),element('b',{text:fmtUsd(d.gap)}),element('span',{text:'Income group'}),element('b',{text:d.income})]));tip.hidden=false;positionTooltip(event)}
   function positionTooltip(event){const tip=document.getElementById('tooltip'),pad=10,box=tip.getBoundingClientRect(),cx=event.clientX??innerWidth/2,cy=event.clientY??innerHeight/2;tip.style.left=`${Math.max(pad,Math.min(innerWidth-box.width-pad,cx+12))}px`;tip.style.top=`${Math.max(pad,Math.min(innerHeight-box.height-pad,cy+12))}px`}
@@ -625,7 +710,10 @@
 
   function toggleComparison(){
     if(comparison){comparison=null;showValidation('');schedule(false);return}
-    const s=state.get();comparison={weights:{...currentWeights()},rows:rows.map(d=>({...d})),context:{scenario:s.scenario,donor:s.donor,year:s.year}};showValidation('');schedule(false);
+    const s=state.get();comparison={weights:{...currentWeights()},rows:rows.map(d=>({...d})),
+      /* The radius domain in force at pin time; see renderChart. */
+      gapMax:d3.max(rows,d=>d.gap)||1,
+      context:{scenario:s.scenario,donor:s.donor,year:s.year}};showValidation('');schedule(false);
   }
   function syncPinButton(current){const b=document.getElementById('pinButton');b.disabled=current.solution.discretionary<=EPS;b.textContent=comparison?'Clear comparison':'Pin this allocation'}
   function updateUrl(s){

@@ -13,7 +13,6 @@
   .donor-plot svg{display:block;width:100%;height:36px}.ratio{text-align:right;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
   .axis-wrap{display:grid;grid-template-columns:minmax(112px,190px) minmax(140px,1fr) 62px;gap:8px;padding:0 5px}.axis-wrap svg{width:100%;height:32px;display:block}
   .year-legend{display:flex;gap:6px 9px;flex-wrap:wrap;font-size:11.5px;justify-content:flex-end}.year-key{display:inline-flex;align-items:center;gap:4px}.year-dot{width:14px;height:8px;border-radius:1px}
-  .donor-filter button{font-size:11.5px;padding:4px 9px}
   @media(max-width:620px){.panel-header{grid-template-columns:minmax(0,1fr)}.year-legend{justify-content:flex-start}}
   .tooltip{position:absolute;z-index:20;max-width:260px}.flat-note{font-size:11px;color:var(--cgd-dark-gray)}
   @media(max-width:520px){.rank-head,.donor-row,.axis-wrap{grid-template-columns:80px minmax(94px,1fr) 50px;gap:3px}.donor-name,.ratio{font-size:11px}.rank-head{font-size:11px}.donor-row{padding-inline:2px}}
@@ -24,7 +23,7 @@
     <button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="View fullscreen" title="View fullscreen"><svg class="icon-expand" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5" stroke="currentColor" stroke-width="1.8"/></svg><svg class="icon-compress" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5" stroke="currentColor" stroke-width="1.8"/></svg></button>
   </div>
   <div class="controls" id="controls"></div>
-  <section class="panel"><div class="panel-header"><div class="segmented donor-filter" id="donorFilter" role="group" aria-label="Donor group"></div><div class="year-legend" id="yearLegend" aria-label="Year colour legend"></div></div>
+  <section class="panel"><div class="panel-header"><span></span><div class="year-legend" id="yearLegend" aria-label="Year colour legend"></div></div>
     <div class="chart-area" id="chartArea"><div class="rank-head"><span>Donor</span><span id="axisHeading">ODA, US$ billion</span><button id="ratioSort" type="button" aria-label="Sort by 2028 ODA as a percentage of 2024 ODA">2028/2024</button></div><div id="rows"></div><div class="axis-wrap"><span></span><svg id="axisSvg" aria-hidden="true"></svg><span></span></div></div>
   </section>
   <p id="chartSummary" class="notes"></p><div id="notes"></div><div class="tooltip" id="tooltip" hidden></div>
@@ -47,7 +46,7 @@
   function niceTicks(span,target){if(!(span>0))return[0];const raw=span/target,mag=Math.pow(10,Math.floor(Math.log10(raw))),n=raw/mag,
     step=(n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10)*mag,out=[];
     for(let g=0;g*step<=span*1.00001&&g<40;g++)out.push(g*step);return out;}
-  const state=UI.createState({sort:'difference',direction:'desc',page:0,group:'all',scale:'usd'},{dependents:{sort:['page'],direction:['page'],group:['page']},onChange:render});
+  const state=UI.createState({sort:'difference',direction:'desc',page:0,scale:'usd'},{dependents:{sort:['page'],direction:['page']},onChange:render});
   const sort=UI.sortSelect(state,[{value:'difference',label:'Largest absolute change'},{value:'ratio',label:'2028 as % of 2024'}]);
   /* A shared linear axis in US$ answers "how big". It cannot answer "how much did
      it change" for a donor spending a fraction of a percent of the largest donor's
@@ -60,19 +59,40 @@
   for(const[v,l]of[['usd','US$'],['index','2024 = 100']]){const b=element('button',{text:l,attributes:{type:'button','data-scale':v}});b.addEventListener('click',()=>state.set({scale:v}));scaleBox.append(b);}
   state.subscribe(st=>scaleBox.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.scale===st.scale))));
   document.getElementById('controls').append(sort,UI.controlGroup('Scale',scaleBox,{id:'scaleToggle'}));
-  /* Sits beside the year legend rather than in the control bank, where it would
-     have pushed the bank onto a second row on phones. */
-  const filterBox=document.getElementById('donorFilter');
-  for(const[v,l,t]of[['all','All','Every provider in the model'],['dac','DAC','Members of the OECD Development Assistance Committee'],['other','Non-DAC','Providers outside the DAC, including EU Institutions']]){const b=element('button',{text:l,attributes:{type:'button','data-group':v,title:t}});b.addEventListener('click',()=>state.set({group:v}));filterBox.append(b);}
-  state.subscribe(st=>filterBox.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.group===st.group))));
+  /* The All / DAC / Non-DAC filter has been removed, because after two
+     corrections it could no longer divide anything. The 17 statically-held
+     donors are gone from this figure (see allRows below), and they were exactly
+     the 17 non-DAC countries; EU Institutions, the only other provider outside
+     the DAC in the payload's own classification, is in fact a DAC member and is
+     now treated as one. Every donor this figure can show is therefore a DAC
+     member: "All" and "DAC" would have selected the same 33 donors and
+     "Non-DAC" would have selected none. */
   UI.pagerRow(document.querySelector('.panel')).append(UI.pager(state,()=>Math.ceil(ordered().length/pageSize)));
   document.getElementById('ratioSort').addEventListener('click',()=>{const s=state.get();state.set({sort:'ratio',direction:s.sort==='ratio'&&s.direction==='asc'?'desc':'asc'});});
   document.getElementById('yearLegend').append(...years.map((y,i)=>{const dot=element('span',{className:'year-dot'});dot.style.background=colours[i];return element('span',{className:'year-key'},[dot,element('span',{text:String(y)})]);}));
-  const isDac=code=>Number(payload.donorMeta[code]&&payload.donorMeta[code].dac_member)===1;
-  function allRows(){return payload.axes.donor.map(code=>{const vals=years.map(year=>payload.at('static/total_oda_ge__donor_year',{donor:code,total_oda_year:year}));const change=vals[4]-vals[0],ratio=vals[0]>0?vals[4]/vals[0]:null;return{code,name:payload.donorName(code),vals,change,ratio};});}
-  function ordered(){const s=state.get(),rows=allRows().filter(r=>s.group==='all'||(s.group==='dac')===isDac(r.code));rows.sort((a,b)=>{const av=s.sort==='ratio'?a.ratio:Math.abs(a.change),bv=s.sort==='ratio'?b.ratio:Math.abs(b.change);return(s.direction==='asc'?av-bv:bv-av)||a.name.localeCompare(b.name);});return rows;}
+  /* The 17 statically-held donors are excluded. Their envelopes are not
+     projected at all: each one's 2024 ODA/GNI ratio is carried forward, so the
+     "change by 2028" this figure ranks is an artefact of GNI growth rather than
+     any modelled decision, and they crowded out donors whose change is real.
+     Read off `static_envelope` rather than a hard-coded list of codes, so a
+     release that reclassifies a donor is followed automatically. */
+  /* A hoisted declaration, not a const arrow: the pager above is constructed
+     with a totalPages callback that it invokes immediately, which reaches
+     ordered() -> allRows() -> here before this line is reached. A const would
+     still be in its temporal dead zone at that point. */
+  function isStatic(code){return Number(payload.donorMeta[code]&&payload.donorMeta[code].static_envelope)===1;}
+  function allRows(){return payload.axes.donor.filter(code=>!isStatic(code)).map(code=>{const vals=years.map(year=>payload.at('static/total_oda_ge__donor_year',{donor:code,total_oda_year:year}));const change=vals[4]-vals[0],ratio=vals[0]>0?vals[4]/vals[0]:null;return{code,name:payload.donorName(code),vals,change,ratio};});}
+  function ordered(){const s=state.get(),rows=allRows();rows.sort((a,b)=>{const av=s.sort==='ratio'?a.ratio:Math.abs(a.change),bv=s.sort==='ratio'?b.ratio:Math.abs(b.change);return(s.direction==='asc'?av-bv:bv-av)||a.name.localeCompare(b.name);});return rows;}
   const tooltip=document.getElementById('tooltip');let pinned=null;
-  function showTip(row,i,target){tooltip.replaceChildren(element('strong',{text:row.name}),element('div',{text:`${years[i]}: ${M.usd(row.vals[i])}`}),element('div',{text:`2028 is ${M.percent(row.ratio,{decimals:1})} of 2024`}));tooltip.hidden=false;const b=target.getBoundingClientRect(),rb=root.getBoundingClientRect();tooltip.style.left=`${Math.min(rb.width-tooltip.offsetWidth-8,Math.max(8,b.left-rb.left+12))}px`;tooltip.style.top=`${b.bottom-rb.top+4}px`;}
+  /* The second line reports the year under the cursor, not always 2028. It read
+     "2028 is 41% of 2024" whichever bar you hovered, so hovering 2026 answered a
+     question about a different bar and the reader had no way to get 2026's own
+     figure. 2024 is the baseline it is measured against, so there it says so
+     rather than stating the tautology that 2024 is 100% of 2024. */
+  function showTip(row,i,target){const share=row.vals[0]>0?row.vals[i]/row.vals[0]:null;
+    tooltip.replaceChildren(element('strong',{text:row.name}),element('div',{text:`${years[i]}: ${M.usd(row.vals[i])}`}),
+      element('div',{text:i===0?'Observed baseline':`${years[i]} is ${M.percent(share,{decimals:1})} of 2024`}));
+    tooltip.hidden=false;const b=target.getBoundingClientRect(),rb=root.getBoundingClientRect();tooltip.style.left=`${Math.min(rb.width-tooltip.offsetWidth-8,Math.max(8,b.left-rb.left+12))}px`;tooltip.style.top=`${b.bottom-rb.top+4}px`;}
   function hideTip(){tooltip.hidden=true;}
   function render(){const s=state.get(),orderedRows=ordered();
     if(!orderedRows.length){document.getElementById('rows').replaceChildren(element('p',{className:'notes',text:'No donors in this group.'}));document.getElementById('axisSvg').replaceChildren();document.getElementById('chartSummary').textContent='No donors in this group.';window.CGD_READY=true;return;}
@@ -114,9 +134,9 @@
     const axis=document.getElementById('axisSvg');axis.replaceChildren();axis.removeAttribute('viewBox');
     const last=ticks[ticks.length-1];
     ticks.forEach(t=>{const xx=x(t);axis.append(svgEl('line',{x1:xx+'%',x2:xx+'%',y1:0,y2:5,stroke:'#85A5AD'}));const tx=svgEl('text',{x:xx+'%',y:17,'text-anchor':t===0?'start':t===last?'end':'middle',class:'axis'});tx.textContent=indexed?Math.round(t*100)+'%':String(Math.round(t/1000));axis.append(tx);});
-    document.getElementById('chartSummary').textContent='Donors '+(page*pageSize+1)+'\u2013'+(page*pageSize+shown.length)+' of '+orderedRows.length+(s.group==='all'?'':s.group==='dac'?' DAC members':' non-DAC providers')+'.';window.CGD_READY=true;
+    document.getElementById('chartSummary').textContent='Donors '+(page*pageSize+1)+'\u2013'+(page*pageSize+shown.length)+' of '+orderedRows.length+'.';window.CGD_READY=true;
   }
-  document.getElementById('notes').append(UI.notes({notes:['Seventeen donors are held static—ARE, AZE, BGR, CYP, HRV, ISR, KAZ, KWT, LIE, MCO, MLT, QAT, ROU, SAU, THA, TUR and TWN—and their collective ODA rises 15.5% because their 2024 ODA/GNI ratio is held.','Values are grant-equivalent only; no valid forward gross total-ODA series is available.','DAC membership follows the model release, which classifies EU Institutions outside the DAC; they therefore appear under non-DAC providers.','Bars share a common baseline and each year has its own band, so all five years stay separately visible however close their values are.','The 2024 = 100 scale rebases each donor to its own 2024 total. It makes every donor\u2019s change equally visible and says nothing about how much ODA a donor gives.',UI.STANDARD_NOTES.prices,UI.STANDARD_NOTES.unallocable],source:`Source: CGD modelling, ${payload.release}.`}));
+  document.getElementById('notes').append(UI.notes({notes:[UI.STANDARD_NOTES.prices],source:`Source: CGD modelling, ${payload.release}.`}));
   document.getElementById('fullscreenBtn').addEventListener('click',()=>document.fullscreenElement?document.exitFullscreen():root.requestFullscreen?.());render();window.ODA_F1={state,rows:allRows};
 })();
 </script><script src="shared/cgd-embed.js"></script></body></html>

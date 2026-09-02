@@ -350,3 +350,76 @@
   display: inline-flex; align-items: center; gap: 7px; min-height: 24px;
   cursor: pointer; line-height: 1.25;
 }
+
+/* --- hover tip -------------------------------------------------------------
+   The immediate tooltip behind ODAUI.hoverTip, used for control and legend-key
+   descriptions. Distinct from a figure's own `.tooltip`, which carries data for
+   a mark: this one carries an explanation for a control, is positioned in
+   viewport coordinates, and is never the only route to information.
+
+   Appended to <body> and therefore `position: fixed`, so it is not clipped by
+   the panel's overflow the way an absolutely-positioned tip inside the chart
+   would be. */
+.oda-hovertip {
+  position: fixed; z-index: 60; max-width: 260px;
+  padding: 5px 8px; border-radius: 5px;
+  background: var(--cgd-teal-black, #1A272A); color: #fff;
+  font-size: 11px; line-height: 1.35; pointer-events: none;
+  box-shadow: 0 2px 8px rgba(26, 39, 42, .22);
+}
+.oda-hovertip[hidden] { display: none !important; }
+
+/* A legend key that is also a filter. `.legend-item` already carries the house
+   pill styling and hover state; these rules add only what a FILTER needs that a
+   label does not.
+
+   The 24px minimum is the WCAG 2.2 tap-target floor, and it applies here for
+   the same reason it applies to the checkbox labels below: as a <span> a legend
+   key was a caption and its size did not matter, but as a <button> it is
+   something a reader has to hit with a thumb. At the house legend size of
+   10.2px text with 1px padding the keys came out 20px tall, which the mobile
+   audit flags. The text itself stays at the house size; only the target grows. */
+.viz-wrapper button.legend-item { min-height: 24px; }
+.viz-wrapper .legend-item.muted .swatch {
+  background: transparent !important;
+  border-color: var(--cgd-teal-gray, #85A5AD);
+}
+.viz-wrapper .legend-item[aria-disabled="true"] { cursor: default; }
+
+/* --- focus on an SVG mark --------------------------------------------------
+   Clicking or tabbing to a chart mark used to throw a large rectangle across
+   the figure. That was the browser's default focus ring: on an SVG element the
+   ring is drawn around the element's BOUNDING BOX, not its shape, so a
+   diagonal flow line from Washington to Kabul produced a rectangle covering
+   most of the map, and a wide country or a long connector produced one
+   spanning the chart.
+
+   Every focusable mark still needs a visible focus indicator, so the ring is
+   replaced rather than removed: a gold stroke, which follows the mark's own
+   outline whatever its shape. `paint-order: stroke` puts it behind the fill so
+   the mark keeps its own colour. Scoped to :focus-visible, so it appears for
+   keyboard focus and not for a mouse click — which is what the reader was
+   seeing.
+
+   A figure needing a different indicator for a particular mark should add a
+   MORE specific rule (see the .map-svg rules in F3), never re-enable outline. */
+.viz-wrapper svg [tabindex]:focus { outline: none; }
+.viz-wrapper svg [tabindex]:focus-visible {
+  stroke: var(--cgd-gold, #FFB52C); stroke-width: 2; paint-order: stroke;
+}
+
+/* Padding rows that keep a paged drill-down the same height on its last page. */
+.oda-rank-spacer { visibility: hidden; }
+
+/* A drill-down row is a FIXED height, and its label is clamped to two lines.
+   Pair names run to things like "Democratic Republic of the Congo — Population
+   policies/programmes and reproductive health", which wrapped to three or four
+   lines. Because the rows are paged ten at a time, that made the dialog a
+   different height on every page: it grew and shrank as the reader paged
+   through, moving the pager buttons out from under the cursor. The full label
+   is on hover, on focus and in the title attribute. */
+.oda-rank-row { min-height: 40px; }
+.viz-wrapper .oda-rank-label {
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; line-height: 1.25;
+}

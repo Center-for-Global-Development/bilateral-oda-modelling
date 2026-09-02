@@ -95,7 +95,7 @@
 
   const state = UI.createState(
     { scenario: 'S1', measure: 'gross', year: 2028, denom: 'gni',
-      excludeMicro: false, unit: 'usd' },
+      excludeMicro: false, unit: 'usd', hiddenIncome: '' },
     { onChange: () => scheduleRender() }
   );
 
@@ -214,7 +214,15 @@
   function render(width) {
     const s = state.get();
     const model = buildRows(s);
-    const { rows, denom } = model;
+    /* `allRows` is every recipient with a drawable value; `rows` is those whose
+       income group is still switched on in the legend. The scales below are
+       built from `rows`, so switching a group off rescales the axes to what is
+       actually on screen rather than leaving the reader a plot mostly of empty
+       space where the hidden group used to be. The legend is built from
+       `allRows`, or a hidden group would vanish from its own control. */
+    const { rows: allRows, denom } = model;
+    const hiddenIncome = UI.hiddenSet(s.hiddenIncome);
+    const rows = allRows.filter(r => !hiddenIncome.has(r.income));
 
     const layout = C.getLayout(width);
     const margin = { ...layout.margin, left: Math.max(layout.margin.left, 46) };
@@ -299,21 +307,23 @@
       svg.append(dot);
     }
 
-    renderLegend(rows);
+    renderLegend(allRows, s);
     updateNotes(model, s);
     window.CGD_READY = true;
   }
 
-  function renderLegend(rows) {
+  /* The income-group legend is also the income-group filter. */
+  function renderLegend(allRows, s) {
     const legend = document.getElementById('incomeLegend');
-    legend.replaceChildren();
-    const present = M.INCOME_GROUPS.filter(g => rows.some(r => r.income === g));
-    for (const group of present) {
-      const swatch = element('span', { className: 'swatch' });
-      swatch.style.background = window.CGDSet.colourFor(group);
-      legend.append(element('span', { className: 'legend-item' },
-        [swatch, element('span', { text: group })]));
-    }
+    const present = M.INCOME_GROUPS.filter(g => allRows.some(r => r.income === g));
+    UI.filterLegend({
+      host: legend, keys: present, state, stateKey: 'hiddenIncome',
+      colourOf: group => window.CGDSet.colourFor(group),
+      tipOf: group => {
+        const n = allRows.filter(r => r.income === group).length;
+        return `${n} recipient${n === 1 ? '' : 's'} shown in this group.`;
+      }
+    });
   }
 
   function showTooltip(row, denom) {
@@ -352,46 +362,21 @@
       `${rows.length} of ${total} recipients shown` +
       (excluded.length ? ` (${excluded.join('; ')} \u2014 see notes).` : '.');
 
-    /* The counts are in the summary line above; the recipient lists that explain
-       them are long enough to push the chart off a phone screen, so they live
-       inside the Notes disclosure. */
-    const listed = [];
-    if (noDenominator.length) {
-      listed.push(`${noDenominator.length} recipients have no ${denom.label} in the ` +
-        `model inputs and cannot be placed: ` +
-        `${noDenominator.map(r => r.name).sort().join(', ')}.`);
-    }
-    if (gained.length) {
-      listed.push(`${gained.length} recipients are projected to receive more in ` +
-        `${s.year} than in 2024, so they have no loss to plot: ` +
-        `${gained.map(r => r.name).sort().join(', ')}.`);
-    }
-    if (microExcluded.length) {
-      listed.push(`${microExcluded.length} microstates are excluded by the advanced ` +
-        `option: ${microExcluded.map(r => r.name).sort().join(', ')}.`);
-    }
-    if (rows.some(row => row.iso === 'MHL')) {
-      listed.push('Marshall Islands is an exceptional 2024 case: its baseline includes ' +
-        'large US Compact payments, including a trust-fund contribution. Its loss relative ' +
-        'to 2024 should not be read as a fall from a normal annual ODA level.');
-    }
+    /* No per-recipient rosters. Each of these used to append a full
+       comma-separated list of recipient names -- 'X recipients have no GNI in
+       the model inputs and cannot be placed: <thirteen names>' -- which is a
+       debugging aid on the face of a published figure, and it duplicated the
+       counts already carried by chartSummary immediately above. They also sat
+       behind the Notes disclosure, which no longer exists, so they would now
+       be running text under the chart. The counts stay in the summary line;
+       a reader who wants to know WHICH recipients can select one. */
 
-    const notes = document.getElementById('notes');
-    notes.replaceChildren();
     notes.append(UI.notes({
       notes: [
-        ...listed,
-        'Both axes are logarithmic. Losses span more than four orders of magnitude, ' +
-        'and a linear axis would compress almost every recipient against the origin.',
-        'Several small states with high aid per person lose an amount worth a very ' +
-        'large share of GNI; the advanced option removes those with populations ' +
-        'under 1 million.',
-        M.incomeGroupNote(payload),
-        UI.STANDARD_NOTES.projectionYears,
-        UI.STANDARD_NOTES.prices,
-        UI.STANDARD_NOTES.unallocable,
-        UI.STANDARD_NOTES.baselineYear
-      ].filter(Boolean),
+        'Both axes are logarithmic; losses span more than four orders of magnitude.',
+        'Some small states lose an amount worth a very large share of GNI; the advanced option removes those with populations under 1 million.',
+        UI.STANDARD_NOTES.prices
+      ].filter(Boolean).filter(Boolean),
       source: `Source: CGD modelling, ${payload.release}.`
     }));
   }

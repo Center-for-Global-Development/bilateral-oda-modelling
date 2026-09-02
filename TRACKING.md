@@ -470,8 +470,12 @@ than per figure.
   options are sentences — allocation rule, sort, metric, F15's sector filter, and
   F7's nesting order.
 
-**F1** gained a donor-group filter (all / DAC / non-DAC, beside the year legend,
-using the release's own `dac_member` flag) and a scale toggle. 2024 now takes its
+**F1** gained a scale toggle. It also gained a donor-group filter (all / DAC /
+non-DAC, beside the year legend, using the release's own `dac_member` flag),
+**which has since been removed** — see *DAC membership* in `README.md`. The
+release's `dac_member` flag records EU Institutions as non-DAC, which is wrong,
+and the 17 statically-held donors that made up the rest of the non-DAC group are
+no longer shown on this figure at all, so the filter had nothing left to divide. 2024 now takes its
 own hue instead of the pale end of the ramp, where it was a near-white fill behind
 a white stroke. Axis ticks land on round values and gridlines repeat in every row.
 The scale toggle is the real answer to dots clustering on a phone: on a shared US$

@@ -15,7 +15,7 @@
   window.CGD_READY = false;const{element}=window.CGDDom,C=window.CGDCore,P=window.ODAPayload,M=window.ODAModel,UI=window.ODAUI;const root=document.getElementById('vizRoot'),chartArea=document.getElementById('chartArea');let payload;
   try{payload=await P.load();if(!window.d3)throw new Error('The pinned chart dependency did not load.');}catch(error){P.renderFailState(chartArea,error); window.CGD_READY = true;return;}
   const defaultRecipient=payload.axes.recipient.includes('UKR')?'UKR':payload.axes.recipient[0];
-  const state=UI.createState({scenario:'S1',measure:'gross',year:2028,focusType:'recipient',focus:defaultRecipient,partner:'ALL',nest:'partner-sector',unit:'usd',colourBy:'composition'},{dependents:{focusType:['partner'],focus:['partner']},onChange:()=>{syncControls();schedule();}});
+  const state=UI.createState({scenario:'S1',measure:'gross',year:2028,focusType:'recipient',focus:'ALL',partner:'ALL',nest:'partner-sector',unit:'usd',colourBy:'composition'},{dependents:{focusType:['partner'],focus:['partner']},onChange:()=>{syncControls();schedule();}});
   const typeBox=element('div',{className:'segmented',attributes:{role:'group','aria-label':'Focus type'}});for(const[v,l]of[['donor','Donor'],['recipient','Recipient']]){const b=element('button',{text:l,attributes:{type:'button','data-focus-type':v}});b.addEventListener('click',()=>{const focus=v==='recipient'?(payload.axes.recipient.includes(state.get().focus)?state.get().focus:defaultRecipient):(payload.axes.donor.includes(state.get().focus)?state.get().focus:payload.axes.donor[0]);state.set({focusType:v,focus,partner:'ALL'});});typeBox.append(b);}
   const focusSelect=element('select',{className:'plain-select oda-select-wide focus-select'});focusSelect.addEventListener('change',()=>state.set({focus:focusSelect.value,partner:'ALL'}));const partnerSelect=element('select',{className:'plain-select'});partnerSelect.addEventListener('change',()=>state.set({partner:partnerSelect.value}));
   const nestSelect=element('select',{className:'plain-select'});for(const[v,l]of[['partner-sector','Partner → sector'],['sector-partner','Sector → partner']])nestSelect.append(element('option',{text:l,attributes:{value:v}}));nestSelect.addEventListener('change',()=>state.set({nest:nestSelect.value}));
@@ -41,9 +41,14 @@
   document.getElementById('controls').append(UI.scenarioSelect(state),UI.yearControl(state,M.displayYears(payload)),UI.measureToggle(state,()=> 'usd'));
   document.getElementById('controls').append(UI.controlGroup('Focus on',typeBox,{id:'focusType'}),focusGroup,partnerGroup,nestGroup,colourGroup);
   function fillSelect(select,items,value){select.replaceChildren();for(const[x,l]of items)select.append(element('option',{text:l,attributes:{value:x}}));select.value=value;}
-  function syncControls(){const s=state.get();typeBox.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.focusType===s.focusType)));colourBox.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.colour===s.colourBy)));const focusItems=(s.focusType==='recipient'?payload.axes.recipient:payload.axes.donor).map(x=>[x,s.focusType==='recipient'?payload.recipientName(x):payload.donorName(x)]).sort((a,b)=>a[1].localeCompare(b[1]));if(!focusItems.some(i=>i[0]===s.focus)){s.focus=focusItems[0][0];}fillSelect(focusSelect,focusItems,s.focus);const partnerType=s.focusType==='recipient'?'donor':'recipient',partnerItems=[['ALL','All '+(partnerType==='donor'?'donors':'recipients')],...(partnerType==='donor'?payload.axes.donor:payload.axes.recipient).map(x=>[x,partnerType==='donor'?payload.donorName(x):payload.recipientName(x)]).sort((a,b)=>a[1].localeCompare(b[1]))];fillSelect(partnerSelect,partnerItems,s.partner);partnerGroup.querySelector('.control-label').textContent=partnerType==='donor'?'Donor partner':'Recipient partner';nestSelect.options[0].textContent=partnerType==='donor'?'Donor first':'Recipient first';nestSelect.options[1].textContent='Sector first';nestSelect.value=s.nest;nestGroup.hidden=s.partner!=='ALL';}
+  function syncControls(){const s=state.get();typeBox.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.focusType===s.focusType)));colourBox.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.colour===s.colourBy)));/* 'All' is a real option, and the default. The cube is only ~80k cells, so an
+     unfiltered read costs the same linear scan as a filtered one, and the capped
+     hierarchy holds the result to 12 groups of 8 -- so the opening view is the
+     whole picture of who funds what, and focusing a country is the reader's
+     first move rather than something they have to undo. */
+    const focusItems=[['ALL','All '+(s.focusType==='recipient'?'recipients':'donors')],...(s.focusType==='recipient'?payload.axes.recipient:payload.axes.donor).map(x=>[x,s.focusType==='recipient'?payload.recipientName(x):payload.donorName(x)]).sort((a,b)=>a[1].localeCompare(b[1]))];if(!focusItems.some(i=>i[0]===s.focus)){s.focus='ALL';}fillSelect(focusSelect,focusItems,s.focus);const partnerType=s.focusType==='recipient'?'donor':'recipient',partnerItems=[['ALL','All '+(partnerType==='donor'?'donors':'recipients')],...(partnerType==='donor'?payload.axes.donor:payload.axes.recipient).map(x=>[x,partnerType==='donor'?payload.donorName(x):payload.recipientName(x)]).sort((a,b)=>a[1].localeCompare(b[1]))];fillSelect(partnerSelect,partnerItems,s.partner);partnerGroup.querySelector('.control-label').textContent=partnerType==='donor'?'Donor partner':'Recipient partner';nestSelect.options[0].textContent=partnerType==='donor'?'Donor first':'Recipient first';nestSelect.options[1].textContent='Sector first';nestSelect.value=s.nest;nestGroup.hidden=s.partner!=='ALL';}
   syncControls();
-  async function cellsFor(s,year){const filter={scenario:s.scenario,measure:s.measure,year};if(s.focusType==='recipient')filter.recipient=s.focus;else filter.donor=s.focus;if(s.partner!=='ALL')filter[s.focusType==='recipient'?'donor':'recipient']=s.partner;return M.cubeCells(payload,filter);}
+  async function cellsFor(s,year){const filter={scenario:s.scenario,measure:s.measure,year};if(s.focus!=='ALL'){if(s.focusType==='recipient')filter.recipient=s.focus;else filter.donor=s.focus;}if(s.partner!=='ALL')filter[s.focusType==='recipient'?'donor':'recipient']=s.partner;return M.cubeCells(payload,filter);}
   function key(r){return`${r.donor}|${r.recipient}|${r.sector}`;}function partnerOf(r,s){return s.focusType==='recipient'?r.donor:r.recipient;}function partnerName(code,s){return s.focusType==='recipient'?payload.donorName(code):payload.recipientName(code);}
   async function buildData(s){const[base,now]=await Promise.all([cellsFor(s,2024),cellsFor(s,s.year)]),byBase=new Map(base.map(r=>[key(r),r.value])),byNow=new Map(now.map(r=>[key(r),r.value])),proto=new Map([...base,...now].map(r=>[key(r),r])),rows=[];for(const[k,r]of proto){const baseline=byBase.get(k)||0,value=byNow.get(k)||0;if(value<=0)continue;rows.push({...r,baseline,value,change:baseline>0?(value-baseline)/baseline:null,partner:partnerOf(r,s)});}return rows;}
   /* A recipient like Ukraine has 389 funded donor-sector cells and a donor like the
@@ -65,7 +70,29 @@ function capped(list,limit,label){
   return{kept,rest:rest.length?aggregate(rest,label):null};
 }
 function hierarchy(rows,s){
-  const first=s.partner!=='ALL'?'sector':s.nest==='partner-sector'?'partner':'sector',
+  /* One focus and one partner: the squares are SECTORS, coloured by sector.
+
+     This case used to fall through the generic two-level path, which keyed the
+     leaves on the partner dimension. With exactly one partner selected, every
+     leaf therefore carried the same key and the whole treemap came out in a
+     single colour -- the one view where the sector breakdown IS the entire
+     content of the chart. Sectors are now the leaves, under one group named for
+     the partner, and they take their pinned sector colours. There are at most
+     21 of them, so none is pooled into Other. */
+  if(s.partner!=='ALL'){
+    const bySector=new Map();
+    for(const r of rows){const k=String(r.sector);
+      if(!bySector.has(k))bySector.set(k,[]);bySector.get(k).push(r);}
+    const leaves=[...bySector].map(([k,list])=>({
+      name:payload.sectorName(k),kind:'sector',leafKey:k,
+      baseline:list.reduce((z,r)=>z+r.baseline,0),
+      value:list.reduce((z,r)=>z+r.value,0),
+      row:list.length===1?list[0]:aggregate(list,payload.sectorName(k))
+    })).sort((a,b)=>b.value-a.value);
+    return{name:'root',children:[{name:partnerName(s.partner,s),kind:'partner',
+      baseline:leaves.reduce((z,l)=>z+l.baseline,0),children:leaves}]};
+  }
+  const first=s.nest==='partner-sector'?'partner':'sector',
         second=first==='partner'?'sector':'partner',groups=new Map();
   for(const r of rows){const a=first==='partner'?r.partner:String(r.sector);
     if(!groups.has(a))groups.set(a,[]);groups.get(a).push(r);}
@@ -99,10 +126,10 @@ function hierarchy(rows,s){
      module-level binding. */
   let focusTotal=0;
   function showTip(r,target){const s0=state.get(),
-    focusName=s0.focusType==='recipient'?payload.recipientName(s0.focus):payload.donorName(s0.focus),
+    focusName=s0.focus==='ALL'?(s0.focusType==='recipient'?'all recipients':'all donors'):(s0.focusType==='recipient'?payload.recipientName(s0.focus):payload.donorName(s0.focus)),
     total=focusTotal,
     lines=[element('strong',{text:r.label?r.label:`${partnerName(r.partner,s0)} — ${payload.sectorName(r.sector)}`}),
-      element('div',{text:`${s0.focusType==='recipient'?'Recipient':'Donor'}: ${focusName}`})];
+      element('div',{text:s0.focus==='ALL'?`Across ${focusName}`:`${s0.focusType==='recipient'?'Recipient':'Donor'}: ${focusName}`})];
   lines.push(element('div',{text:`${s0.year}: ${M.usd(r.value)}`}),
     element('div',{text:`2024: ${M.usd(r.baseline)}`}),
     element('div',{text:`Change: ${r.baseline>=.1?M.percent(r.change,{decimals:1}):'not comparable (2024 baseline under US$0.1m)'}`}),
@@ -136,7 +163,7 @@ function hierarchy(rows,s){
       leafTotals.set(k,(leafTotals.get(k)||0)+(leaf.data.value||0));}
     const leafOrder=[...leafTotals].sort((a,b)=>b[1]-a[1]).map(x=>x[0]);
     const leafPalette=window.CGDSet.assignColours(leafOrder);
-    const leafName=k=>{const s2=state.get(),second=s2.partner!=='ALL'?'partner':(s2.nest==='partner-sector'?'sector':'partner');
+    const leafName=k=>{const s2=state.get(),second=(s2.partner!=='ALL'||s2.nest==='partner-sector')?'sector':'partner';
       return second==='sector'?payload.sectorName(k):partnerName(k,s2);};
     const fillFor=d=>s.colourBy==='change'?scale.colour(d.data.row)
       :(d.data.leafKey==null?window.CGDSet.RESIDUAL:leafPalette.get(String(d.data.leafKey)));
@@ -210,6 +237,6 @@ function hierarchy(rows,s){
     const fitLabel=d=>{const room=Math.max(0,d.x1-d.x0-8),name=short(d.data.name);if(room<18)return'';const budget=Math.floor(room/6.2);return budget>=name.length?name:name.slice(0,Math.max(1,budget-1))+'\u2026';};
     svg.selectAll('g.group-heading').data((rootNode.children||[]).filter(d=>d.y1-d.y0>24)).join('g').attr('class','group-heading').call(g=>{g.append('rect').attr('x',d=>d.x0).attr('y',d=>d.y0).attr('width',d=>Math.max(0,d.x1-d.x0)).attr('height',14).attr('fill','#F2F7F8');g.append('text').attr('class','group-label').attr('x',d=>d.x0+4).attr('y',d=>d.y0+11).text(fitLabel).append('title').text(d=>d.data.name);});const drawn=rootNode.leaves().filter(d=>!d.data.row.aggregate).length,pooled=rows.length-drawn;document.getElementById('chartSummary').textContent=`All values in constant 2024 US$. ${rows.length} funded donor–recipient–sector cells`+(pooled>0?`; the largest ${drawn} are drawn individually and the remaining ${pooled} are pooled into the Other cells`:' shown individually')+`.`+(s.colourBy==='change'?` Colour is capped at the 95th percentile of absolute change (${M.percent(scale.cap,{decimals:0})}).`:'');window.CGD_READY=true;}
   async function schedule(){const n=++seq, s={...state.get()};tooltip.hidden=true;try{const rows=await buildData(s);if(n!==seq)return;draw(rows,s,lastWidth);}catch(error){if(n===seq)P.renderFailState(chartArea,error); window.CGD_READY = true;}}
-  document.getElementById('notes').append(UI.notes({notes:['The treemap hierarchy is ordered by 2024 baseline amounts, so its ordering does not reshuffle between years. Rectangle size follows the selected year’s ODA level.','Colour shows composition by default: every cell of the same sector, or the same partner, carries one colour across all groups. Switch it to change against 2024 to read the direction of movement instead. Either way the tooltip gives the 2024 value, the selected year and the percentage change.',`At most ${MAX_GROUPS} groups and ${MAX_CHILDREN} cells within each are drawn individually; everything smaller is pooled into an Other cell that carries its own total and change, and names how many cells it covers. A recipient can have several hundred funded donor-sector cells, and drawing all of them leaves none of them readable.`,'Cells with no 2024 baseline, or a 2024 baseline below US$0.1m, are left grey rather than coloured: a change ratio against a near-zero or absent baseline is rounding noise, not a finding.','Other colour changes are winsorised; other colour changes are winsorised at the 95th percentile of absolute change to prevent tiny or exceptional ratios dominating.',UI.STANDARD_NOTES.prices,UI.STANDARD_NOTES.unallocable,UI.STANDARD_NOTES.baselineYear],source:`Source: CGD modelling, ${payload.release}.`}));C.observeInlineSize(document.querySelector('.treemap-wrap'),w=>{lastWidth=w;schedule();});document.getElementById('fullscreenBtn').addEventListener('click',()=>document.fullscreenElement?document.exitFullscreen():root.requestFullscreen?.());window.ODA_F7={state,buildData:()=>buildData(state.get())};
+  document.getElementById('notes').append(UI.notes({notes:[`At most ${MAX_GROUPS} groups and ${MAX_CHILDREN} cells within each are drawn individually; everything smaller is pooled into an Other cell that carries its own total.`,'Cells with no 2024 baseline, or one below US$0.1m, are left grey rather than coloured: a change against a near-zero baseline is rounding noise.','Colour changes are capped at the 95th percentile of absolute change.',UI.STANDARD_NOTES.prices],source:`Source: CGD modelling, ${payload.release}.`}));C.observeInlineSize(document.querySelector('.treemap-wrap'),w=>{lastWidth=w;schedule();});document.getElementById('fullscreenBtn').addEventListener('click',()=>document.fullscreenElement?document.exitFullscreen():root.requestFullscreen?.());window.ODA_F7={state,buildData:()=>buildData(state.get())};
 })();
 </script><script src="shared/cgd-embed.js"></script></body></html>

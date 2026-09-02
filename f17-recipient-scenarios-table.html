@@ -14,13 +14,22 @@
             font-size: 12px; font-variant-numeric: tabular-nums; }
   .matrix th, .matrix td { padding: 7px 8px; border-bottom: 1px solid var(--cgd-light-gray);
                            text-align: right; white-space: nowrap; }
-  .matrix thead th { position: sticky; top: 0; z-index: 3; background: var(--cgd-cream);
+  /* --cgd-cream is not a token in the CGD layer, so `background: var(--cgd-cream)`
+     resolved to nothing and BOTH sticky headers were transparent. That is why the
+     'Average' heading appeared through the 'Recipient' heading on horizontal
+     scroll: the Recipient cell is correctly on top (z-index 5) but you could see
+     straight through it. The same fault let body rows show through the header row
+     on vertical scroll. --cgd-offwhite is the house token for a header band. */
+  .matrix thead th { position: sticky; top: 0; z-index: 3; background: var(--cgd-offwhite);
                      color: var(--cgd-teal-black); vertical-align: bottom; }
   .matrix .recipient { position: sticky; left: 0; z-index: 2; min-width: 180px; max-width: 210px;
                        text-align: left; background: #fff; box-shadow: 5px 0 7px -7px #394649; }
-  .matrix thead .recipient { z-index: 5; background: var(--cgd-cream); }
+  .matrix thead .recipient { z-index: 5; background: var(--cgd-offwhite); }
   .matrix .summary-start { border-left: 2px solid var(--cgd-teal-gray); }
-  .matrix .range { border-left: 2px solid var(--cgd-gold); }
+  /* CGD green, not gold. Gold is this set's 2024/observed-baseline and highlight
+     colour, so a gold rule here read as marking a value rather than dividing two
+     column groups. */
+  .matrix .range { border-left: 2px solid var(--cgd-light-teal); }
   .matrix .scen-start { border-left: 2px solid var(--cgd-teal-gray); }
   /* The sort control fills its header cell, so the target is the cell the
      reader is aiming at rather than the text baseline inside it. */
@@ -390,16 +399,38 @@
      brief asks for that move to be animated, so the change is visible rather
      than the table silently reshuffling under the reader. Respects
      prefers-reduced-motion. */
+  /* The reorder animation was jolting for three separate reasons, all fixed here.
+
+     1. Layout thrashing. The old loop read a row's getBoundingClientRect() and
+        then called animate() on it, over and over. Each read after a write forces
+        a synchronous layout, so a 140-row table did ~140 forced reflows in one
+        frame. Reads are now batched into one pass and the writes into a second.
+     2. Viewport-relative measurement. `top` is relative to the viewport, so any
+        scroll between the two measurements corrupted every delta. offsetTop is
+        relative to the table and is stable.
+     3. Half the rows did not animate at all. Rows moving more than 600px were
+        skipped, so on a big re-sort some rows glided and others teleported --
+        which reads as a glitch rather than as a deliberate limit. The cap is
+        gone; the animation is transform-only and stays on the compositor.
+
+     The horizontal scroll position is also preserved. The table is rebuilt whole,
+     which used to snap a reader who had scrolled right back to the first column
+     on every sort or year change. */
   function renderCurrent(){
     if(!lastModel)return;
-    const before=new Map([...tableArea.querySelectorAll('tr[data-iso]')].map(tr=>[tr.dataset.iso,tr.getBoundingClientRect().top]));
+    const previousScroll=tableArea.querySelector('.table-scroll')?.scrollLeft||0;
+    const before=new Map([...tableArea.querySelectorAll('tr[data-iso]')].map(tr=>[tr.dataset.iso,tr.offsetTop]));
     tableArea.replaceChildren(renderTable(lastModel,state.get(),false,lastDomain),renderTable(lastModel,state.get(),true,lastDomain));
+    for(const pane of tableArea.querySelectorAll('.table-scroll'))pane.scrollLeft=previousScroll;
     if(!before.size||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    const moves=[];
     for(const tr of tableArea.querySelectorAll('tr[data-iso]')){
       const previous=before.get(tr.dataset.iso);
       if(previous===undefined)continue;
-      const delta=previous-tr.getBoundingClientRect().top;
-      if(!delta||Math.abs(delta)<2||Math.abs(delta)>600)continue;
+      const delta=previous-tr.offsetTop;
+      if(Math.abs(delta)>=2)moves.push([tr,delta]);
+    }
+    for(const [tr,delta] of moves){
       tr.animate([{transform:`translateY(${delta}px)`},{transform:'none'}],
                  {duration:320,easing:'cubic-bezier(.2,.7,.3,1)'});
     }
@@ -412,13 +443,10 @@
       document.getElementById('tagline').textContent=`${M.MEASURE_LABEL[s.measure]} measure; ${grouping}.`;
       document.getElementById('chartSummary').textContent=`${model.rows.length} of ${RECIPIENTS.length} recipients shown.`;
       document.getElementById('notes').replaceChildren(UI.notes({notes:[
-        'The prioritisation ratio compares each recipient’s bilateral ODA per unit of need with the global mean for the same year and objective; 100% means the global mean.',
-        'For poverty, the global benchmark is about US$118 per person in extreme poverty in 2024 and US$91 in 2028. A constant ratio therefore means a constant share of the benchmark, not constant funding.',
-        'Average is the mean across the ten allocation rules. Range is the highest minus the lowest value. Collapsed group rows show medians by allocation rule; Range uses its own sequential colour scale.',
-        'Colour domains are fixed across all four projection years. Prioritisation ratios are clipped above 400%, and ODA per person above US$1,000, so outliers do not wash out the scale.',
-        'The need threshold uses the modelled population in extreme poverty. Recipients without the selected need mass are explicitly not classified.',
-        UI.STANDARD_NOTES.projectionYears, UI.STANDARD_NOTES.unallocable,
-        UI.STANDARD_NOTES.prices, UI.STANDARD_NOTES.baselineYear
+        'The prioritisation ratio compares each recipient\u2019s bilateral ODA per unit of need with the global mean for the same year and objective; 100% is the global mean.',
+        'Average is the mean across the ten allocation rules; Range is the highest minus the lowest.',
+        'Prioritisation ratios are clipped above 400%, and ODA per person above US$1,000, so outliers do not wash out the colour scale.',
+        UI.STANDARD_NOTES.projectionYears, UI.STANDARD_NOTES.prices
       ],source:`Source: CGD modelling, ${payload.release}.`}));
       window.CGD_READY = true;
     } catch(error){ if(version===renderVersion)P.renderFailState(tableArea,error); window.CGD_READY = true; }

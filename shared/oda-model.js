@@ -207,13 +207,18 @@
    * The general rules require GNI gaps to be named wherever GNI drives results.
    * Empty string when nothing is missing.
    */
+  /* Reports the COUNT, not the roster. This used to end with a comma-separated
+     list of every affected recipient — thirteen names in one sentence for GNI —
+     which is a debugging aid printed on the face of a published figure. The
+     count is what tells a reader how much of the picture is missing; a reader
+     who needs to know which ones can select them. */
   function denominatorNote(payload, kind, isoList = payload.axes.recipient) {
     const { missing, label } = { ...partitionByDenominator(payload, isoList, kind),
                                  label: DENOMINATORS[kind].label };
     if (!missing.length) return '';
-    const names = missing.map(iso => payload.recipientName(iso)).sort();
-    return `${names.length} recipient${names.length === 1 ? ' has' : 's have'} no ${label} ` +
-      `figure in the model inputs and cannot be shown here: ${names.join(', ')}.`;
+    const n = missing.length;
+    return `${n} recipient${n === 1 ? ' has' : 's have'} no ${label} figure in the model ` +
+      `inputs and ${n === 1 ? 'is' : 'are'} not shown.`;
   }
 
   /* --- income group ---------------------------------------------------------
@@ -245,13 +250,54 @@
                   .map(iso => payload.recipientName(iso)).sort();
   }
 
-  /** The standard notes line naming them. Empty string when none are affected. */
+  /** The standard notes line, as a count rather than a roster (see denominatorNote). */
   function incomeGroupNote(payload, isoList) {
-    const names = recipientsWithoutIncomeGroup(payload, isoList);
-    if (!names.length) return '';
-    return `${names.length} recipient${names.length === 1 ? ' has' : 's have'} no World Bank ` +
-      `income group and ${names.length === 1 ? 'is' : 'are'} shown as not classified: ` +
-      `${names.join(', ')}.`;
+    const n = recipientsWithoutIncomeGroup(payload, isoList).length;
+    if (!n) return '';
+    return `${n} recipient${n === 1 ? ' has' : 's have'} no World Bank income group and ` +
+      `${n === 1 ? 'is' : 'are'} shown as not classified.`;
+  }
+
+  /* --- DAC membership -------------------------------------------------------
+     The EU is a full member of the OECD Development Assistance Committee, and
+     has been since the DAC was founded. `donor_meta` in the payload records
+     EU Institutions as `dac_member: 0` with `eu_institution: 1`, which put the
+     largest non-sovereign provider in the model under "Non-DAC providers" on
+     F1 and called it a "Non-DAC provider" in F2's tooltip. Both were wrong.
+
+     Corrected here rather than in the payload: the payload is emitted upstream
+     and every blob is hash-verified in the browser, so the figure layer cannot
+     edit it. `eu_institution` is the flag that identifies the case, so the
+     correction is expressed in terms of that rather than hard-coding a donor
+     code. The upstream `dac_member` field should be fixed in the emitter; until
+     it is, every figure must read membership through here and none may read
+     `donor_meta.dac_member` directly. */
+
+  function isDacMember(payload, code) {
+    const meta = payload.donorMeta[code];
+    if (!meta) return false;
+    return Number(meta.dac_member) === 1 || Number(meta.eu_institution) === 1;
+  }
+
+  /** "DAC member" / "Non-DAC provider", so the two figures cannot word it differently. */
+  function dacLabel(payload, code) {
+    return isDacMember(payload, code) ? 'DAC member' : 'Non-DAC provider';
+  }
+
+  /* --- sector order ---------------------------------------------------------
+     The sector axis is in CRS code order, which groups sectors by DAC family
+     (social, then economic, then production, and so on). That order is
+     meaningful to someone who knows the CRS and arbitrary to everyone else: a
+     reader looking for "Humanitarian aid" in a 21-item dropdown has no way to
+     guess it sits last. Every sector list a reader picks from is therefore
+     ordered by name.
+
+     Sector COLOURS are pinned in set-config.js by code, so reordering the list
+     does not repaint anything. */
+
+  function sectorsAlphabetical(payload, codes = payload.axes.sector) {
+    return codes.slice().sort((a, b) =>
+      payload.sectorName(a).localeCompare(payload.sectorName(b), 'en'));
   }
 
   /* --- formatting -----------------------------------------------------------
@@ -259,8 +305,9 @@
      Model values are US$ millions, constant 2024 prices. */
 
   const nf = {
-    usdMillions: new Intl.NumberFormat('en-GB', { maximumFractionDigits: 0 }),
-    usdBillions1: new Intl.NumberFormat('en-GB', { minimumFractionDigits: 1, maximumFractionDigits: 1 }),
+    usdMillions: new Intl.NumberFormat('en-GB', { maximumFractionDigits: 1 }),
+    usdMillions2: new Intl.NumberFormat('en-GB', { maximumFractionDigits: 2 }),
+    usdBillions1: new Intl.NumberFormat('en-GB', { minimumFractionDigits: 1, maximumFractionDigits: 2 }),
     integer: new Intl.NumberFormat('en-GB', { maximumFractionDigits: 0 }),
     percent0: new Intl.NumberFormat('en-GB', { maximumFractionDigits: 0 }),
     percent1: new Intl.NumberFormat('en-GB', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
@@ -282,14 +329,34 @@
       .replace(/\.(?=\D|$)/g, '');
   }
 
+  /* --- precision -------------------------------------------------------------
+     Whole millions were hiding real flows. A US$0.3m recipient-sector flow — an
+     ordinary size for a small sector in a small country — formatted as "US$0m",
+     so F3's flow tooltips read "US$0" for every line into Angola's
+     communications sector and the reader could not tell a small flow from no
+     flow at all. That is the missing-data-rendered-as-zero defect wearing a
+     rounding costume.
+
+     So: one more decimal place everywhere, and a real value NEVER formats as
+     zero. Sub-0.005m values, where even two places round away, get an explicit
+     "<US$0.01m" rather than a figure that reads as nothing. trimZeros then takes
+     the uninformative places back off, so a round total stays "US$15bn" rather
+     than becoming "US$15.00bn". */
+
   /** US$ millions in, display string out. Null/NaN becomes "not available". */
   function usd(valueMillions, { unit = 'auto' } = {}) {
     if (valueMillions == null || !Number.isFinite(valueMillions)) return MISSING_TEXT;
     const abs = Math.abs(valueMillions);
     const useBn = unit === 'bn' || (unit === 'auto' && abs >= 1000);
-    return useBn
-      ? `US$${trimZeros(nf.usdBillions1.format(valueMillions / 1000))}bn`
-      : `US$${nf.usdMillions.format(valueMillions)}m`;
+    if (useBn) return `US$${trimZeros(nf.usdBillions1.format(valueMillions / 1000))}bn`;
+    if (abs === 0) return 'US$0m';
+    /* Below a million, one decimal place is not enough to keep a real flow
+       visible, so spend a second one — and only there. */
+    if (abs < 1) {
+      if (abs < 0.005) return `${valueMillions < 0 ? '>-' : '<'}US$0.01m`;
+      return `US$${trimZeros(nf.usdMillions2.format(valueMillions))}m`;
+    }
+    return `US$${trimZeros(nf.usdMillions.format(valueMillions))}m`;
   }
 
   /** Proportions are stored as fractions; only display multiplies by 100. */
@@ -307,7 +374,10 @@
   /* Honours the decimals asked for. It previously had only a 0-place and a
      1-place formatter, so a caller asking for 2 silently got 1 — which is what
      the attributed-cuts tooltip and total column were doing. */
-  function percent(fraction, { decimals = 0 } = {}) {
+  /* The default is one decimal place, not zero. trimZeros means a round value is
+     unaffected — "24%" stays "24%", and an axis of round ticks stays clean — so
+     the extra place shows up only where it carries information. */
+  function percent(fraction, { decimals = 1 } = {}) {
     if (fraction == null || !Number.isFinite(fraction)) return MISSING_TEXT;
     return `${trimZeros(percentFormatter(decimals).format(fraction * 100))}%`;
   }
@@ -321,31 +391,46 @@
      Short labels plus the tooltip text the general rules require. Families exist
      because several figures colour by them; F15 deliberately does not. */
 
+  /* Each rule carries three names, for three different jobs. `label` is the axis
+     key ('S2A'). `name` is the full editorial name, used in dropdowns and
+     tooltips. `short` is for a chart's own label column, where the full name
+     does not fit: seven of the ten begin 'Prioritisation of' or 'Prioritisation
+     by', so in F14's label column every row truncated to
+     'S5 - Prioritisation of macroeconomic...' and the reader could tell the
+     rules apart only by their codes. Dropping the shared prefix is what makes
+     the distinguishing half of the name visible. */
   const SCENARIOS = {
-    S1:  { label: 'S1',  family: 'donor',     name: 'Even proportional allocations',
+    S1:  { label: 'S1',  short: 'Even proportional cuts', family: 'donor',     name: 'Even proportional allocations',
            tip: 'Donors distribute cuts or increases proportionately across all existing donor-recipient-sector cells.' },
-    S2A: { label: 'S2A', family: 'donor',     name: 'Sector prioritisation by donor portfolio',
+    S2A: { label: 'S2A', short: 'Sectors by donor portfolio', family: 'donor',     name: 'Sector prioritisation by donor portfolio',
            tip: 'Donors protect sectors that make up a large share of their own bilateral portfolio.' },
-    S2B: { label: 'S2B', family: 'donor',     name: 'Sector prioritisation by relative contribution',
+    S2B: { label: 'S2B', short: 'Sectors by global contribution', family: 'donor',     name: 'Sector prioritisation by relative contribution',
            tip: 'Donors protect sectors for which they provide a large share of total modelled bilateral ODA globally.' },
-    S3A: { label: 'S3A', family: 'donor',     name: 'Prioritisation of largest country programmes',
+    S3A: { label: 'S3A', short: 'Largest country programmes', family: 'donor',     name: 'Prioritisation of largest country programmes',
            tip: 'Donors protect countries that account for a large share of their own bilateral portfolio.' },
-    S3B: { label: 'S3B', family: 'donor',     name: 'Prioritisation by importance of country programmes',
+    S3B: { label: 'S3B', short: 'Most important country programmes', family: 'donor',     name: 'Prioritisation by importance of country programmes',
            tip: 'Donors protect recipients to which they provide a large share of total modelled bilateral ODA.' },
-    S4:  { label: 'S4',  family: 'donor',     name: 'Prioritisation of comparative advantage',
+    S4:  { label: 'S4',  short: 'Comparative advantage', family: 'donor',     name: 'Prioritisation of comparative advantage',
            tip: 'Donors protect recipient-sector pairs to which they contribute a large share of support.' },
-    S5:  { label: 'S5',  family: 'recipient', name: 'Prioritisation of macroeconomically vulnerable recipients',
+    S5:  { label: 'S5',  short: 'Macroeconomic vulnerability', family: 'recipient', name: 'Prioritisation of macroeconomically vulnerable recipients',
            tip: 'Donors protect recipients least able to replace lost aid from domestic resources.' },
-    S6A: { label: 'S6A', family: 'recipient', name: 'Prioritisation of high humanitarian-risk recipients',
+    S6A: { label: 'S6A', short: 'High humanitarian risk', family: 'recipient', name: 'Prioritisation of high humanitarian-risk recipients',
            tip: 'Donors protect recipients facing high humanitarian risk, measured by the INFORM Risk Index.' },
-    S6B: { label: 'S6B', family: 'recipient', name: 'Prioritisation of humanitarian sector spend',
+    S6B: { label: 'S6B', short: 'Humanitarian sector spend', family: 'recipient', name: 'Prioritisation of humanitarian sector spend',
            tip: 'Donors protect humanitarian and emergency-response spending wherever it occurs.' },
-    S7:  { label: 'S7',  family: 'recipient', name: 'Prioritisation of under-covered poverty',
+    S7:  { label: 'S7',  short: 'Under-covered poverty', family: 'recipient', name: 'Prioritisation of under-covered poverty',
            tip: 'Donors protect recipients whose share of the world’s extreme poor exceeds the share of projected bilateral ODA they receive.' }
   };
 
   function scenarioInfo(id) {
-    return SCENARIOS[id] || { label: id, family: 'donor', name: id, tip: '' };
+    return SCENARIOS[id] || { label: id, short: id, family: 'donor', name: id, tip: '' };
+  }
+
+  /** The scenario keys in published order: S1, S2A, S2B, S3A, S3B, S4, S5, S6A, S6B, S7. */
+  const SCENARIO_ORDER = Object.keys(SCENARIOS);
+  function scenarioRank(id) {
+    const i = SCENARIO_ORDER.indexOf(id);
+    return i < 0 ? SCENARIO_ORDER.length : i;
   }
 
   /* --- measure --------------------------------------------------------------
@@ -367,7 +452,8 @@
     partitionByDenominator, nShownText,
     denominatorNote,
     INCOME_GROUPS, NOT_CLASSIFIED, incomeGroup, recipientsWithoutIncomeGroup, incomeGroupNote,
+    isDacMember, dacLabel, sectorsAlphabetical,
     usd, percent, count, trimZeros, MISSING_TEXT,
-    SCENARIOS, scenarioInfo, measureApplies, MEASURE_LABEL, MEASURE_LABEL_SHORT
+    SCENARIOS, SCENARIO_ORDER, scenarioInfo, scenarioRank, measureApplies, MEASURE_LABEL, MEASURE_LABEL_SHORT
   };
 })();
