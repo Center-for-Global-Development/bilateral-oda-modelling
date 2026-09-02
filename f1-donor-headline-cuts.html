@@ -136,7 +136,7 @@
     ticks.forEach(t=>{const xx=x(t);axis.append(svgEl('line',{x1:xx+'%',x2:xx+'%',y1:0,y2:5,stroke:'#85A5AD'}));const tx=svgEl('text',{x:xx+'%',y:17,'text-anchor':t===0?'start':t===last?'end':'middle',class:'axis'});tx.textContent=indexed?Math.round(t*100)+'%':String(Math.round(t/1000));axis.append(tx);});
     document.getElementById('chartSummary').textContent='Donors '+(page*pageSize+1)+'\u2013'+(page*pageSize+shown.length)+' of '+orderedRows.length+'.';window.CGD_READY=true;
   }
-  document.getElementById('notes').append(UI.notes({notes:[UI.STANDARD_NOTES.prices],source:`Source: CGD modelling, ${payload.release}.`}));
+  document.getElementById('notes').append(UI.notes({notes:[UI.STANDARD_NOTES.prices]}));
   document.getElementById('fullscreenBtn').addEventListener('click',()=>document.fullscreenElement?document.exitFullscreen():root.requestFullscreen?.());render();window.ODA_F1={state,rows:allRows};
 })();
 </script><script src="shared/cgd-embed.js"></script></body></html>

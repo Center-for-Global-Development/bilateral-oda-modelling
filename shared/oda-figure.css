@@ -252,6 +252,47 @@
   }
 }
 
+/* Five controls on one row (F15). The flex bank sizes each group from its own
+   content, and five groups' natural widths came to just over the 930px the
+   house wrapper allows, so the last one wrapped onto a row of its own and
+   stretched to full width -- a whole row of control bank for one dropdown.
+
+   A grid instead, with minima that fit: the two-option selects (threshold,
+   Y-axis) get the least, and the two entity pickers the most. */
+/* 910px, because that is where the row actually fits, not a round number.
+   .viz-wrapper caps at 930px and takes 13px of padding each side, .controls
+   takes another 9px each side, so the usable width is min(930, viewport) - 44.
+   The five columns need 826px plus four 8px gaps = 858px, which needs a
+   viewport of 902. Below that the grid is off and the flex bank wraps, which is
+   the right phone behaviour anyway. */
+@media (min-width: 910px) {
+  .controls.oda-controls-five {
+    display: grid;
+    /* Each minimum is the MEASURED width of that control's longest option text
+       plus the select's well and padding, with a few pixels of tolerance for
+       font substitution -- Sofia Pro is wider than the fallback and this row has
+       little spare width to absorb the difference. Guessed minima put the sector
+       text back under an ellipsis twice before these were measured. The longest
+       option is "Population & reproductive health" at 250px, and it is only that
+       short because ODAModel.sectorShortName abbreviates it. */
+    grid-template-columns:
+      minmax(96px, 0.5fr) minmax(155px, 0.85fr) minmax(139px, 0.8fr)
+      minmax(182px, 1fr) minmax(254px, 1.4fr);
+  }
+  /* Both the group AND the select inside it. Zeroing only the group's min-width
+     left the wide tier's floor on the select itself, so a select stayed wider
+     than its grid column, overflowed it and overlapped its neighbour -- which
+     the render gate reports as intersecting control groups. In a grid the column
+     is the width authority, not the tier. */
+  /* .viz-wrapper-scoped, because the responsive layer sets the tier floor as
+     `.viz-wrapper .controls .control-group { min-width: 144px }` -- three classes,
+     which outranks a two-class rule here. Without the extra class the groups kept
+     their 144px floor inside 96px columns, overflowed them and overlapped their
+     neighbours. In a grid the column is the width authority, not the tier. */
+  .viz-wrapper .controls.oda-controls-five > .control-group { min-width: 0; }
+  .viz-wrapper .controls.oda-controls-five > .control-group > select { width: 100%; min-width: 0; }
+}
+
 /* --- modal (ODAUI.modal) ---------------------------------------------------
    One implementation for every drill-down in the set. Previously each figure
    carried its own copy of these rules and they had drifted. */

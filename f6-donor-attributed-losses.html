@@ -111,7 +111,7 @@
       'Marshall Islands is an exceptional 2024 case: its baseline includes large US Compact payments, so its cut should not be read as a fall from a normal annual aid level.',
       M.denominatorNote(payload,'gni'),
       UI.STANDARD_NOTES.prices
-    ].filter(Boolean).filter(Boolean),source:`Source: CGD modelling, ${payload.release}.`}));
+    ].filter(Boolean).filter(Boolean)}));
   }
   let seq=0;async function schedule(){const n=++seq;tooltip.hidden=true;try{await ensure(state.get());if(n!==seq)return;render();}catch(error){if(n===seq)P.renderFailState(chartArea,error); window.CGD_READY = true;}}
   await ensure(state.get());render();document.getElementById('fullscreenBtn').addEventListener('click',()=>document.fullscreenElement?document.exitFullscreen():root.requestFullscreen?.());window.ODA_F6={state,rows:()=>rowsFor(state.get()),partition:()=>partition(state.get()),OUTLIER_THRESHOLD,detail:()=>donorDetail(state.get().selected,state.get())};

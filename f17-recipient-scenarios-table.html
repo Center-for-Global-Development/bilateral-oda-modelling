@@ -168,6 +168,12 @@
   function currentMetric(s) { return s.layer === 'ratio' ? `ratio_${s.objective}` : s.odaMetric; }
   function metricLabel(metric) { return metricOptions.find(x => x[0] === metric)?.[1] || metric; }
   function objectiveLabel(v) { return v[0].toUpperCase() + v.slice(1); }
+  /* The UNIT each objective's need mass is counted in, so a cell tooltip can
+     say "at the global average for its population in extreme poverty" rather
+     than "for its poverty". */
+  const OBJECTIVE_NOUN = { poverty: 'population in extreme poverty',
+                           humanitarian: 'humanitarian need',
+                           fiscal: 'fiscal vulnerability' };
 
   function segmented(key, values, labels, aria) {
     const box = element('div', { className: 'segmented', attributes: { role: 'group', 'aria-label': aria } });
@@ -257,6 +263,31 @@
     return payload.at(`scenarios/${scenario}/recipient_year__${measure}`, { recipient: iso, year });
   }
   function baseline(iso, measure) { return payload.at(`static/baseline_${measure}__recipient`, { recipient: iso }); }
+
+  /* The global mean ODA per unit of need, per allocation rule. This is the
+     benchmark the prioritisation ratio is measured against -- a ratio of 100% is
+     a recipient receiving exactly this much per person in need -- so it is also
+     what lets a cell say what a recipient WOULD receive at the global average.
+     ratioValues computes the same mean internally; it is factored out here
+     rather than duplicated, and memoised because the table asks for it once per
+     cell. */
+  const benchmarkCache = new Map();
+  function benchmarks(year, measure, objective) {
+    const key = `${year}|${measure}|${objective}`;
+    if (benchmarkCache.has(key)) return benchmarkCache.get(key);
+    const means = new Map();
+    for (const sc of scenarios) {
+      let totalOda = 0, totalNeed = 0;
+      for (const iso of payload.axes.recipient) {
+        const n = need(iso, objective);
+        if (n == null) continue;
+        totalOda += oda(iso, sc, year, measure); totalNeed += n;
+      }
+      means.set(sc, totalNeed > 0 ? totalOda / totalNeed : null);
+    }
+    benchmarkCache.set(key, means);
+    return means;
+  }
 
   function ratioValues(year, measure, objective) {
     const map = new Map(), nmap = new Map();
@@ -365,10 +396,40 @@
   }
   function medianRows(rows) { return scenarios.map((_,i) => { const v=rows.map(r=>r.values[i]).filter(Number.isFinite).sort((a,b)=>a-b);
     if(!v.length)return null; const m=Math.floor(v.length/2); return v.length%2?v[m]:(v[m-1]+v[m])/2; }); }
-  function makeValueCell(value, metric, domain, cls='', isRange=false) { const td=element('td',{className:`cell ${cls}${Number.isFinite(value)?'':' na'}`,text:fmt(value,metric,isRange)});
+  function makeValueCell(value, metric, domain, cls='', isRange=false, context=null) { const td=element('td',{className:`cell ${cls}${Number.isFinite(value)?'':' na'}`,text:fmt(value,metric,isRange)});
     const bg=colour(value,metric,domain,isRange); td.style.background=bg;
     if(Number.isFinite(value)){ const rgb=bg.match(/\w\w/g).map(x=>parseInt(x,16)/255), lum=.2126*rgb[0]+.7152*rgb[1]+.0722*rgb[2];
-      if(lum<.42)td.style.color='#fff'; } return td; }
+      if(lum<.42)td.style.color='#fff'; }
+    /* A scenario cell explains itself: what the recipient is modelled to
+       receive, and what it would receive at the global average for its need.
+       The cell alone showed one number -- often a bare percentage against a
+       benchmark defined three sentences into the notes -- so the reader could
+       see that a country was under-prioritised without being able to see by how
+       much money. */
+    if(context){ const text=cellExplanation(context);
+      if(text){ td.setAttribute('tabindex','0'); UI.hoverTip(td,text);
+        td.setAttribute('aria-label',`${context.name}, ${M.scenarioInfo(context.scenario).label}. ${text}`); } }
+    return td; }
+
+  /* Built from the same oda(), need() and benchmarks() the table itself uses, so
+     the tooltip cannot drift from the cell it explains. */
+  function cellExplanation({ iso, name, scenario, s }) {
+    if (!iso) return '';
+    const objective = currentMetric(s).startsWith('ratio_') ? currentMetric(s).slice(6) : s.objective;
+    const n = need(iso, objective), mean = benchmarks(s.year, s.measure, objective).get(scenario);
+    const modelled = oda(iso, scenario, s.year, s.measure);
+    const parts = [`${name} \u2014 ${M.scenarioInfo(scenario).label}, ${s.year}.`,
+                   `Modelled to receive ${M.usd(modelled)}.`];
+    if (n != null && n > 0 && mean != null && mean > 0) {
+      const should = n * mean, gap = modelled - should;
+      parts.push(`At the global average for its ${OBJECTIVE_NOUN[objective] || objective} it would receive ${M.usd(should)}`
+        + ` (${M.percent(should > 0 ? modelled / should : null, { decimals: 1 })} of that`
+        + `, ${gap >= 0 ? 'above' : 'below'} by ${M.usd(Math.abs(gap))}).`);
+    } else {
+      parts.push(`No ${OBJECTIVE_NOUN[objective] || objective} figure, so no benchmark can be computed.`);
+    }
+    return parts.join(' ');
+  }
 
   function renderTable(model, s, mobile, domain) {
     const order = ['recipient','average','range',...scenarios];
@@ -388,7 +449,8 @@
             if(mobile) name.addEventListener('click',()=>name.classList.toggle('expanded')); th.append(name); tr.append(th); }
           else if(col==='average') tr.append(makeValueCell(row.average,model.metric,domain,'summary-start'));
           else if(col==='range') tr.append(makeValueCell(row.range,model.metric,domain,'range',true));
-          else tr.append(makeValueCell(row.values[scenarios.indexOf(col)],model.metric,domain,col===scenarios[0]?'scen-start':'')); }
+          else tr.append(makeValueCell(row.values[scenarios.indexOf(col)],model.metric,domain,col===scenarios[0]?'scen-start':'',false,
+            row.iso?{iso:row.iso,name:row.name,scenario:col,s}:null)); }
         tbody.append(tr); }
     }
     return shell;
@@ -447,7 +509,7 @@
         'Average is the mean across the ten allocation rules; Range is the highest minus the lowest.',
         'Prioritisation ratios are clipped above 400%, and ODA per person above US$1,000, so outliers do not wash out the colour scale.',
         UI.STANDARD_NOTES.projectionYears, UI.STANDARD_NOTES.prices
-      ],source:`Source: CGD modelling, ${payload.release}.`}));
+      ]}));
       window.CGD_READY = true;
     } catch(error){ if(version===renderVersion)P.renderFailState(tableArea,error); window.CGD_READY = true; }
   }

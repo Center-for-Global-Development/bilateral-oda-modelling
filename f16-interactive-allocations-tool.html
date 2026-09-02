@@ -190,8 +190,7 @@
       'Peer donors follow the selected allocation rule and are then held fixed; they are never re-optimised.',
       'The recommendation is solved at recipient level over the donor\u2019s observed 2024 portfolio; it does not choose sectors.',
       UI.STANDARD_NOTES.prices
-    ],
-    source:`Source: CGD modelling, ${payload.release}.`
+    ]
   }));
   /* After the notes block exists, not before it. This looked for
      `#notes details`; notes are now one paragraph with no disclosure, so the
@@ -601,7 +600,23 @@
     const area=document.getElementById('chartArea');
     if(!document.getElementById('chart')){const fresh=document.createElementNS('http://www.w3.org/2000/svg','svg');fresh.id='chart';fresh.setAttribute('role','img');fresh.setAttribute('aria-labelledby','panelTitle');area.replaceChildren(fresh)}
     const data=current.rows,w=Math.max(280,Math.floor(area.clientWidth||width)),h=w<430?430:490,m={top:48,right:18,bottom:58,left:w<430?64:76},plotW=w-m.left-m.right,plotH=h-m.top-m.bottom,maxX=Math.max(10,d3.max(data,d=>Math.max(d.projected,d.recommended))||10),xFloor=.03,x=d3.scaleLog([xFloor,maxX*1.15],[m.left,w-m.right]).clamp(true),view=s.view;
-    const rawAbs=d3.max(data,d=>Math.abs(d.change))||1,absMax=Math.max(1,rawAbs*1.15),y=view==='pct'?d3.scaleLog([.1,10],[h-m.bottom,m.top]).clamp(true):d3.scaleSymlog().constant(Math.max(.05,absMax/30)).domain([-absMax,absMax]).range([h-m.bottom,m.top]);
+    /* The percentage-change axis was hard-coded to a ratio domain of [0.1, 10] --
+       a fixed window from "10% of projected" to "ten times projected" -- for every
+       donor and every allocation rule. Almost no donor spans anything like that,
+       so for most of them every bubble sat on the centre line and the chart said
+       nothing. The x axis was already data-driven; this one now is too.
+
+       The window is symmetric in LOG space around 1, so "half as much" and "twice
+       as much" sit the same distance from no-change, which is the honest reading
+       of a ratio. It is floored at +/-5% so a donor whose recommendation barely
+       moves does not get an axis magnifying rounding noise, and capped at 20x so
+       one recipient going from near-zero to funded cannot flatten everyone else --
+       the scale still clamps, so such a point is pinned to the axis end rather
+       than dropped. */
+    const ratios=data.map(d=>d.ratio).filter(v=>Number.isFinite(v)&&v>0),
+      spread=ratios.length?Math.max(...ratios.map(r=>Math.max(r,1/r))):1,
+      ratioK=Math.min(20,Math.max(1.05,spread*1.15));
+    const rawAbs=d3.max(data,d=>Math.abs(d.change))||1,absMax=Math.max(1,rawAbs*1.15),y=view==='pct'?d3.scaleLog([1/ratioK,ratioK],[h-m.bottom,m.top]).clamp(true):d3.scaleSymlog().constant(Math.max(.05,absMax/30)).domain([-absMax,absMax]).range([h-m.bottom,m.top]);
     /* While a comparison is pinned, the bubble-radius DOMAIN is held at the value
        it had when the pin was taken. Freezing the pinned row's gap was not enough
        on its own: this domain is the maximum peer funding gap in the current data,
@@ -619,7 +634,7 @@
       gapMax=(comparison&&comparison.gapMax)||liveGapMax,
       r=d3.scaleSqrt([0,gapMax],[4,w<430?12:17]);
     const svg=d3.select('#chart').attr('viewBox',`0 0 ${w} ${h}`).attr('height',h).style('height',`${h}px`);svg.selectAll('*').remove();
-    const tickCandidates=[.03,.05,.1,.2,.5,1,2,5,10,20,50,100,200,500,1000,2000,5000,10000].filter(v=>v>=xFloor&&v<=maxX*1.15),xTicks=C.thinTicks(tickCandidates,w<430?4:6),yTicks=view==='pct'?[.2,.5,1,2,5,10]:y.ticks(w<430?5:7);
+    const tickCandidates=[.03,.05,.1,.2,.5,1,2,5,10,20,50,100,200,500,1000,2000,5000,10000].filter(v=>v>=xFloor&&v<=maxX*1.15),xTicks=C.thinTicks(tickCandidates,w<430?4:6),yTicks=view==='pct'?ratioTicks(y):y.ticks(w<430?5:7);
     svg.append('g').attr('class','axis').attr('transform',`translate(0,${h-m.bottom})`).call(d3.axisBottom(x).tickValues(xTicks).tickFormat(v=>v<.1?d3.format('.2f')(v):v<1?d3.format('.1f')(v):d3.format('~s')(v)).tickSizeOuter(0));
     svg.append('g').attr('class','axis').attr('transform',`translate(${m.left},0)`).call(d3.axisLeft(y).tickValues(yTicks).tickFormat(v=>view==='pct'?ratioLabel(v):fmtSigned(v)).tickSize(-plotW)).call(g=>g.select('.domain').remove());
     const zeroY=y(view==='pct'?1:0);svg.append('line').attr('x1',m.left).attr('x2',w-m.right).attr('y1',zeroY).attr('y2',zeroY).attr('stroke','var(--cgd-dark-gray)').attr('stroke-dasharray','4 3');svg.append('text').attr('x',w-m.right).attr('y',zeroY-5).attr('text-anchor','end').attr('class','small-text ref-label').text('no change');
@@ -675,9 +690,37 @@
     marks.raise();
   }
 
-  function pointY(d,view,y){if(view==='abs')return y(d.change);const ratio=Number.isFinite(d.ratio)?d.ratio:(d.recommended>EPS?10:1);return y(Math.max(.1,Math.min(10,ratio)))}
+  /* Clamped to whatever the scale's domain currently is. This used to clamp to
+     a literal [0.1, 10], which silently disagreed with the axis as soon as the
+     domain stopped being [0.1, 10] -- a bubble would have been drawn off the
+     plot, or bunched at a bound the axis no longer showed. A recipient with no
+     projected funding at all has an infinite ratio and is pinned to the top. */
+  function pointY(d,view,y){if(view==='abs')return y(d.change);
+    const[lo,hi]=y.domain(),ratio=Number.isFinite(d.ratio)?d.ratio:(d.recommended>EPS?hi:1);
+    return y(Math.max(lo,Math.min(hi,ratio)))}
+
+  /* Ratio ticks inside the scale's domain, always including 1 (no change).
+     Thinned by PIXEL distance rather than by count: a count-based thin produced
+     seven ticks whatever the domain, so on a tight window the labels sat a few
+     pixels apart and overlapped -- which the render gate catches as overlapping
+     SVG text. Candidates are walked outward from 1, so when space is short it is
+     the outer ticks that go and the no-change line always survives. */
+  function ratioTicks(y,minGap=22){
+    const[lo,hi]=y.domain(),candidates=[1];
+    for(const mult of[1.02,1.05,1.1,1.25,1.5,2,3,5,10,20])candidates.push(mult,1/mult);
+    const inside=[...new Set(candidates)].filter(v=>v>=lo*0.999&&v<=hi*1.001);
+    const outward=inside.filter(v=>v!==1).sort((a,b)=>Math.abs(Math.log(a))-Math.abs(Math.log(b)));
+    const kept=[1];
+    for(const v of outward)if(kept.every(k=>Math.abs(y(v)-y(k))>=minGap))kept.push(v);
+    return kept.sort((a,b)=>a-b);
+  }
   function logRatio(ratio){if(ratio===Infinity)return Math.log(10);return Math.log(Math.max(.1,Math.min(10,ratio||.1)))}
-  function ratioLabel(v){const pct=(v-1)*100;return`${pct>0?'+':''}${Math.round(pct)}%`}
+  /* A decimal place inside +/-10%, because a tight domain produces ticks like
+     1.02 and 1.05, and whole percentages rendered several of them identically. */
+  function ratioLabel(v){const pct=(v-1)*100;
+    if(Math.abs(pct)<0.05)return'0%';
+    const dp=Math.abs(pct)<10?1:0;
+    return`${pct>0?'+':''}${M.trimZeros(pct.toFixed(dp))}%`}
   function fmtSigned(v){if(Math.abs(v)<EPS)return'0';return`${v>0?'+':''}${d3.format(v<10?'.1f':'.0f')(v)}`}
   /* Defers to the set-wide formatter so the tool agrees with every other figure;
      only sub-US$10m values need the extra precision this tool works at. */

@@ -312,6 +312,36 @@ Two rules keep them that way:
   count already appears in the figure's own summary line does not belong in the
   notes at all.
 
+### The source line
+
+`UI.notes` puts **`Source: CGD modelling.`** first, and it is the same five
+words on every figure. Each one used to close its notes with its own variant —
+"CGD modelling and poverty need inputs, static-v2.2.9-swe-exit-scope.", "CGD
+analysis of 2024 CRS disbursements, static-v2.2.9-swe-exit-scope." — so
+seventeen figures ended in five different ways and each printed the release
+name, which belongs in the repository and not on a published figure. No figure
+passes a source of its own; `ODAUI.SOURCE` is the only place it is written.
+
+`attribution` is the one escape hatch, for a credit that is not the source and
+cannot be dropped. F3's map geometry is the only case.
+
+## No native tooltips
+
+**Nothing in this set uses a `title` attribute or an SVG `<title>` to carry
+information a reader needs.** Browsers delay `title` by about a second, it never
+appears on touch at all, and it cannot be styled or given more than one line.
+Every figure now uses either its own `.tooltip` panel or the shared
+`UI.hoverTip`, both of which appear immediately, work on tap and on keyboard
+focus, and can hold several lines.
+
+This mattered more than it sounds. F10's stacked bands had no tooltip of any
+kind — a reader could see a shape and a colour but could not read a single
+number off the chart without opening the drill-down. F12's drill-down had ten
+dots per row, each needing a second's hover. F13's and F15's scenario labels
+read `S1`, `S2A`, `S6B`, with the full name only in a `title`, so the one thing
+a reader needed to interpret the axis was the thing hardest to reach. F14 had
+four facts worth reading per row and a native tooltip that could show one.
+
 ## DAC membership
 
 **The EU is a full member of the OECD Development Assistance Committee.**
@@ -423,6 +453,36 @@ apart only by their codes. F14 uses `short` and titles the column
 of being repeated down ten rows. `ODAModel.scenarioRank()` gives the published
 order, which F14 lists in rather than re-sorting by value on every change of
 metric and year.
+
+## What an axis may respond to
+
+Two figures had this wrong in opposite directions, so the rule is worth stating.
+**An axis should respond to a change of population, and hold still across a
+change of moment.**
+
+* **F9 held nothing still.** Its domain came from the selected year alone, so
+  stepping the year slider rescaled both axes and every bubble moved, including
+  bubbles whose own values had not changed. On a log-log plot that is actively
+  misleading: the reader is trying to watch recipients move between 2024 and
+  2028 and the axes were moving underneath them. The domain now spans every
+  year. A change of donor or allocation rule still rescales, because that is a
+  different population rather than a different moment.
+* **F16 held too much still.** Its percentage-change axis was hard-coded to a
+  ratio domain of `[0.1, 10]` — from a tenth of projected to ten times projected
+  — for every donor and every allocation rule. Almost no donor spans anything
+  like that, so for most of them every bubble sat on the centre line and the
+  chart said nothing. It is now data-driven, symmetric in log space around 1 so
+  that "half as much" and "twice as much" sit equidistant from no change,
+  floored at ±5% so a donor whose recommendation barely moves does not get an
+  axis magnifying rounding noise, and capped at 20× so one recipient going from
+  near-zero to funded cannot flatten everyone else.
+
+Two things have to move together when a domain becomes data-driven. `pointY` was
+clamping to a literal `[0.1, 10]`, which silently disagreed with the axis as
+soon as the domain changed; it now clamps to `y.domain()`. And the ticks were a
+fixed list, then a count-based thin, both of which put labels on top of each
+other on a tight domain — they are now thinned by **pixel** distance, walking
+outward from 1 so the no-change line is never the tick that gets dropped.
 
 ## The F16 pin
 

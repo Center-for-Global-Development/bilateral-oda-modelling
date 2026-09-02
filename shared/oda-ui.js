@@ -388,9 +388,13 @@
   }
 
   /* --- notes (Part 0.4) -----------------------------------------------------
-     Brief and succinct; collapsible when numerous, collapsed by default.
+     Brief and succinct, and set as ONE paragraph opening with the shared source
+     line -- the collapsible block this used to describe is gone; see `notes()`.
      Conditional statements that would otherwise make a figure look broken are
-     passed as `visible` and stay on the face. */
+     passed as `visible` and keep their own paragraph on the face. */
+
+  /** The one source line for the whole set; `notes()` puts it first. */
+  const SOURCE = 'Source: CGD modelling.';
 
   const STANDARD_NOTES = {
     prices: 'All values are in constant 2024 US dollars.',
@@ -424,9 +428,9 @@
    * @param {object}   options
    * @param {string[]} options.visible live statements about the current view
    * @param {string[]} options.notes   standing notes, joined into one paragraph
-   * @param {string}  [options.source] source, appended to that paragraph
+   * @param {string}  [options.attribution] extra credit, appended last
    */
-  function notes({ visible = [], notes: standing = [], source } = {}) {
+  function notes({ visible = [], notes: standing = [], attribution } = {}) {
     const root = element('div', { className: 'notes' });
 
     /* Sentences are joined with a space, so each entry must be a complete
@@ -436,7 +440,17 @@
     const live = join(visible);
     if (live) root.append(element('p', { text: live }));
 
-    const body = join([...standing, source].filter(Boolean));
+    /* SOURCE leads, and it is the same five words on every figure. Each figure
+       used to end its notes with its own variant — "CGD modelling and poverty
+       need inputs, static-v2.2.9-swe-exit-scope.", "CGD analysis of 2024 CRS
+       disbursements, static-v2.2.9-swe-exit-scope." — so the release name and a
+       different provenance phrase closed seventeen figures in five different
+       ways. The release is recorded in the repository, not on the face of a
+       published figure.
+
+       `attribution` is for a credit that is not the source and cannot be
+       dropped: F3's map geometry is the only case. */
+    const body = join([SOURCE, ...standing, attribution].filter(Boolean));
     if (body) root.append(element('p', { text: body }));
 
     return root;
@@ -781,9 +795,12 @@
             text: 'No donor funded this recipient-sector in 2024.' }));
           return;
         }
+        /* No trackAxis here. The scale caption belongs to the first layer, where
+           the reader meets the track for the first time; repeating "0% of 2024
+           remains … 100%" inside the donor layer restates a scale they have
+           already read and costs two lines at the top of a stacked dialog. */
         body.append(element('p', { className: 'notes',
-          text: `Donors ranked by how far their support moved between 2024 and ${year}.` }),
-          trackAxis());
+          text: `Donors ranked by how far their support moved between 2024 and ${year}.` }));
         const rowsHost = element('div');
         body.append(rowsHost);
         pagedList(rowsHost, ranked, row => rankRow(payload.donorName(row.donor), row.ratio, null,
@@ -809,7 +826,7 @@
   window.ODAUI = {
     pagerActions,
     createState, selfSync, controlGroup, scenarioSelect, measureToggle, yearControl,
-    sortSelect, applySort, pager, notes, STANDARD_NOTES, attachDismiss,
+    sortSelect, applySort, pager, notes, SOURCE, STANDARD_NOTES, attachDismiss,
     hoverTip, hideHoverTip, filterLegend, hiddenSet,
     modal, trapFocus, pagerRow, pagedList, rankRow, trackAxis, orphanDrilldown
   };

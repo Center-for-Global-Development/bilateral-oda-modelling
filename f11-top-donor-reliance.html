@@ -28,11 +28,28 @@ svg.append('text').attr('class','axis-title').attr('x',(m.left+w-m.right)/2).att
 function openPopup(r,s,trigger){const dialog=UI.modal(r.name,{host,returnFocusTo:trigger});const donors=new Set([...r.a.donors.keys(),...r.b.donors.keys()]),list=[...donors].map(d=>({d,a:(r.a.donors.get(d)||0)/r.a.total,b:(r.b.donors.get(d)||0)/r.b.total})).sort((a,b)=>Math.max(b.a,b.b)-Math.max(a.a,a.b));
 dialog.card.append(element('p',{className:'notes',text:'Each donor’s share of this cell’s bilateral ODA. Pale dot: 2024. Solid dot: 2028.'}),UI.trackAxis());
 const body=element('div');dialog.card.append(body);
-UI.pagedList(body,list,v=>{const track=element('div',{className:'oda-track'}),a=element('i',{className:'baseline'}),b=element('i');a.style.left=`calc(${Math.min(100,v.a*100)}% - 4px)`;b.style.left=`calc(${Math.min(100,v.b*100)}% - 4px)`;b.style.background=CGDSet.colourFor(v.d);track.append(a,b);return element('div',{className:'oda-rank-row'},[element('span',{text:payload.donorName(v.d)}),track,element('small',{text:`${M.percent(v.a)} → ${M.percent(v.b)}`})])})}
+/* The two dots on each row carried no tooltip, so the only figures a reader
+   could get out of the drill-down were the two percentages in the right-hand
+   column -- and those do not say which dot is which, or by how much the donor
+   moved. Each dot now names its year and its share, and the row label carries
+   the donor name in full for a name the column has ellipsised. */
+UI.pagedList(body,list,v=>{const track=element('div',{className:'oda-track'}),a=element('i',{className:'baseline'}),b=element('i');
+  a.style.left=`calc(${Math.min(100,v.a*100)}% - 4px)`;b.style.left=`calc(${Math.min(100,v.b*100)}% - 4px)`;
+  b.style.background=CGDSet.colourFor(v.d);
+  const name=payload.donorName(v.d),move=v.b-v.a;
+  const shift=Math.abs(move)<0.0005?'no change':`${move>0?'up':'down'} ${M.percent(Math.abs(move),{decimals:1})}`;
+  a.setAttribute('aria-label',`${name}, 2024: ${M.percent(v.a,{decimals:1})}`);
+  b.setAttribute('aria-label',`${name}, 2028: ${M.percent(v.b,{decimals:1})}, ${shift}`);
+  UI.hoverTip(a,`${name} — 2024: ${M.percent(v.a,{decimals:1})} of this cell.`);
+  UI.hoverTip(b,`${name} — 2028: ${M.percent(v.b,{decimals:1})} of this cell (${shift} on 2024).`);
+  track.append(a,b);
+  const label=element('span',{className:'oda-rank-label',text:name});
+  UI.hoverTip(label,`${name}: ${M.percent(v.a,{decimals:1})} in 2024, ${M.percent(v.b,{decimals:1})} in 2028 (${shift}).`);
+  return element('div',{className:'oda-rank-row'},[label,track,element('small',{text:`${M.percent(v.a)} → ${M.percent(v.b)}`})])})}
 async function schedule(){window.CGD_READY=false;const n=++seq,s={...state.get()};syncControls(s);try{const next=await build(s);if(n!==seq)return;rows=next;draw(s,width)}catch(e){if(n===seq){P.renderFailState(document.querySelector('.panel'),e);window.CGD_READY=true}}}
 document.getElementById('notes').append(UI.notes({notes:[
  'The top donor is re-identified in each year, so it may differ between 2024 and 2028.',
  UI.STANDARD_NOTES.prices
-].filter(Boolean).filter(Boolean),source:`Source: CGD modelling, ${payload.release}.`}));
+].filter(Boolean).filter(Boolean)}));
 C.observeInlineSize(document.querySelector('.plot-wrap'),w=>{width=w;schedule()});document.getElementById('fullscreenBtn').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.getElementById('vizRoot').requestFullscreen?.();window.ODA_F11={state,rows:()=>rows};})();
 </script><script src="shared/cgd-embed.js"></script></body></html>

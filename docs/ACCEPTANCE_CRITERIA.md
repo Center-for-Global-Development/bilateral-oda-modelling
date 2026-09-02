@@ -70,6 +70,11 @@ running paragraph. See *Notes* in `README.md`.
 - [ ] No fact that already appears in the figure's own summary line.
 - [ ] Conditional statements that explain an otherwise-broken-looking state
       surface on the face of the figure, in their own paragraph above the notes.
+- [ ] The notes OPEN with `Source: CGD modelling.` and no figure varies it. The
+      release name does not appear on the face of a figure.
+- [ ] No `title` attribute or SVG `<title>` carries information a reader needs:
+      it is delayed, invisible on touch, and limited to one line. Use the
+      figure's own tooltip panel or `ODAUI.hoverTip`.
 
 ### 0.5 Responsive and accessible
 

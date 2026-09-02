@@ -295,6 +295,30 @@
      Sector COLOURS are pinned in set-config.js by code, so reordering the list
      does not repaint anything. */
 
+  /* Three CRS sector names are long enough to set the width of any control they
+     appear in: "Population policies/programmes and reproductive health" is 54
+     characters, which is wider than the whole control bank's share for one
+     dropdown. Shortened here rather than in each figure -- F13 carried its own
+     copy of these three replacements -- so a reader meets the same shortening
+     wherever it is used, and the full name stays available from sectorName(). */
+  const SECTOR_SHORT = {
+    'Population policies/programmes and reproductive health': 'Population & reproductive health',
+    'Government and civil society': 'Government & civil society',
+    'General environment protection': 'Environmental protection',
+    'Other social infrastructure and services': 'Other social infrastructure',
+    'Industry, mining and construction': 'Industry & construction',
+    'Agriculture, forestry and fishing': 'Agriculture & fishing',
+    'Trade policies and regulations': 'Trade policy & regulation',
+    'Development food assistance': 'Food assistance',
+    'Other commodity assistance': 'Other commodity aid',
+    'Water supply and sanitation': 'Water & sanitation'
+  };
+
+  function sectorShortName(payload, code) {
+    const full = payload.sectorName(code);
+    return SECTOR_SHORT[full] || full;
+  }
+
   function sectorsAlphabetical(payload, codes = payload.axes.sector) {
     return codes.slice().sort((a, b) =>
       payload.sectorName(a).localeCompare(payload.sectorName(b), 'en'));
@@ -452,7 +476,7 @@
     partitionByDenominator, nShownText,
     denominatorNote,
     INCOME_GROUPS, NOT_CLASSIFIED, incomeGroup, recipientsWithoutIncomeGroup, incomeGroupNote,
-    isDacMember, dacLabel, sectorsAlphabetical,
+    isDacMember, dacLabel, sectorsAlphabetical, sectorShortName,
     usd, percent, count, trimZeros, MISSING_TEXT,
     SCENARIOS, SCENARIO_ORDER, scenarioInfo, scenarioRank, measureApplies, MEASURE_LABEL, MEASURE_LABEL_SHORT
   };
