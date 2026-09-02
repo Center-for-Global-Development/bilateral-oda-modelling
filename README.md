@@ -11,6 +11,119 @@ shared layer, Figures 1–16 and a Figure 17 test build. `shared-layer-check.htm
 development harness, not a publishable figure; it is marked
 `data-cgd-harness="true"` and the gate skips it.
 
+## Preview and hosting
+
+`preview.html` embeds all seventeen figures on one page, each in a full-width
+iframe that sizes itself from the figure's own resize message — the same contract
+production uses. It is a **review** page, not a publication: the digital note will
+carry its own surrounding text and spacing.
+
+Once GitHub Pages is enabled (see below), the preview and the individual figures
+are served from:
+
+**Preview of all seventeen figures:**
+https://center-for-global-development.github.io/bilateral-oda-modelling/preview.html
+
+| Figure | Title | Standalone URL |
+|---|---|---|
+| F1 | How donor ODA changes by 2028 | [f1-donor-headline-cuts.html](https://center-for-global-development.github.io/bilateral-oda-modelling/f1-donor-headline-cuts.html) |
+| F2 | How much of each donor's bilateral ODA can be traced to a recipient and sector? | [f2-traceable-oda.html](https://center-for-global-development.github.io/bilateral-oda-modelling/f2-traceable-oda.html) |
+| F3 | How aid losses are distributed across countries | [f3-flows-and-losses-map.html](https://center-for-global-development.github.io/bilateral-oda-modelling/f3-flows-and-losses-map.html) |
+| F4 | Where sector-level aid is falling fastest | [f4-recipient-sector-losses.html](https://center-for-global-development.github.io/bilateral-oda-modelling/f4-recipient-sector-losses.html) |
+| F5 | What lost aid means for a recipient's economy | [f5-fiscal-loss.html](https://center-for-global-development.github.io/bilateral-oda-modelling/f5-fiscal-loss.html) |
+| F6 | Which donors account for the largest aid losses? | [f6-donor-attributed-losses.html](https://center-for-global-development.github.io/bilateral-oda-modelling/f6-donor-attributed-losses.html) |
+| F7 | How aid portfolios are changing | [f7-oda-treemap.html](https://center-for-global-development.github.io/bilateral-oda-modelling/f7-oda-treemap.html) |
+| F8 | How a recipient's donor mix changes over time | [f8-donor-oda-over-time.html](https://center-for-global-development.github.io/bilateral-oda-modelling/f8-donor-oda-over-time.html) |
+| F9 | Does bilateral ODA follow where extreme poverty is? | [f9-poverty-share-allocation.html](https://center-for-global-development.github.io/bilateral-oda-modelling/f9-poverty-share-allocation.html) |
+| F10 | ‘Orphaned’ recipient-sector pairs, by year | [f10-orphaned-recipient-sector-pairs.html](https://center-for-global-development.github.io/bilateral-oda-modelling/f10-orphaned-recipient-sector-pairs.html) |
+| F11 | Changing concentration of reliance on the top bilateral donor | [f11-top-donor-reliance.html](https://center-for-global-development.github.io/bilateral-oda-modelling/f11-top-donor-reliance.html) |
+| F12 | How recipients’ losses vary across scenarios | [f12-recipient-losses-across-scenarios.html](https://center-for-global-development.github.io/bilateral-oda-modelling/f12-recipient-losses-across-scenarios.html) |
+| F13 | How do allocation rules change a donor’s portfolio? | [f13-donor-flows-by-scenario.html](https://center-for-global-development.github.io/bilateral-oda-modelling/f13-donor-flows-by-scenario.html) |
+| F14 | Which allocation rules protect countries facing the greatest constraints? | [f14-priority-flows-across-scenarios.html](https://center-for-global-development.github.io/bilateral-oda-modelling/f14-priority-flows-across-scenarios.html) |
+| F15 | How much does donor behaviour change the risk of ‘orphaning’? | [f15-orphaning-across-scenarios.html](https://center-for-global-development.github.io/bilateral-oda-modelling/f15-orphaning-across-scenarios.html) |
+| F16 | How could a donor allocate its bilateral ODA differently? | [f16-interactive-allocations-tool.html](https://center-for-global-development.github.io/bilateral-oda-modelling/f16-interactive-allocations-tool.html) |
+| F17 | How recipients fare across allocation rules | [f17-recipient-scenarios-table.html](https://center-for-global-development.github.io/bilateral-oda-modelling/f17-recipient-scenarios-table.html) |
+
+`shared-layer-check.html` is a development harness rather than a figure. It is
+marked `data-cgd-harness="true"`, the QA gate skips it, and it is deliberately
+absent from the preview page.
+
+### Reviewing locally
+
+The figures fetch a binary payload, and `fetch()` is blocked on `file://`, so
+opening `preview.html` from disk shows seventeen fail states rather than
+seventeen charts. Serve the repository root over HTTP instead:
+
+```
+python -m http.server 8000
+```
+
+Then open `http://localhost:8000/preview.html`.
+
+### Enabling GitHub Pages
+
+Pages is served straight from the branch; no build workflow is needed, because
+there is no build step.
+
+1. In the repository on GitHub, open **Settings → Pages**.
+2. Under **Build and deployment**, set **Source** to *Deploy from a branch*.
+3. Set **Branch** to `main` and the folder to `/ (root)`, then **Save**.
+4. Wait for the `pages-build-deployment` action to go green under **Actions**.
+
+`.nojekyll` at the repository root is load-bearing: it turns off Jekyll
+preprocessing so the payload is published byte-for-byte. Do not delete it.
+
+`https://center-for-global-development.github.io` is already on the CGD resize
+listener's allowlist, so figures embedded from this origin resize correctly in
+production. Resize and analytics have **separate** allowlists and both must be
+confirmed after deployment.
+
+### The one check that must be run after the first deploy
+
+Blobs are pre-compressed `.bin.gz` and inflated in the browser with
+`DecompressionStream`, which requires the host to serve them **as bytes**. If
+Pages sets `Content-Encoding: gzip`, the browser inflates them first and
+`DecompressionStream` then fails on already-inflated bytes — every figure would
+render a fail state. Verify once, as soon as Pages is live:
+
+```
+curl -sI https://center-for-global-development.github.io/bilateral-oda-modelling/data/static-v2.2.9-swe-exit-scope/manifest.json
+curl -sI https://center-for-global-development.github.io/bilateral-oda-modelling/data/static-v2.2.9-swe-exit-scope/cube/baseline__gross.bin.gz
+```
+
+The `.bin.gz` response must **not** carry a `Content-Encoding: gzip` header. If it
+does, stop and re-plan the payload transport; the fix is not a front-end change.
+Opening `preview.html` on the live site is the same check by eye: seventeen charts
+means the transport is correct, and a wall of fail states means it is not.
+
+### Embedding a figure in the digital note
+
+Each figure carries the standard CGD child-side resize and analytics code. Embed
+it with a full-width iframe whose initial height is only a loading placeholder:
+
+```html
+<iframe
+  src="https://center-for-global-development.github.io/bilateral-oda-modelling/f1-donor-headline-cuts.html"
+  title="How donor ODA changes by 2028"
+  loading="lazy"
+  scrolling="no"
+  style="display:block;width:100%;height:1240px;border:0"
+>
+</iframe>
+```
+
+The child reports its content height with `{ type: "cgd-iframe-resize", height }`
+and the CGD parent listener applies it after validating the child origin. Do not
+tune a permanent fixed height; the figure reports again after width changes, font
+loading, control changes, dialogs and any other reflow. The parent listener is
+already deployed on CGD and must never be copied into a figure. `preview.html`
+carries its own strict same-origin listener for review purposes; its analytics
+are retained only in `window.CGDPreviewAnalytics` and are not forwarded to
+production analytics.
+
+Interaction events are documented in [TRACKING.md](TRACKING.md). Do not add a
+separate analytics tag inside an iframe.
+
 ## Governing documents
 
 | Document | What it governs |
@@ -42,6 +155,7 @@ repo/
   f15-orphaning-across-scenarios.html  F15 — orphaning across scenarios
   f16-interactive-allocations-tool.html  F16 — live donor allocation tool
   f17-recipient-scenarios-table.html  F17 — recipient × allocation-rule table
+  preview.html              all seventeen figures on one page, for review
   shared-layer-check.html   development harness for the shared layer
   shared/
     cgd-embed.js            PUBLISHED CGD infra — iframe resize + analytics. Do not fork.
@@ -69,6 +183,7 @@ repo/
   docs/SCOPE.md             what the product is and is not
   docs/ACCEPTANCE_CRITERIA.md  per-figure definition of done
   .github/workflows/verify.yml
+  .nojekyll                 disables Jekyll so the payload publishes as bytes
 ```
 
 The five `cgd-*` / `chart-core` / `dom` files are copies of the published CGD
