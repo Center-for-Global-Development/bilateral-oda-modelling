@@ -1,0 +1,352 @@
+/* =============================================================================
+   Project-specific components not present in the CGD layer.
+
+   This file adds ONLY new components. It defines no :root tokens and overrides
+   no house rule — cgd-figure.css and cgd-responsive.css remain the single source
+   of truth for colour, type and control behaviour.
+   ========================================================================== */
+
+/* Fail state: shown when the payload cannot be loaded or verified. A figure must
+   refuse visibly rather than render an empty chart, which would read as
+   "no data" — a different and wrong claim. */
+.oda-failstate {
+  border: 1px solid #C4463B;
+  border-left-width: 4px;
+  border-radius: 0;
+  background: #FDF3F2;
+  padding: 10px 12px;
+  margin: 8px 0;
+}
+
+.oda-failstate__title {
+  margin: 0 0 4px;
+  color: #8E2F27;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.oda-failstate__detail {
+  margin: 0 0 4px;
+  color: #6B2A24;
+  font-size: 10.8px;
+  line-height: 1.45;
+}
+
+.oda-failstate__detail:last-child { margin-bottom: 0; }
+
+/* The house .notes rule carries a border-top, so a summary line with nothing to
+   say still draws a rule and claims 17px above whatever follows it. Figures set
+   these conditionally, so hide the empty case rather than making each one remember
+   to remove its own element. */
+.viz-wrapper .notes:empty { display: none; }
+
+/* A value the model does not have. Never rendered as zero, and distinguished
+   from a real zero by text as well as colour. */
+.oda-missing {
+  color: var(--cgd-dark-gray, #4A4A4A);
+  font-style: italic;
+}
+
+/* The house control row is `flex-wrap: nowrap`, which is right for the two-control
+   remittances figures it was tuned on. These figures carry four or five, and
+   between 761px and roughly 900px that is wider than the frame: the shared
+   two-column phone grid has stopped applying and the row has nowhere to go, so
+   the last control hung outside the panel. Wrapping is the smallest fix that
+   holds at every width in between. */
+.viz-wrapper .controls { flex-wrap: wrap; row-gap: 6px; }
+/* Shrink to the controls it actually holds, so a figure with one or two of them
+   does not present a full-width empty panel. A figure with enough controls to
+   wrap is clamped to the frame by max-width and fills it. */
+@media (min-width: 761px) {
+  .viz-wrapper .controls { width: max-content; max-width: 100%; }
+  /* Growing to fill is only useful once a bank is big enough to wrap. On a bank
+     that hugs its contents there is no slack to absorb, and switching grow on
+     lets a sub-pixel rounding difference cascade: the first control grows into
+     the whole width, which pushes the second onto a row of its own, which then
+     grows too. Three controls or fewer therefore sit at their asked-for width. */
+  /* Three controls or fewer keep the house nowrap row: the bank is hugging its
+     contents, so there is nothing to wrap for, and max-content sizing plus wrap
+     can disagree by a few pixels and break the row in two. */
+  .viz-wrapper .controls:not(:has(> :nth-child(4))) { flex-wrap: nowrap; }
+  .viz-wrapper .controls:not(:has(> :nth-child(4))) > .control-group { flex-grow: 0; }
+  .viz-wrapper .controls:not(:has(> :nth-child(4))) > .control-group > .segmented,
+  .viz-wrapper .controls:not(:has(> :nth-child(4))) > .control-group > .limit-control { width: auto; }
+}
+
+/* A range input is 16px tall by default, which is an uncomfortable target even
+   with a mouse. The thumb is what gets grabbed, so give the track some height. */
+.viz-wrapper input[type="range"] { height: 24px; }
+
+/* Any control that opens something must be a real target on touch. */
+.viz-wrapper .oda-tap-target { min-height: 30px; display: inline-flex; align-items: center; }
+
+/* --- dropdown sizing -------------------------------------------------------
+   The house .plain-select is width:100%, so a two-option control came out as wide
+   as the 141-recipient one and most dropdowns sat half empty. Two widths only, so
+   the bank reads as a row of uniform controls rather than a ragged set: the
+   standard width fits every short option set, and the wide width is opted into
+   for the entity and allocation-rule lists whose names genuinely need it.
+   Below the phone breakpoint the shared two-column grid owns the widths. */
+.viz-wrapper { --oda-select: 144px; --oda-select-wide: 240px; --oda-select-rule: 274px; }
+.viz-wrapper .plain-select { width: 100%; max-width: 100%; }
+
+/* Two widths, carried on the GROUP as a flex basis rather than on the select as a
+   fixed width. The basis is the width the control asks for; flex-grow then lets it
+   take a share of whatever is left on its row. That is the whole mechanism behind
+   "no blank space": a row that wraps short is filled by the controls on it instead
+   of trailing off into empty panel. Growth is bounded by the row, so a figure with
+   one control still hugs rather than stretching across the frame. */
+.viz-wrapper .controls > .control-group { flex: 1 1 auto; min-width: 0; }
+/* min-width as well as flex-basis: a percentage-width select contributes its own
+   content width to the row's max-content, not the basis, so without this a bank
+   that hugs came out narrower than the tier it asked for and clipped its options. */
+.viz-wrapper .controls > .control-group:has(> .plain-select) {
+  flex-basis: var(--oda-select); min-width: var(--oda-select);
+}
+.viz-wrapper .controls > .control-group:has(> .oda-select-wide) {
+  flex-basis: var(--oda-select-wide); min-width: var(--oda-select-wide);
+}
+.viz-wrapper .controls > .control-group:has(> .oda-select-rule) {
+  flex-basis: var(--oda-select-rule); min-width: var(--oda-select-rule);
+}
+/* The year control shrank below its own label. It has a slider that will take any
+   width offered, so it is the other most compressible thing on a row. */
+.viz-wrapper .controls > .control-group:has(> .oda-year) { min-width: 172px; }
+@media (max-width: 760px) {
+  .viz-wrapper .controls > .control-group:has(> .oda-year) { min-width: 128px; }
+}
+
+/* --- control pair ----------------------------------------------------------
+   Two controls that should share one row wherever the bank wraps. Needed because
+   the phone rule gives the gross/GE toggle a full row of its own, which is right
+   when it is alone and wasteful when it has a two-button neighbour: pairing them
+   takes the toggle out of that rule (it is no longer a direct child of .controls)
+   and puts both on one row at every width. */
+.viz-wrapper .controls > .oda-pair {
+  display: flex; gap: 7px; align-items: flex-start; flex: 1 1 auto;
+  /* Enough for both toggles at their natural widths. Without a floor the pair is
+     the most compressible thing on the row and gets crushed into whatever is left,
+     which is how "% ODA" and "Grant-equivalent" ended up clipped at 768px. */
+  min-width: 300px;
+}
+.viz-wrapper .oda-measure-long { display: inline; }
+.viz-wrapper .oda-measure-short { display: none; }
+/* A select needs about 44px of well and padding before any option text shows, so
+   the smaller half of a pair gets a floor rather than a proportional share: at
+   320px "Count" was being cut to "Co". */
+.viz-wrapper .oda-pair > .control-group { flex: 1 1 auto; min-width: 96px; }
+.viz-wrapper .oda-pair > .control-group > .segmented,
+.viz-wrapper .oda-pair > .control-group > .plain-select { width: 100%; }
+/* Where the pair holds a long option list and a short one, the long one takes
+   the larger share rather than half. */
+.viz-wrapper .oda-pair > .control-group:has(> .oda-select-wide) { flex-grow: 2; }
+@media (max-width: 760px) {
+  .viz-wrapper .controls > .oda-pair { flex-basis: 100%; min-width: 0; }
+}
+/* A toggle has to stretch with its group or the space inside the group is blank
+   space by another name. The house phone layout already makes segmented controls
+   full width; this is the same rule applied wherever a row has room to give. */
+.viz-wrapper .controls > .control-group > .segmented,
+.viz-wrapper .oda-pair > .control-group > .segmented { width: 100%; }
+.viz-wrapper .controls > .control-group > .segmented > button,
+.viz-wrapper .oda-pair > .control-group > .segmented > button { flex: 1 1 auto; min-width: 0; }
+.viz-wrapper .controls > .control-group > .limit-control { width: 100%; }
+
+/* Slack goes mostly to the dropdowns. A two-button toggle stretched across 400px
+   of a wrapped row is filled space but not neat space; a dropdown given the same
+   400px is showing more of its option text. */
+.viz-wrapper .controls > .control-group:has(> .plain-select) { flex-grow: 3; }
+
+@media (max-width: 760px) {
+  /* The house phone layout is a two-column grid, which is right for a figure with
+     two controls and wrong for one with five: an odd count leaves a visibly empty
+     cell, and a segmented toggle crushed into an 88px column clipped its own label
+     ("US$ billio"). The same grow-to-fill flex row used above scales to any count
+     and never leaves a half-empty row. */
+  .viz-wrapper .controls { display: flex; flex-wrap: wrap; align-items: flex-end;
+                           gap: 7px 7px; }
+  .viz-wrapper .controls > * { width: auto; }
+  .viz-wrapper .controls > .control-group { flex: 1 1 auto; min-width: 104px; }
+  .viz-wrapper .controls > .control-group:has(> .plain-select) { flex-basis: 118px; min-width: 104px; }
+  /* A wide-tier control has already declared its option text long. One column of a
+     phone row is about 140px, nothing like enough for "S1 — Even proportional
+     allocations", so it takes the row. Costs a row; buys legibility. */
+  .viz-wrapper .controls > .control-group:has(> .oda-select-wide),
+  .viz-wrapper .controls > .control-group:has(> .oda-select-rule) { flex-basis: 100%; min-width: 0; }
+  /* The house phone layout gives the gross/grant-equivalent toggle a row of its
+     own, because "Grant-equivalent" cannot fit in a shared phone column. With the
+     short label in use below this breakpoint it can, so it shares like anything
+     else. */
+  .viz-wrapper .oda-measure-long { display: none; }
+  .viz-wrapper .oda-measure-short { display: inline; }
+}
+
+/* Range thumbs default to the browser's bright blue, which is off-brand and the
+   most saturated thing on several figures. */
+.viz-wrapper input[type="range"] { accent-color: var(--cgd-teal, #0B4C5B); }
+
+/* An 'Advanced' disclosure folded into the main control row rather than given a
+   panel of its own. Aligns to the control baseline, and spans the row on phones
+   because its label is a full sentence. The button and its panel sit side by
+   side, so opening the disclosure widens the row instead of adding a line to it. */
+.viz-wrapper .controls > .control-group.oda-advanced {
+  align-self: flex-end; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+@media (max-width: 760px) {
+  .viz-wrapper .controls > .control-group.oda-advanced { flex-basis: 100%; }
+}
+
+/* --- paging ----------------------------------------------------------------
+   Paging belongs with the thing being paged, not in the control bank: it is not
+   a view setting, and it cost a whole control group at the top of four figures.
+   Sits under the panel and above the notes, label inline. */
+.oda-pager-row { display: flex; justify-content: flex-end; align-items: center;
+                 gap: 10px; margin: 5px 0 0; }
+.oda-pager-row > .control-group { display: flex; align-items: center; gap: 8px; }
+.oda-pager-row .control-label { margin: 0; white-space: nowrap; }
+.oda-pager-row .limit-control { display: flex; align-items: center; gap: 7px; }
+.oda-pager-row output { font-size: 11.5px; color: var(--cgd-dark-gray, #394649);
+                        white-space: nowrap; font-variant-numeric: tabular-nums; }
+@media (max-width: 520px) { .oda-pager-row { justify-content: space-between; } }
+
+/* --- control density -------------------------------------------------------
+   A documented, set-wide tightening of the house control row. These figures
+   carry four or five controls where the remittances figures the house spacing
+   was tuned on carry two, so the default padding and gap pushed the chart below
+   the fold. Applied once, to every ODA figure, rather than per figure. */
+.viz-wrapper .controls { padding: 6px 7px; gap: 6px; margin-bottom: 6px; }
+.viz-wrapper .controls + .controls { margin-top: -2px; }
+.viz-wrapper .control-label { margin-bottom: 2px; line-height: 1.05; }
+.viz-wrapper .controls .notes { margin: 0; }
+
+/* --- year control ----------------------------------------------------------
+   One state key, two renderings: the stepper is the phone control, the slider
+   the wider-screen one. Never both at once. */
+.oda-year { display: flex; align-items: center; gap: 7px; }
+.oda-year .oda-year-slider { flex: 1 1 auto; min-width: 0; }
+.oda-year .oda-year-slider input[type="range"] { width: 100%; display: block; }
+.oda-year output { font-variant-numeric: tabular-nums; font-weight: 700;
+                   color: var(--cgd-teal, #0B4C5B); }
+.oda-year .oda-year-stepper { display: none; }
+@media (max-width: 760px) {
+  .oda-year .oda-year-stepper { display: inline-flex; }
+  .oda-year .oda-year-slider { display: none; }
+  .oda-year { justify-content: flex-start; }
+}
+
+/* A control group that cannot compress into one column of the shared two-column
+   phone grid — a three-option segmented control, or a group that contains its
+   own nested grid row. It spans the row instead of being crushed. Opted into per
+   control, so the shared grid still governs everything else. */
+@media (max-width: 760px) {
+  .viz-wrapper .controls > .oda-span-row { flex-basis: 100%; }
+}
+
+/* A controls row whose groups have very different natural widths (the
+   allocations tool: a long scenario name, a donor name, a year stepper). Opted
+   into with a class rather than overriding #controls from inside one figure. */
+@media (min-width: 721px) {
+  .controls.oda-controls-wide {
+    display: grid;
+    grid-template-columns: minmax(220px, 1.5fr) minmax(170px, 1fr) minmax(190px, 1fr);
+  }
+}
+
+/* --- modal (ODAUI.modal) ---------------------------------------------------
+   One implementation for every drill-down in the set. Previously each figure
+   carried its own copy of these rules and they had drifted. */
+.oda-modal-backdrop {
+  position: fixed; inset: 0; z-index: 50; background: rgba(26, 39, 42, .38);
+  display: flex; align-items: center; justify-content: center; padding: 12px;
+}
+.oda-modal-card {
+  width: min(680px, 100%); max-height: 88vh; overflow-y: auto; background: #fff;
+  border-radius: var(--panel-radius, 12px); padding: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, .2);
+}
+.oda-modal-top { display: flex; gap: 10px; justify-content: space-between; align-items: flex-start; }
+.oda-modal-top h2 { margin: 0; color: var(--cgd-teal, #0B4C5B); font-size: 15px; line-height: 1.2; }
+.oda-modal-close {
+  flex: 0 0 auto; width: 30px; height: 30px; border: 1px solid var(--border, #D9E1E4);
+  border-radius: 8px; background: #fff; color: var(--cgd-teal, #0B4C5B);
+  font: inherit; font-size: 17px; line-height: 1; cursor: pointer;
+}
+.oda-modal-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 9px; }
+.oda-modal-actions button {
+  min-width: 32px; min-height: 30px; border: 1px solid var(--border, #D9E1E4);
+  border-radius: 8px; background: #fff; color: var(--cgd-teal, #0B4C5B); font: inherit; cursor: pointer;
+}
+.oda-modal-actions button[disabled] { opacity: .45; cursor: not-allowed; }
+.oda-modal-actions output { font-size: 11.5px; color: var(--cgd-dark-gray, #394649); }
+
+/* Drill-down pager. Sits at the foot of the popup, under the rows it pages,
+   rather than in a control bank above them: it is navigation, not a view setting.
+   Wider gap than the modal action row it borrows, because "1 of 13" pressed
+   against the arrows read as part of the buttons. */
+.oda-pager-actions { justify-content: flex-end; gap: 11px; margin-top: 10px;
+                     padding-top: 8px; border-top: 1px solid var(--cgd-light-gray, #DFE0E2); }
+.oda-pager-actions output { color: var(--cgd-dark-gray, #394649); font-size: 11.5px;
+                            font-variant-numeric: tabular-nums; }
+
+/* Ranked dot rows inside a drill-down. The dot sits on a shared 0-100% track, so
+   rows are comparable with each other — never rescaled per row. */
+.oda-rank-row {
+  display: grid; grid-template-columns: minmax(105px, 1.1fr) minmax(140px, 2fr) max-content;
+  gap: 8px; align-items: center; padding: 5px 0;
+  border-bottom: 1px solid var(--cgd-light-gray, #DFE0E2);
+}
+.oda-rank-row > button {
+  border: 0; padding: 0; background: transparent; color: var(--cgd-teal, #0B4C5B);
+  font: inherit; font-size: 11.5px; text-align: left; text-decoration: underline; cursor: pointer;
+}
+.oda-rank-row > span:first-child { font-size: 11.5px; }
+.oda-rank-row small { font-size: 11px; color: var(--cgd-dark-gray, #394649); text-align: right;
+                      font-variant-numeric: tabular-nums; }
+.oda-track { position: relative; height: 18px; }
+.oda-track::before { content: ''; position: absolute; left: 0; right: 0; top: 9px;
+                     border-top: 1px solid var(--cgd-teal-gray, #85A5AD); }
+.oda-track i { position: absolute; top: 5px; width: 8px; height: 8px; border-radius: 50%;
+               background: var(--cgd-teal, #0B4C5B); }
+.oda-track i.baseline { background: var(--cgd-light-blue, #BFDEE0); }
+.oda-track-axis { display: flex; justify-content: space-between; font-size: 10.8px;
+                  color: var(--cgd-dark-gray, #394649); padding: 2px 0 6px; }
+@media (max-width: 520px) {
+  .oda-modal-backdrop { position: absolute; align-items: flex-start; }
+  .oda-rank-row { grid-template-columns: minmax(95px, 1.3fr) minmax(110px, 1fr); }
+  .oda-rank-row small { grid-column: 2; text-align: left; }
+}
+
+/* Mark for a recipient excluded from a view because a denominator is missing. */
+.oda-hatch {
+  fill: none;
+  stroke: var(--cgd-dark-gray, #4A4A4A);
+  stroke-width: 0.75;
+  stroke-dasharray: 2 2;
+}
+
+/* A 24px box was the blunt way to meet the WCAG 2.2 target minimum, and it looked
+   like one: a control twice the height of the text beside it. WCAG counts the label
+   as part of the target where clicking the label activates the control, which it
+   does here, so the box can be the size a checkbox should be and the LINE carries
+   the 24px. `accent-color` keeps the checked state on-brand without restyling the
+   control. */
+.viz-wrapper input[type="checkbox"] {
+  width: 15px; height: 15px; margin: 0; flex: 0 0 auto;
+  accent-color: var(--cgd-teal, #0B4C5B);
+}
+/* The line that holds a checkbox and its label is the target, and the two are
+   centred on each other rather than sitting on a shared baseline. */
+.viz-wrapper .advanced-line,
+.viz-wrapper .advanced-panel {
+  display: flex; align-items: center; gap: 7px; min-height: 24px;
+}
+/* The box lives INSIDE the label, so there is one element, one target and one
+   alignment: centring the label's own contents puts the box on the text's centre
+   line, and no rule has to reconcile two siblings of different heights. Aligning
+   them as siblings left the box two pixels below the text however the container
+   was set, because the label's box and its line box are not the same height. */
+.viz-wrapper .advanced-line label,
+.viz-wrapper .advanced-panel label {
+  display: inline-flex; align-items: center; gap: 7px; min-height: 24px;
+  cursor: pointer; line-height: 1.25;
+}

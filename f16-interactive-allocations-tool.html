@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="en" data-cgd-interactive-name="oda-f16-interactive-allocations-tool">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>How could a donor allocate its bilateral ODA differently?</title>
+  <link rel="stylesheet" href="shared/cgd-figure.css">
+  <link rel="stylesheet" href="shared/cgd-responsive.css">
+  <link rel="stylesheet" href="shared/oda-figure.css">
+  <style>
+    .disclaimer{margin:0 0 8px;color:var(--cgd-dark-gray);font-size:11.5px;line-height:1.35}
+    .visible-note{margin:7px 0;color:var(--cgd-dark-gray);font-size:11.5px;line-height:1.35}
+    .objective-block{padding:8px 10px;border:1px solid var(--border);border-radius:12px;background:var(--cgd-offwhite);margin-bottom:8px}
+    .objective-head{display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:wrap}
+    .objective-head h2{margin:0;color:var(--cgd-teal);font-size:13px;line-height:1.2}
+    .objective-buttons{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+    .objective-buttons .segmented{flex-wrap:wrap}
+    .objective-buttons .segmented button:disabled{opacity:.45;cursor:not-allowed}
+    .blend-panel{display:grid;grid-template-columns:minmax(150px,186px) minmax(190px,1fr);gap:16px;align-items:center;margin-top:9px;padding-top:9px;border-top:1px solid var(--border)}
+    /* Half the linear size, so a quarter of the area. The corner names moved out to
+       the weights list beside it, where they were already printed: three full
+       phrases cannot be legible around a 186px triangle, and single letters keyed
+       to that list can. */
+    .triangle-wrap{width:100%;max-width:186px;margin:0}
+    .triangle-wrap svg{height:auto;touch-action:none;overflow:visible}
+    .triangle-edge{fill:#fff;stroke:var(--cgd-teal-gray);stroke-width:3}
+    .triangle-grid{stroke:var(--border);stroke-width:2;fill:none}
+    .triangle-label{fill:var(--cgd-teal);font-size:26px;font-weight:700}
+    .triangle-point{fill:var(--cgd-gold);stroke:var(--cgd-teal);stroke-width:3.5;cursor:grab}
+    .weights{display:grid;gap:7px}
+    .weight-row{display:grid;grid-template-columns:minmax(110px,1fr) 48px;gap:8px;align-items:center}
+    .weight-track{height:7px;background:var(--cgd-light-gray);position:relative}
+    .weight-row .weight-track{grid-column:1/-1}
+    .weight-track i{display:block;height:100%;background:var(--cgd-light-teal)}
+    .weight-row output{text-align:right;color:var(--cgd-teal);font-weight:700;font-variant-numeric:tabular-nums}
+    .validation{margin:8px 0 0;color:var(--cgd-red);font-weight:700;line-height:1.35}
+    .availability{margin:7px 0 0;color:var(--cgd-dark-gray);line-height:1.35}
+    .panel-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:8px 10px 6px;border-bottom:1px solid #edf2f3;flex-wrap:wrap}
+    .panel-actions{display:flex;gap:7px;align-items:flex-end;flex-wrap:wrap}
+    .panel-actions .control-group{min-width:155px}
+    .pin-button{height:34px;border:1px solid var(--border);border-radius:9px;background:#fff;color:var(--cgd-teal);font:inherit;font-weight:700;padding:6px 10px;cursor:pointer}
+    .pin-button:disabled{opacity:.45;cursor:not-allowed}
+    .key{display:flex;flex-wrap:wrap;gap:5px 12px;margin-top:5px;color:var(--cgd-dark-gray);font-size:10.8px}
+    .key span{display:inline-flex;align-items:center;gap:4px}
+    .key i{width:10px;height:10px;border-radius:50%;display:inline-block}
+    .key .more{background:var(--cgd-light-teal)}
+    .key .less{background:var(--cgd-gold)}
+    .key .held{background:#fff;border:1.5px dashed var(--cgd-dark-gray)}
+    .key .compare{background:#fff;border:1.5px solid var(--cgd-blue)}
+    .chart-area{position:relative;min-height:430px}
+    #chart{display:block;width:100%}
+    .summary{margin:8px 10px 10px;color:var(--cgd-teal-black);font-size:12px;line-height:1.4}
+    .loading{min-height:430px;display:flex;align-items:center;justify-content:center;color:var(--cgd-dark-gray)}
+    .tooltip{position:fixed}
+    @media(max-width:720px){
+      .blend-panel{grid-template-columns:1fr}
+      .panel-top{display:block}
+      .panel-actions{margin-top:7px}
+      .chart-area{min-height:390px;padding-left:5px;padding-right:5px}
+    }
+    @media(max-width:430px){
+      .objective-buttons,.objective-buttons .segmented{width:100%}
+      .objective-buttons .segmented{display:grid;grid-template-columns:1fr 1fr}
+      .objective-buttons .segmented button+button{border-left:0}
+      .objective-buttons .segmented button:nth-child(even){border-left:1px solid var(--border)}
+      .objective-buttons .segmented button:nth-child(n+3){border-top:1px solid var(--border)}
+      .sector-diag{width:100%}
+    .sector-diag svg{display:block;width:100%;height:auto}
+    .sector-diag .lead{font-size:11.6px;color:var(--cgd-dark-gray);line-height:1.4;margin:0 0 8px}
+    .sector-diag .zero{stroke:var(--cgd-dark-gray);stroke-width:1}
+    .sector-diag .grid{stroke:#EDF2F3;stroke-width:1}
+    .sector-diag .dot{stroke:#fff;stroke-width:1}
+    .sector-diag .dot-label{pointer-events:none}
+    .sector-diag .foot{font-size:11px;color:var(--cgd-dark-gray);margin:8px 0 0;line-height:1.4}
+    .panel-actions{display:grid;grid-template-columns:1fr}
+      .panel-actions .control-group,.pin-button{width:100%}
+    }
+  </style>
+</head>
+<body>
+<main id="vizRoot" class="viz-wrapper">
+  <div class="header-row">
+    <div class="title-block">
+      <h1>How could a donor allocate its bilateral ODA differently?</h1>
+      <p class="viz-sub">Explore how donors’ bilateral ODA allocations change when different recipient interests are prioritised.</p>
+    </div>
+    <button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="View fullscreen" title="View fullscreen"><svg class="icon-expand" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5" stroke="currentColor" stroke-width="1.8"/></svg><svg class="icon-compress" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5" stroke="currentColor" stroke-width="1.8"/></svg></button>
+  </div>
+  <div class="controls oda-controls-wide" id="controls"></div>
+  <section class="objective-block" aria-labelledby="objectiveHeading">
+    <div class="objective-head">
+      <h2 id="objectiveHeading">Objective</h2>
+      <div class="objective-buttons" id="objectiveButtons"></div>
+    </div>
+    <div class="blend-panel" id="blendPanel" hidden>
+      <div class="triangle-wrap"><svg id="triangle" viewBox="0 0 360 255" role="img" aria-label="Blend poverty, humanitarian risk and fiscal vulnerability"></svg></div>
+      <div class="weights" id="weights"></div>
+    </div>
+    <p class="availability" id="objectiveAvailability"></p>
+    <p class="validation" id="validation" role="alert" hidden></p>
+  </section>
+  <section class="panel" id="chartPanel">
+    <div class="panel-top">
+      <div>
+        <h2 class="panel-title" id="panelTitle">Change by recipient under allocation objective function</h2>
+        <div class="key" aria-label="Chart key">
+          <span><i class="more"></i>More</span><span><i class="less"></i>Less</span>
+          <span><i class="held"></i>Policy-held</span><span><i class="compare"></i>Pinned comparison</span>
+          <span>Larger bubble = larger peer funding gap</span>
+        </div>
+      </div>
+      <div class="panel-actions">
+        <div class="control-group"><div class="control-label">Change shown</div><div class="segmented" id="viewToggle" role="group" aria-label="Change shown"></div></div>
+        <button class="pin-button" id="pinButton" type="button">Pin this allocation</button>
+      </div>
+    </div>
+    <div class="chart-area" id="chartArea"><svg id="chart" role="img" aria-labelledby="panelTitle"></svg></div>
+    <p class="summary" id="summary" aria-live="polite"></p>
+  </section>
+  <p class="visible-note" id="discretionNote" aria-live="polite" hidden></p>
+  <p class="visible-note" id="noPriorityNote" aria-live="polite" hidden></p>
+  <div id="notes"></div>
+  <div id="popupHost"></div>
+  <div class="tooltip" id="tooltip" role="tooltip" hidden></div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js" integrity="sha384-CjloA8y00+1SDAUkjs099PVfnY2KmDC2BZnws9kh8D/lX1s46w6EPhpXdqMfjK6i" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="shared/dom.js"></script>
+<script src="shared/chart-core.js"></script>
+<script src="shared/set-config.js"></script>
+<script src="shared/oda-payload.js"></script>
+<script src="shared/oda-model.js"></script>
+<script src="shared/oda-ui.js"></script>
+<script>
+(async()=>{
+  'use strict';
+  window.CGD_READY=false;
+  const {element}=CGDDom, C=CGDCore, P=ODAPayload, M=ODAModel, UI=ODAUI;
+  const TOOL_BLOBS=['tool/baseline_recipient_ge','tool/baseline_recipient_gross','tool/country_floor_gross','tool/envelope_ge','tool/need_poverty','tool/need_humanitarian','tool/need_fiscal','tool/pinned_donor_index','tool/pinned_recipient_index','tool/pinned_ge'];
+  const OBJECTIVES={poverty:'Poverty',humanitarian:'Humanitarian risk',fiscal:'Fiscal vulnerability'};
+  const LAMBDA=2.3, EPS=1e-7;
+  let payload, width=700, scenarioLoaded=null, rows=[], comparison=null, requestSeq=0, advancedOpen=false;
+
+  try{
+    payload=await P.load();
+    if(!window.d3)throw Error('The pinned chart dependency did not load.');
+    await payload.blobs(TOOL_BLOBS);
+  }catch(error){
+    P.renderFailState(document.getElementById('chartPanel'),error);
+    window.CGD_READY=true;
+    return;
+  }
+
+  const years=payload.axes.year.slice();
+  const donors=payload.axes.donor.slice().sort((a,b)=>payload.donorName(a).localeCompare(payload.donorName(b)));
+  const parsed=parseUrl();
+  const defaults={scenario:parsed.scenario||'S1',donor:parsed.donor||'USA',year:parsed.year||2028,poverty:parsed.poverty??1,humanitarian:parsed.humanitarian??0,fiscal:parsed.fiscal??0,view:parsed.view||'pct'};
+  normaliseWeights(defaults);
+  const state=UI.createState(defaults,{onChange:()=>schedule()});
+
+  const scenarioControl=UI.scenarioSelect(state);
+  const donorSelect=element('select',{className:'plain-select'});
+  donors.forEach(d=>donorSelect.append(new Option(payload.donorName(d),d)));
+  donorSelect.value=defaults.donor;
+  donorSelect.addEventListener('change',()=>{
+    const next=donorSelect.value;
+    const issue=missingIssue(next,currentWeights());
+    if(issue){donorSelect.value=state.get().donor;showValidation(issue);return;}
+    comparison=null; state.set({donor:next});
+  });
+  state.subscribe(s=>{donorSelect.value=s.donor});
+  const yearControl=UI.yearControl(state,years);
+  document.getElementById('controls').append(scenarioControl,UI.controlGroup('Focus donor',donorSelect,{id:'donorSelect'}),yearControl);
+
+  buildObjectiveControls();
+  buildViewToggle();
+  buildTriangle();
+  document.getElementById('pinButton').addEventListener('click',toggleComparison);
+  document.getElementById('fullscreenBtn').addEventListener('click',()=>document.fullscreenElement?document.exitFullscreen():document.getElementById('vizRoot').requestFullscreen?.());
+
+  /* The no-priority note names a recipient the objective cannot score. It is a
+     caveat on the method, not something the reader needs in front of the chart, so
+     it lives inside Notes. It stays a live region and keeps its id: the content is
+     state-dependent, and the notes list itself is built once. */
+  const noPriorityNode = document.getElementById('noPriorityNote');
+  document.getElementById('notes').append(UI.notes({
+    notes:[
+      'Allocations and the donor envelope are grant-equivalent. Peer coverage and the country viability test use gross ODA, converted with the selected donor-year realised gross-to-grant-equivalent ratio.',
+      'Policy-held corridors, including Ukraine and executable exits or zero pins, stay at their audited projected values. Other announced country allocations and country floors are deliberately not applied, so the tool may imply funding for a country from which the donor has announced an exit.',
+      'The recommendation is solved at recipient level over the donor’s observed 2024 portfolio. Any later sector reporting would impute the donor’s observed 2024 sector mix; this tool does not choose sectors.',
+      'The tool applies the guarded country viability floor. Published figures apply a cell floor; both use 10th-percentile constructions from the same 2024 distributions, but the thresholds differ.',
+      'Peer donors follow the selected system-wide allocation rule and are then held fixed; they are never re-optimised.',
+      'Objective weights apply to separately normalised peer-coverage protection scores, not to raw need masses.',
+      'Where a recipient has no need mass for a weighted objective, the published methodology governs. A recipient that is not a least developed country receives no priority from that objective and is named rather than imputed: it stays in the portfolio and remains fundable. A least developed country would instead take the methodology’s imputation from the observed least-developed-country distribution, which needs inputs the browser payload does not carry, so that combination is blocked rather than approximated. No recipient is in that state in this release.',
+      'Selecting a recipient opens a sector diagnostic: where the donor already worked in that recipient in 2024, and how much its peers are changing their own funding of those sectors. It is descriptive only — the tool allocates by recipient and does not choose sectors — and nothing in it feeds back into the recommendation.',
+      UI.STANDARD_NOTES.prices,UI.STANDARD_NOTES.unallocable
+    ],
+    source:`Source: CGD modelling, ${payload.release}.`
+  }));
+  /* After the notes list exists, not before it: the disclosure is built by
+     UI.notes and there is nothing to move into until then. */
+  const notesDetails = document.querySelector('#notes details');
+  if (notesDetails && noPriorityNode) notesDetails.append(noPriorityNode);
+
+  await ensureScenario(defaults.scenario,true);
+  /* The observer is registered only AFTER the first scenario blob is in memory.
+     Registered before, its first synchronous callback ran schedule() against an
+     unloaded payload, threw, and replaced the panel with a fail state — which
+     the old QA gate could not see because it was matching the fullscreen icon
+     rather than the chart. */
+  C.observeInlineSize(document.querySelector('.chart-area'),w=>{width=w;schedule(false)});
+  const initialIssue=missingIssue(defaults.donor,currentWeights());
+  if(initialIssue){state.set({poverty:1,humanitarian:0,fiscal:0});showValidation(`${initialIssue} The URL state was reset to poverty.`)}
+  if(parsed.pin)comparison={weights:parsed.pin,context:{scenario:defaults.scenario,donor:defaults.donor,year:defaults.year}};
+  schedule(false);
+
+  function parseUrl(){
+    const q=new URLSearchParams(location.search),validScenario=payload.scenarios.includes(q.get('scenario')),validDonor=payload.axes.donor.includes(q.get('donor'));
+    const n=k=>{if(!q.has(k))return null;const v=Number(q.get(k));return Number.isFinite(v)?v:null};
+    const year=n('year'),p=n('p'),h=n('h'),f=n('f'),pp=n('pp'),ph=n('ph'),pf=n('pf');
+    const pin=[pp,ph,pf].every(Number.isFinite)?normalisedObject(pp,ph,pf):null;
+    return{scenario:validScenario?q.get('scenario'):null,donor:validDonor?q.get('donor'):null,year:years.includes(year)?year:null,poverty:p,humanitarian:h,fiscal:f,view:['pct','abs'].includes(q.get('view'))?q.get('view'):null,pin};
+  }
+
+  function normalisedObject(p,h,f){const x={poverty:Math.max(0,p),humanitarian:Math.max(0,h),fiscal:Math.max(0,f)};let sum=x.poverty+x.humanitarian+x.fiscal;if(sum<=EPS){x.poverty=1;sum=1}Object.keys(x).forEach(k=>x[k]/=sum);return x}
+  function normaliseWeights(obj){Object.assign(obj,normalisedObject(Number(obj.poverty)||0,Number(obj.humanitarian)||0,Number(obj.fiscal)||0))}
+  function currentWeights(){const s=state.get();return{poverty:s.poverty,humanitarian:s.humanitarian,fiscal:s.fiscal}}
+  function weightPhrase(w){
+    const corner=Object.keys(w).find(k=>w[k]>1-EPS);
+    if(corner)return`Weighted entirely on ${OBJECTIVES[corner].toLowerCase()}`;
+    return`With a ${Math.round(w.poverty*100)}% poverty, ${Math.round(w.humanitarian*100)}% humanitarian-risk and ${Math.round(w.fiscal*100)}% fiscal-vulnerability blend`;
+  }
+
+  function supportRecipients(donor){return payload.axes.recipient.filter(r=>payload.at('tool/baseline_recipient_ge',{donor,recipient:r})>0)}
+  /* Split by what the published methodology says to do, not merely by whether a
+     number is present. A non-LDC gap is a documented no-priority case and must
+     not block; an LDC gap needs an imputation this payload cannot support. */
+  function gapsFor(donor,kind){
+    const out={noPriority:[],needsImputation:[]};
+    for(const r of supportRecipients(donor)){
+      const st=M.needStatus(payload,r,kind);
+      if(st.status===M.NEED_STATUS.NO_PRIORITY)out.noPriority.push(r);
+      else if(st.status===M.NEED_STATUS.NEEDS_IMPUTATION)out.needsImputation.push(r);
+    }
+    return out;
+  }
+  function missingIssue(donor,w){
+    const parts=[];
+    Object.keys(OBJECTIVES).forEach(k=>{if(w[k]>EPS){const miss=gapsFor(donor,k).needsImputation;
+      if(miss.length)parts.push(`${OBJECTIVES[k]} needs an imputation for ${miss.map(r=>payload.recipientName(r)).join(', ')}, which the methodology defines from the observed least-developed-country distribution`)}});
+    return parts.length?`${parts.join('; ')}. That input is not carried in the browser payload, so this weight combination is blocked rather than approximated.`:'';
+  }
+  /* Named on the face of the figure whenever a weighted objective leaves one of
+     this donor's recipients unscored: an unprotected recipient and a recipient
+     that needs no protection look identical on the chart otherwise. */
+  function noPriorityNote(donor,w){
+    const named=new Map();
+    Object.keys(OBJECTIVES).forEach(k=>{if(w[k]>EPS)for(const r of gapsFor(donor,k).noPriority){
+      if(!named.has(r))named.set(r,[]);named.get(r).push(OBJECTIVES[k].toLowerCase())}});
+    if(!named.size)return '';
+    const names=[...named.keys()].map(r=>payload.recipientName(r)).sort();
+    const kinds=[...new Set([...named.values()].flat())].join(' or ');
+    const one=names.length===1;
+    return `${names.join(', ')} ${one?'has':'have'} no ${kinds} score, so this objective gives ${one?'it':'them'} no priority. `+
+      `${one?'It is not a least developed country':'None is a least developed country'}, so the methodology does not impute one. `+
+      `${one?'It remains':'They remain'} funded and can still be allocated to.`;
+  }
+  function showValidation(message=''){const node=document.getElementById('validation');node.hidden=!message;node.textContent=message}
+
+  function buildObjectiveControls(){
+    const group=element('div',{className:'segmented',attributes:{role:'group','aria-label':'Objective'}});
+    Object.entries(OBJECTIVES).forEach(([key,label])=>{
+      const button=element('button',{text:label,attributes:{type:'button','data-objective':key,'aria-pressed':'false'}});
+      button.addEventListener('click',()=>setWeights({poverty:key==='poverty'?1:0,humanitarian:key==='humanitarian'?1:0,fiscal:key==='fiscal'?1:0}));
+      group.append(button);
+    });
+    const advanced=element('button',{text:'Advanced blend',attributes:{type:'button','aria-expanded':'false','aria-controls':'blendPanel'}});
+    advanced.addEventListener('click',()=>{advancedOpen=!advancedOpen;document.getElementById('blendPanel').hidden=!advancedOpen;advanced.setAttribute('aria-expanded',String(advancedOpen));syncObjective()});
+    group.append(advanced);
+    document.getElementById('objectiveButtons').append(group);
+    state.subscribe(syncObjective);
+    syncObjective();
+  }
+
+  function buildViewToggle(){
+    const host=document.getElementById('viewToggle');
+    [['pct','Percentage'],['abs','US$m']].forEach(([value,label])=>{const b=element('button',{text:label,attributes:{type:'button','data-view':value,'aria-pressed':'false'}});b.addEventListener('click',()=>state.set({view:value}));host.append(b)});
+    state.subscribe(s=>host.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===s.view))));
+  }
+
+  function buildTriangle(){
+    const svg=d3.select('#triangle'),A=[180,24],B=[25,222],D=[335,222];
+    svg.append('path').attr('class','triangle-edge').attr('d',`M${A}L${B}L${D}Z`);
+    [0.25,0.5,0.75].forEach(t=>{
+      const mix=(x,y,u)=>[x[0]*u+y[0]*(1-u),x[1]*u+y[1]*(1-u)];
+      const p1=mix(A,B,t),p2=mix(A,D,t),p3=mix(B,D,t),p4=mix(B,A,t),p5=mix(D,A,t),p6=mix(D,B,t);
+      svg.append('path').attr('class','triangle-grid').attr('d',`M${p1}L${p2}M${p3}L${p4}M${p5}L${p6}`);
+    });
+    const corners=[['P',180,18,'middle','Poverty'],['H',14,250,'start','Humanitarian risk'],
+      ['F',346,250,'end','Fiscal vulnerability']];
+    corners.forEach(([letter,cx,cy,anchor,full])=>svg.append('text').attr('class','triangle-label')
+      .attr('x',cx).attr('y',cy).attr('text-anchor',anchor).text(letter)
+      .append('title').text(full));
+    const point=svg.append('circle').attr('class','triangle-point').attr('r',13);
+    const overlay=svg.append('path').attr('d',`M${A}L${B}L${D}Z`).attr('fill','transparent').style('cursor','crosshair');
+    function weightsAt(event){
+      const [x,y]=d3.pointer(event,svg.node()),den=(B[1]-D[1])*(A[0]-D[0])+(D[0]-B[0])*(A[1]-D[1]);
+      let p=((B[1]-D[1])*(x-D[0])+(D[0]-B[0])*(y-D[1]))/den;
+      let h=((D[1]-A[1])*(x-D[0])+(A[0]-D[0])*(y-D[1]))/den;
+      let f=1-p-h;
+      p=Math.max(0,p);h=Math.max(0,h);f=Math.max(0,f);
+      return normalisedObject(p,h,f);
+    }
+    overlay.on('pointerdown',event=>{overlay.node().setPointerCapture?.(event.pointerId);setWeights(weightsAt(event))}).on('pointermove',event=>{if(event.buttons===1)setWeights(weightsAt(event))});
+    point.on('pointerdown',event=>{event.stopPropagation();point.node().setPointerCapture?.(event.pointerId)}).on('pointermove',event=>{if(event.buttons===1)setWeights(weightsAt(event))});
+    document.getElementById('weights').replaceChildren(...Object.entries(OBJECTIVES).map(([key,label])=>element('div',{className:'weight-row'},[element('span',{text:`${label.charAt(0).toUpperCase()} — ${label}`}),element('output',{attributes:{'data-weight':key}}),element('div',{className:'weight-track'},[element('i',{attributes:{'data-bar':key}})])])));
+    function syncTriangle(){const w=currentWeights(),x=A[0]*w.poverty+B[0]*w.humanitarian+D[0]*w.fiscal,y=A[1]*w.poverty+B[1]*w.humanitarian+D[1]*w.fiscal;point.attr('cx',x).attr('cy',y);Object.keys(w).forEach(k=>{document.querySelector(`[data-weight="${k}"]`).textContent=`${Math.round(w[k]*100)}%`;document.querySelector(`[data-bar="${k}"]`).style.width=`${w[k]*100}%`})}
+    state.subscribe(syncTriangle);syncTriangle();
+  }
+
+  function syncObjective(){
+    const w=currentWeights(),buttons=document.querySelectorAll('[data-objective]');
+    const unavailable=[];
+    buttons.forEach(b=>{const k=b.dataset.objective,blocked=gapsFor(state.get().donor,k).needsImputation;b.setAttribute('aria-pressed',String(w[k]>1-EPS));b.disabled=blocked.length>0;b.title=blocked.length?`${OBJECTIVES[k]} needs an imputation for ${blocked.map(r=>payload.recipientName(r)).join(', ')}.`:'';if(blocked.length)unavailable.push(`${OBJECTIVES[k]} (${blocked.map(r=>payload.recipientName(r)).join(', ')})`) });
+    document.getElementById('objectiveAvailability').textContent=unavailable.length?`Blocked for this donor: ${unavailable.join('; ')}. The methodology's least-developed-country imputation is not reproducible in the browser.`:'';
+    const advanced=document.querySelector('[aria-controls="blendPanel"]');
+    if(advanced)advanced.setAttribute('aria-pressed',String(advancedOpen&&!Object.keys(w).some(k=>w[k]>1-EPS)));
+  }
+  function setWeights(next){
+    next=normalisedObject(next.poverty,next.humanitarian,next.fiscal);
+    const issue=missingIssue(state.get().donor,next);
+    if(issue){showValidation(issue);return false}
+    showValidation('');state.set(next);return true;
+  }
+
+  async function ensureScenario(scenario,initial=false){
+    /* Gross drives the peer-coverage score and the viability test; grant-
+       equivalent is the donor's own projected allocation and the x axis. */
+    const names=[`scenarios/${scenario}/donor_recipient_year__gross`,
+                 `scenarios/${scenario}/donor_recipient_year__ge`];
+    if(names.every(n=>payload._blobs.has(n))){scenarioLoaded=scenario;return}
+    const area=document.getElementById('chartArea');
+    area.replaceChildren(element('div',{className:'loading',text:initial?'Loading allocations…':'Loading the selected system-wide rule…',attributes:{role:'status'}}));
+    await payload.blobs(names);scenarioLoaded=scenario;
+  }
+
+  function pinMap(s){
+    const pd=payload._blobs.get('tool/pinned_donor_index'),pr=payload._blobs.get('tool/pinned_recipient_index'),out=new Map();
+    const scenarioIndex=payload.scenarios.indexOf(s.scenario);
+    for(let i=0;i<pd.length;i++)if(payload.axes.donor[pd[i]]===s.donor){const recipient=payload.axes.recipient[pr[i]],value=payload.at('tool/pinned_ge',{scenario:scenarioIndex,pin:i,year:s.year});out.set(recipient,value)}
+    return out;
+  }
+
+  function coverage(s,weights){
+    const grossName=`scenarios/${s.scenario}/donor_recipient_year__gross`,recipients=payload.axes.recipient,donorsAxis=payload.axes.donor;
+    const peer=new Map(),focal=new Map();
+    recipients.forEach(r=>{let total=0,own=0;donorsAxis.forEach(d=>{const v=payload.at(grossName,{donor:d,recipient:r,year:s.year})||0;if(d===s.donor)own+=v;else total+=v});peer.set(r,total);focal.set(r,own)});
+    const components={};
+    Object.keys(OBJECTIVES).forEach(kind=>{
+      const valid=recipients.filter(r=>Number.isFinite(payload.at(`tool/need_${kind}`,{recipient:r}))),needTotal=d3.sum(valid,r=>Math.max(0,payload.at(`tool/need_${kind}`,{recipient:r}))),peerTotal=d3.sum(valid,r=>peer.get(r));
+      const raw=new Map(valid.map(r=>{const share=needTotal>0?Math.max(0,payload.at(`tool/need_${kind}`,{recipient:r}))/needTotal:0;return[r,Math.max(0,share*peerTotal-peer.get(r))]}));
+      const positive=[...raw.values()].filter(v=>v>0).sort(d3.ascending),p95=d3.quantileSorted(positive,.95)||1;
+      components[kind]={raw,score:new Map(valid.map(r=>[r,Math.min(1,(raw.get(r)||0)/p95)]))};
+    });
+    return{peer,focal,components,score:r=>d3.sum(Object.keys(weights),k=>weights[k]*(components[k].score.get(r)||0)),gap:r=>d3.sum(Object.keys(weights),k=>weights[k]*(components[k].raw.get(r)||0))};
+  }
+
+  function allocateDesired(anchor,score,target){
+    const total=d3.sum(anchor);if(!anchor.length)return[];if(Math.abs(target-total)<=EPS)return anchor.slice();
+    if(target>total){let weights=anchor.map((v,i)=>v*Math.exp(LAMBDA*score[i])),sum=d3.sum(weights);if(sum<=EPS){weights=score.map(q=>Math.exp(LAMBDA*q));sum=d3.sum(weights)}return anchor.map((v,i)=>v+(target-total)*weights[i]/sum)}
+    let cut=total-target,weights=anchor.map((v,i)=>v*Math.exp(-LAMBDA*score[i])),result=anchor.slice(),active=result.map(()=>true);
+    while(cut>EPS&&active.some(Boolean)){
+      const ids=active.map((v,i)=>v?i:-1).filter(i=>i>=0),sum=d3.sum(ids,i=>weights[i]);
+      let closed=false;
+      ids.forEach(i=>{const proposed=cut*(sum>EPS?weights[i]/sum:1/ids.length);if(proposed>=result[i]-EPS){cut-=result[i];result[i]=0;active[i]=false;closed=true}});
+      if(!closed){ids.forEach(i=>{result[i]-=cut*(sum>EPS?weights[i]/sum:1/ids.length)});cut=0}
+    }
+    return result.map(v=>v<EPS?0:v);
+  }
+
+  function projectBox(desired,target,closed){
+    const n=desired.length,scaleFloor=Math.max(target/Math.max(n,1)*1e-4,1e-8),scale=desired.map(v=>Math.max(v,scaleFloor));
+    const alloc=mu=>desired.map((v,i)=>closed.has(i)?0:Math.max(0,v+mu*scale[i]));
+    let lo=0,hi=0,at0=d3.sum(alloc(0));
+    if(at0>target){lo=-1;while(d3.sum(alloc(lo))>target)lo*=2}
+    else{hi=1;while(d3.sum(alloc(hi))<target)hi*=2}
+    for(let i=0;i<200;i++){const mid=(lo+hi)/2;if(d3.sum(alloc(mid))<target)lo=mid;else hi=mid;if(hi-lo<=1e-15*Math.max(1,Math.abs(hi)))break}
+    return alloc((lo+hi)/2);
+  }
+
+  function solve(s,weights,cov){
+    const pins=pinMap(s),support=supportRecipients(s.donor),free=support.filter(r=>!pins.has(r)),envelope=payload.at('tool/envelope_ge',{scenario:payload.scenarios.indexOf(s.scenario),donor:s.donor,year:s.year}),pinnedTotal=d3.sum(pins.values()),target=Math.max(0,envelope-pinnedTotal);
+    const anchor=free.map(r=>payload.at('tool/baseline_recipient_ge',{donor:s.donor,recipient:r})),scores=free.map(r=>cov.score(r)),desired=allocateDesired(anchor,scores,target),grossTotal=d3.sum(cov.focal.values()),ratio=envelope>EPS?grossTotal/envelope:1;
+    const closed=new Set();let allocation=desired.slice();
+    for(let iteration=0;iteration<=free.length;iteration++){
+      allocation=closed.size?projectBox(desired,target,closed):desired.slice();
+      const candidates=free.map((r,i)=>({r,i,value:allocation[i],score:scores[i],floor:payload.at('tool/country_floor_gross',{donor:s.donor,recipient:r})})).filter(x=>!closed.has(x.i)&&x.value>EPS&&x.value*ratio+EPS<x.floor);
+      if(!candidates.length)break;
+      candidates.sort((a,b)=>d3.ascending(a.score,b.score)||d3.ascending(a.value,b.value)||d3.ascending(a.r,b.r));closed.add(candidates[0].i);
+    }
+    const recommended=new Map();support.forEach(r=>recommended.set(r,pins.has(r)?pins.get(r):allocation[free.indexOf(r)]||0));
+    return{recommended,pins,envelope,pinnedTotal,discretionary:target,ratio,closed:new Set([...closed].map(i=>free[i]))};
+  }
+
+  function derive(s,weights){
+    const cov=coverage(s,weights),solution=solve(s,weights,cov),projected=new Map();
+    /* The audited grant-equivalent donor-recipient projection, read directly.
+       It sums exactly to tool/envelope_ge for every donor-year, so there is
+       nothing to rescale — an earlier build derived this axis by rescaling the
+       GROSS series to the envelope, which approximated a number the payload
+       already carries exactly. */
+    const geName=`scenarios/${s.scenario}/donor_recipient_year__ge`;
+    solution.recommended.forEach((_v,r)=>projected.set(r,payload.at(geName,{donor:s.donor,recipient:r,year:s.year})||0));
+    const viewRows=[...solution.recommended].map(([recipient,recommended])=>{const before=projected.get(recipient)||0,ratio=before>EPS?recommended/before:(recommended>EPS?Infinity:1),change=recommended-before;return{recipient,name:payload.recipientName(recipient),income:M.incomeGroup(payload,recipient),projected:before,recommended,ratio,change,gap:cov.gap(recipient),score:cov.score(recipient),held:solution.pins.has(recipient),closed:solution.closed.has(recipient)}});
+    return{rows:viewRows,solution,cov};
+  }
+
+  function schedule(fetchScenario=true){
+    const seq=++requestSeq,s={...state.get()};window.CGD_READY=false;
+    Promise.resolve().then(async()=>{if(fetchScenario&&scenarioLoaded!==s.scenario)await ensureScenario(s.scenario);if(seq!==requestSeq)return;render(s)}).catch(error=>{if(seq===requestSeq){P.renderFailState(document.getElementById('chartPanel'),error);window.CGD_READY=true}});
+  }
+
+  function render(s){
+    const weights=currentWeights(),current=derive(s,weights);rows=current.rows;
+    if(comparison?.context&&(comparison.context.scenario!==s.scenario||comparison.context.donor!==s.donor||comparison.context.year!==s.year))comparison=null;
+    if(comparison&&!comparison.rows){const issue=missingIssue(s.donor,comparison.weights);if(issue)comparison=null;else comparison={...comparison,...derive(s,comparison.weights)}}
+    syncObjective();updateUrl(s);renderNotes(s,current);renderChart(s,current);renderSummary(s,current);syncPinButton(current);window.CGD_READY=true;
+  }
+
+  function renderNotes(s,current){
+
+    const none=current.solution.discretionary<=EPS,node=document.getElementById('discretionNote');node.hidden=!none;node.textContent=none?'There is no discretionary allocation under this system-wide rule and year; every recipient allocation is policy-held.':'';
+    const gap=noPriorityNote(s.donor,currentWeights()),gapNode=document.getElementById('noPriorityNote');gapNode.hidden=!gap;gapNode.textContent=gap;
+  }
+
+  /* ---------------------------------------------------------------- sector diagnostic
+     A DESCRIPTIVE drill-down, not part of the optimisation. The tool allocates by
+     recipient and imputes sectors from the donor's observed 2024 mix, so the
+     donor's own percentage change is identical across every sector within a
+     recipient - which is exactly why the donor's own change cannot be an axis here.
+     What can be shown is where the donor already works and where its peers are
+     pulling out, which is the judgement a desk officer would actually make with
+     this tool open. Nothing here feeds back into the recommendation.
+
+     Peer figures are GROSS, as peer coverage is throughout the tool. */
+  const poss = name => /s$/i.test(name) ? `${name}\u2019` : `${name}\u2019s`;
+
+  async function openSectorDiagnostic(iso, trigger) {
+    const s = state.get();
+    const donorName = payload.donorName(s.donor), recipientName = payload.recipientName(iso);
+    const dialog = UI.modal(`${recipientName}: 2024 ${donorName} sector funding versus peers\u2019 cuts`,
+      { host: document.getElementById('popupHost'), returnFocusTo: trigger });
+    const body = element('div', { className: 'sector-diag' });
+    dialog.card.append(body);
+    body.append(element('p', { className: 'lead', text: 'Loading sector detail\u2026',
+      attributes: { role: 'status' } }));
+
+    let base, proj;
+    try {
+      [base, proj] = await Promise.all([
+        M.cubeCells(payload, { measure: 'gross', year: M.BASELINE_YEAR, recipient: iso }),
+        M.cubeCells(payload, { scenario: s.scenario, measure: 'gross', year: s.year, recipient: iso })
+      ]);
+    } catch (error) {
+      body.replaceChildren(element('p', { className: 'lead',
+        text: `Sector detail could not be loaded: ${error.message}` }));
+      return;
+    }
+    if (!dialog.card.isConnected) return;   /* closed while loading */
+
+    const own2024 = new Map(), peer2024 = new Map(), peerNow = new Map();
+    const add = (map, k, v) => map.set(k, (map.get(k) || 0) + v);
+    for (const c of base) (c.donor === s.donor ? add(own2024, c.sector, c.value)
+                                              : add(peer2024, c.sector, c.value));
+    for (const c of proj) { if (c.donor !== s.donor) add(peerNow, c.sector, c.value); }
+
+    const ownTotal = [...own2024.values()].reduce((z, v) => z + v, 0);
+    const rowsFor = [...own2024.entries()]
+      .map(([sector, own]) => {
+        const p0 = peer2024.get(sector) || 0, p1 = peerNow.get(sector) || 0;
+        return { sector, name: payload.sectorName(sector), own,
+                 share: ownTotal > 0 ? own / ownTotal : null,
+                 peer2024: p0, peerNow: p1,
+                 peerChange: p0 > 0 ? (p1 - p0) / p0 : null };
+      })
+      .filter(r => r.own > 0)
+      .sort((a, b) => b.own - a.own);
+
+    const scored = rowsFor.filter(r => r.peerChange != null);
+    const noPeers = rowsFor.filter(r => r.peerChange == null);
+
+    body.replaceChildren(element('p', { className: 'lead', text:
+      `Each dot is a sector ${donorName} already funded in ${recipientName} in 2024, sized by ` +
+      `that amount.` }));
+
+    if (!scored.length) {
+      body.append(element('p', { className: 'foot', text: ownTotal > 0
+        ? `No sector in ${recipientName} has a 2024 peer baseline to compare, so there is no peer change to plot.`
+        : `${donorName} funded no sector in ${recipientName} in 2024.` }));
+      return;
+    }
+
+    /* Peers cannot cut by more than 100%; large increases come off small peer
+       bases and would flatten everything else, so the axis is capped and the
+       capped sectors are named rather than quietly moved. */
+    const CAP = 2;
+    const capped = scored.filter(r => r.peerChange > CAP);
+    const lo = Math.min(-1, ...scored.map(r => r.peerChange));
+    const hi = Math.min(CAP, Math.max(0.1, ...scored.map(r => r.peerChange)));
+    const w = 640, h = 348, m = { top: 46, right: 22, bottom: 52, left: 58 };
+    const x = d3.scaleLinear([lo, hi], [m.left, w - m.right]).clamp(true);
+    const yMax = Math.max(...scored.map(r => r.share || 0)) * 1.15 || 1;
+    const y = d3.scaleLinear([0, yMax], [h - m.bottom, m.top]);
+    const rad = d3.scaleSqrt([0, Math.max(...scored.map(r => r.own))], [4, 17]);
+
+    const svg = d3.select(body.appendChild(
+      document.createElementNS('http://www.w3.org/2000/svg', 'svg')))
+      .attr('viewBox', `0 0 ${w} ${h}`).attr('role', 'img')
+      .attr('aria-label', `Peer change by sector for ${donorName} in ${recipientName}`);
+
+    svg.append('g').attr('class', 'axis').attr('transform', `translate(0,${h - m.bottom})`)
+      .call(d3.axisBottom(x).ticks(6).tickFormat(v => M.percent(v, { decimals: 0 })).tickSizeOuter(0));
+    svg.append('g').attr('class', 'axis').attr('transform', `translate(${m.left},0)`)
+      .call(d3.axisLeft(y).ticks(5).tickFormat(v => M.percent(v, { decimals: 0 }))
+        .tickSize(-(w - m.left - m.right)).tickSizeOuter(0))
+      .call(g => g.select('.domain').remove())
+      .call(g => g.selectAll('line').attr('class', 'grid'));
+    if (lo < 0 && hi > 0) svg.append('line').attr('class', 'zero')
+      .attr('x1', x(0)).attr('x2', x(0)).attr('y1', m.top - 6).attr('y2', h - m.bottom);
+
+    svg.append('text').attr('class', 'small-text quadrant').attr('x', m.left).attr('y', m.top - 10)
+      .text('\u2190 peers cutting');
+    svg.append('text').attr('class', 'small-text quadrant').attr('x', w - m.right).attr('y', m.top - 10)
+      .attr('text-anchor', 'end').text('peers increasing \u2192');
+    svg.append('text').attr('class', 'axis-title').attr('x', (m.left + w - m.right) / 2)
+      .attr('y', h - 6).attr('text-anchor', 'middle')
+      .text(`Change in other donors\u2019 gross ODA, 2024 to ${s.year}`);
+    svg.append('text').attr('class', 'axis-title').attr('x', 2).attr('y', 13)
+      .text(`Share of ${poss(donorName)} 2024 spending in ${recipientName}`);
+
+    svg.append('g').selectAll('circle').data(scored).join('circle')
+      .attr('class', 'dot')
+      .attr('cx', d => x(d.peerChange)).attr('cy', d => y(d.share || 0))
+      .attr('r', d => rad(d.own))
+      .attr('fill', d => window.CGDSet.sectorColour(d.sector))
+      .attr('fill-opacity', .85)
+      .attr('tabindex', 0).attr('role', 'img')
+      .attr('aria-label', d => `${d.name}: peers ${M.percent(d.peerChange,{decimals:1})}, ` +
+        `${M.percent(d.share,{decimals:1})} of ${donorName}\u2019s 2024 spend, ${M.usd(d.own)}`)
+      .append('title').text(d =>
+        `${d.name}\n${donorName} 2024: ${M.usd(d.own)} (${M.percent(d.share,{decimals:1})} of its ` +
+        `${recipientName} spending)\nOther donors 2024: ${M.usd(d.peer2024)}\n` +
+        `Other donors ${s.year}: ${M.usd(d.peerNow)}\nPeer change: ${M.percent(d.peerChange,{decimals:1})}`);
+
+    /* Only the four largest are labelled; the rest are in the tooltip. */
+    svg.append('g').selectAll('text.dot-label').data(scored.slice(0, 4)).join('text')
+      .attr('class', 'small-text dot-label')
+      .attr('x', d => x(d.peerChange)).attr('y', d => y(d.share || 0) - rad(d.own) - 4)
+      .attr('text-anchor', 'middle')
+      .text(d => d.name.length > 22 ? d.name.slice(0, 21) + '\u2026' : d.name);
+
+    const caveats = [`Peer figures are gross ODA, as peer coverage is throughout this tool.`];
+    if (capped.length) caveats.unshift(`${capped.length} sector${capped.length === 1 ? '' : 's'} ` +
+      `sit at the right-hand edge because peer funding more than trebled from a small 2024 base: ` +
+      `${capped.map(r => r.name).sort().join(', ')}.`);
+    if (noPeers.length) caveats.unshift(`${noPeers.length} sector${noPeers.length === 1 ? '' : 's'} ` +
+      `have no 2024 peer funding to compare and are not plotted: ` +
+      `${noPeers.map(r => r.name).sort().join(', ')}.`);
+    for (const line of caveats) body.append(element('p', { className: 'foot', text: line }));
+  }
+
+  function renderSummary(s,current){
+    /* The fixed-envelope caveat and the committed share are qualifications of the
+       sentence that reports the movement, so they follow it in the same paragraph
+       rather than standing as two more lines under the chart. */
+    const fixedNote=`Note that the focus donor’s projected ODA envelope is fixed, and peers’ allocation behaviour is fixed by announced commitments and scenario projections.`;
+    const committedNote=`${fmtUsd(current.solution.pinnedTotal)} of ${payload.donorName(s.donor)}’s ${fmtUsd(current.solution.envelope)} projected envelope is already committed and cannot move.`;
+    const up=current.rows.filter(r=>r.change>EPS),down=current.rows.filter(r=>r.change<-EPS),toward=d3.sum(up,r=>r.change),away=-d3.sum(down,r=>r.change),moved=(toward+away)/2,share=current.solution.discretionary>EPS?moved/current.solution.discretionary:0;
+    document.getElementById('summary').textContent=(current.solution.discretionary<=EPS?`No allocation can move for ${payload.donorName(s.donor)} in ${s.year} under ${s.scenario}.`:`${weightPhrase(currentWeights())}, this objective moves about ${fmtUsd(moved)} — ${M.percent(share)} of this donor’s discretionary envelope — toward ${up.length} recipients and away from ${down.length}.`)+` ${fixedNote} ${committedNote}`;
+  }
+
+  function renderChart(s,current){
+    const area=document.getElementById('chartArea');
+    if(!document.getElementById('chart')){const fresh=document.createElementNS('http://www.w3.org/2000/svg','svg');fresh.id='chart';fresh.setAttribute('role','img');fresh.setAttribute('aria-labelledby','panelTitle');area.replaceChildren(fresh)}
+    const data=current.rows,w=Math.max(280,Math.floor(area.clientWidth||width)),h=w<430?430:490,m={top:48,right:18,bottom:58,left:w<430?64:76},plotW=w-m.left-m.right,plotH=h-m.top-m.bottom,maxX=Math.max(10,d3.max(data,d=>Math.max(d.projected,d.recommended))||10),xFloor=.03,x=d3.scaleLog([xFloor,maxX*1.15],[m.left,w-m.right]).clamp(true),view=s.view;
+    const rawAbs=d3.max(data,d=>Math.abs(d.change))||1,absMax=Math.max(1,rawAbs*1.15),y=view==='pct'?d3.scaleLog([.1,10],[h-m.bottom,m.top]).clamp(true):d3.scaleSymlog().constant(Math.max(.05,absMax/30)).domain([-absMax,absMax]).range([h-m.bottom,m.top]);
+    const gapMax=d3.max(data,d=>d.gap)||1,r=d3.scaleSqrt([0,gapMax],[4,w<430?12:17]);
+    const svg=d3.select('#chart').attr('viewBox',`0 0 ${w} ${h}`).attr('height',h).style('height',`${h}px`);svg.selectAll('*').remove();
+    const tickCandidates=[.03,.05,.1,.2,.5,1,2,5,10,20,50,100,200,500,1000,2000,5000,10000].filter(v=>v>=xFloor&&v<=maxX*1.15),xTicks=C.thinTicks(tickCandidates,w<430?4:6),yTicks=view==='pct'?[.2,.5,1,2,5,10]:y.ticks(w<430?5:7);
+    svg.append('g').attr('class','axis').attr('transform',`translate(0,${h-m.bottom})`).call(d3.axisBottom(x).tickValues(xTicks).tickFormat(v=>v<.1?d3.format('.2f')(v):v<1?d3.format('.1f')(v):d3.format('~s')(v)).tickSizeOuter(0));
+    svg.append('g').attr('class','axis').attr('transform',`translate(${m.left},0)`).call(d3.axisLeft(y).tickValues(yTicks).tickFormat(v=>view==='pct'?ratioLabel(v):fmtSigned(v)).tickSize(-plotW)).call(g=>g.select('.domain').remove());
+    const zeroY=y(view==='pct'?1:0);svg.append('line').attr('x1',m.left).attr('x2',w-m.right).attr('y1',zeroY).attr('y2',zeroY).attr('stroke','var(--cgd-dark-gray)').attr('stroke-dasharray','4 3');svg.append('text').attr('x',w-m.right).attr('y',zeroY-5).attr('text-anchor','end').attr('class','small-text ref-label').text('no change');
+    svg.append('text').attr('class','axis-title').attr('x',(m.left+w-m.right)/2).attr('y',h-7).attr('text-anchor','middle').text(w<430?'Projected allocation (GE US$m, log)':'Projected allocation before this objective (grant-equivalent US$m, log scale)');
+    svg.append('text').attr('class','axis-title').attr('x',m.left).attr('y',13).text(view==='pct'?(w<430?'Recommended change (log ratio)':'Recommended change (log-ratio scale)'):(w<430?'Recommended change (GE US$m, symlog)':'Recommended change (grant-equivalent US$m, symlog scale)'));
+    if(comparison?.rows){const by=new Map(comparison.rows.map(d=>[d.recipient,d]));svg.append('g').selectAll('line').data(data.filter(d=>by.has(d.recipient)&&!d.held)).join('line').attr('x1',d=>x(Math.max(xFloor,d.projected))).attr('x2',d=>x(Math.max(xFloor,d.projected))).attr('y1',d=>pointY(d,view,y)).attr('y2',d=>pointY(by.get(d.recipient),view,y)).attr('stroke','var(--cgd-blue)').attr('stroke-opacity',.25);svg.append('g').selectAll('circle').data(data.filter(d=>by.has(d.recipient)&&!d.held)).join('circle').attr('cx',d=>x(Math.max(xFloor,d.projected))).attr('cy',d=>pointY(by.get(d.recipient),view,y)).attr('r',d=>r(d.gap)+2).attr('fill','none').attr('stroke','var(--cgd-blue)').attr('stroke-width',1.2).attr('opacity',.65)}
+    const marks=svg.append('g').selectAll('circle.current').data(data).join('circle').attr('class','current point').attr('cx',d=>x(Math.max(xFloor,d.projected))).attr('cy',d=>d.held?zeroY:pointY(d,view,y)).attr('r',d=>r(d.gap)).attr('fill',d=>d.held?'#fff':d.change>=0?'var(--cgd-light-teal)':'var(--cgd-gold)').attr('stroke',d=>d.held?'var(--cgd-dark-gray)':'#fff').attr('stroke-dasharray',d=>d.held?'3 2':null).attr('stroke-width',d=>d.held?1.5:1).attr('tabindex',0).attr('aria-label',d=>tooltipText(d)).on('pointerenter',(event,d)=>showTooltip(event,d)).on('pointermove',event=>positionTooltip(event)).on('pointerleave',()=>hideTooltip()).on('focus',(event,d)=>showTooltip(event,d)).on('blur',()=>hideTooltip()).on('click',function(event,d){event.stopPropagation();hideTooltip();openSectorDiagnostic(d.recipient,this)}).on('keydown',function(event,d){if(event.key==='Enter'||event.key===' '){event.preventDefault();hideTooltip();openSectorDiagnostic(d.recipient,this)}});
+    /* Selecting a mark opens the sector diagnostic rather than pinning the
+       tooltip; the dialog carries its own Escape and outside-click dismissal
+       through UI.modal, so there is no pinned state here to manage. */
+    const labelCount=w<520?4:9,extreme=data.filter(d=>!d.held).slice().sort((a,b)=>d3.descending(Math.abs(logRatio(a.ratio)),Math.abs(logRatio(b.ratio)))||d3.descending(Math.max(a.projected,a.recommended),Math.max(b.projected,b.recommended))),selected=[];
+    extreme.slice(0,Math.ceil(labelCount*.65)).forEach(d=>selected.push(d));data.slice().sort((a,b)=>d3.descending(Math.max(a.projected,a.recommended),Math.max(b.projected,b.recommended))).forEach(d=>{if(selected.length<labelCount&&!selected.includes(d)&&!d.held)selected.push(d)});
+    const labelText=d=>w<430?({'Democratic Republic of the Congo':'DR Congo','Saint Vincent and the Grenadines':'St Vincent & Grenadines'}[d.name]||d.name):d.name,labelEnds=d=>x(Math.max(xFloor,d.projected))+7+labelText(d).length*5.8>w-m.right;
+    const labelData=w<430?selected.filter(d=>pointY(d,view,y)<h-m.bottom-55):selected,labels=svg.append('g').selectAll('text').data(labelData).join('text').attr('class','small-text outlier-label').attr('x',d=>x(Math.max(xFloor,d.projected))+(labelEnds(d)?-7:7)).attr('y',d=>pointY(d,view,y)-5).attr('text-anchor',d=>labelEnds(d)?'end':'start').text(labelText),occupied=[...svg.selectAll('.axis text,.axis-title,.ref-label').nodes()].map(n=>n.getBBox());
+    /* Bubbles are obstacles too. Testing labels only against axis text let an
+       outlier label sit on top of a mark, which is the collision a reader
+       actually notices. */
+    marks.each(function(d){const r=Number(this.getAttribute('r'))||0,cx=Number(this.getAttribute('cx')),cy=Number(this.getAttribute('cy'));
+      occupied.push({x:cx-r,y:cy-r,width:r*2,height:r*2});});
+    labels.each(function(){const box=this.getBBox(),hit=occupied.some(other=>box.x<other.x+other.width+3&&box.x+box.width+3>other.x&&box.y<other.y+other.height+3&&box.y+box.height+3>other.y);if(hit)this.remove();else occupied.push(box)});
+    marks.raise();
+  }
+
+  function pointY(d,view,y){if(view==='abs')return y(d.change);const ratio=Number.isFinite(d.ratio)?d.ratio:(d.recommended>EPS?10:1);return y(Math.max(.1,Math.min(10,ratio)))}
+  function logRatio(ratio){if(ratio===Infinity)return Math.log(10);return Math.log(Math.max(.1,Math.min(10,ratio||.1)))}
+  function ratioLabel(v){const pct=(v-1)*100;return`${pct>0?'+':''}${Math.round(pct)}%`}
+  function fmtSigned(v){if(Math.abs(v)<EPS)return'0';return`${v>0?'+':''}${d3.format(v<10?'.1f':'.0f')(v)}`}
+  /* Defers to the set-wide formatter so the tool agrees with every other figure;
+     only sub-US$10m values need the extra precision this tool works at. */
+  function fmtUsd(v){if(!Number.isFinite(v))return M.MISSING_TEXT;if(Math.abs(v)<10&&v!==0)return`US$${d3.format('.2~f')(v)}m`;return M.usd(v)}
+  function pctChange(d){if(d.projected<=EPS)return d.recommended<=EPS?'0%':'new/reopened';return`${d.change/d.projected>0?'+':''}${d3.format('.1f')(d.change/d.projected*100)}%`}
+  function tooltipText(d){return`${d.name}. Projected allocation ${fmtUsd(d.projected)}. Change ${pctChange(d)}. Recommended allocation ${fmtUsd(d.recommended)}. Peer funding gap ${fmtUsd(d.gap)}. Income group ${d.income}.`}
+  function showTooltip(event,d){const tip=document.getElementById('tooltip');tip.replaceChildren(element('strong',{text:d.name}),element('div',{className:'tooltip-grid'},[element('span',{text:'Projected allocation'}),element('b',{text:fmtUsd(d.projected)}),element('span',{text:'Change implied'}),element('b',{text:d.held?'0% (policy-held)':pctChange(d)}),element('span',{text:'Recommended allocation'}),element('b',{text:fmtUsd(d.recommended)}),element('span',{text:'Peer funding gap'}),element('b',{text:fmtUsd(d.gap)}),element('span',{text:'Income group'}),element('b',{text:d.income})]));tip.hidden=false;positionTooltip(event)}
+  function positionTooltip(event){const tip=document.getElementById('tooltip'),pad=10,box=tip.getBoundingClientRect(),cx=event.clientX??innerWidth/2,cy=event.clientY??innerHeight/2;tip.style.left=`${Math.max(pad,Math.min(innerWidth-box.width-pad,cx+12))}px`;tip.style.top=`${Math.max(pad,Math.min(innerHeight-box.height-pad,cy+12))}px`}
+  function hideTooltip(){document.getElementById('tooltip').hidden=true}
+
+  function toggleComparison(){
+    if(comparison){comparison=null;showValidation('');schedule(false);return}
+    const s=state.get();comparison={weights:{...currentWeights()},rows:rows.map(d=>({...d})),context:{scenario:s.scenario,donor:s.donor,year:s.year}};showValidation('');schedule(false);
+  }
+  function syncPinButton(current){const b=document.getElementById('pinButton');b.disabled=current.solution.discretionary<=EPS;b.textContent=comparison?'Clear comparison':'Pin this allocation'}
+  function updateUrl(s){
+    const q=new URLSearchParams();q.set('scenario',s.scenario);q.set('donor',s.donor);q.set('year',s.year);q.set('p',s.poverty.toFixed(4));q.set('h',s.humanitarian.toFixed(4));q.set('f',s.fiscal.toFixed(4));q.set('view',s.view);if(comparison?.weights){q.set('pp',comparison.weights.poverty.toFixed(4));q.set('ph',comparison.weights.humanitarian.toFixed(4));q.set('pf',comparison.weights.fiscal.toFixed(4))}history.replaceState(null,'',`${location.pathname}?${q}`)
+  }
+
+  window.ODA_F16={state,rows:()=>rows,comparison:()=>comparison,derive,solve,coverage,missingIssue,setWeights};
+})();
+</script>
+<script src="shared/cgd-embed.js"></script>
+</body>
+</html>

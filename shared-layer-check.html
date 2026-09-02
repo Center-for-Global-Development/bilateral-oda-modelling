@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en" data-cgd-interactive-name="oda-shared-layer-check" data-cgd-harness="true">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shared layer check — bilateral ODA figures</title>
+<link rel="stylesheet" href="shared/cgd-figure.css">
+<link rel="stylesheet" href="shared/cgd-responsive.css">
+<link rel="stylesheet" href="shared/oda-figure.css">
+<style>
+  .check-list { margin: 0; padding: 0; list-style: none; }
+  .check-list li { display: grid; grid-template-columns: 46px minmax(0, 1fr);
+                   gap: 8px; padding: 3px 0; border-bottom: 1px solid #EDF2F3;
+                   font-size: 11.5px; line-height: 1.35; }
+  .check-flag { font-weight: 700; }
+  .check-pass { color: #1F7A5C; }
+  .check-fail { color: #C4463B; }
+  .check-detail { color: var(--cgd-dark-gray, #4A4A4A); }
+</style>
+</head>
+<body>
+<div class="viz-wrapper">
+
+  <div class="title-block">
+    <h1 class="panel-title">Shared layer check</h1>
+    <p class="viz-sub">Exercises the payload client, the 2024 convention, the
+      missing-denominator rule, the shared controls and the notes block against the
+      live payload. Not a published figure.</p>
+  </div>
+
+  <div class="controls" id="controls" aria-label="Shared control demonstration"></div>
+
+  <div class="panel">
+    <div class="panel-header"><h2 class="panel-title">Contract checks</h2></div>
+    <div class="chart-area">
+      <ul class="check-list" id="checks"></ul>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header"><h2 class="panel-title">Derived values</h2></div>
+    <div class="chart-area"><div id="readout"></div></div>
+  </div>
+
+  <div id="notes"></div>
+</div>
+
+<script src="shared/dom.js"></script>
+<script src="shared/chart-core.js"></script>
+<script src="shared/oda-payload.js"></script>
+<script src="shared/oda-model.js"></script>
+<script src="shared/oda-ui.js"></script>
+<script>
+(async () => {
+  'use strict';
+  const { element } = window.CGDDom;
+  const P = window.ODAPayload, M = window.ODAModel, UI = window.ODAUI;
+
+  const list = document.getElementById('checks');
+  const results = [];
+  function check(name, fn) {
+    let ok = false, detail = '';
+    try { const out = fn(); ok = out === true || out?.ok === true; detail = out?.detail || ''; }
+    catch (error) { ok = false; detail = error.message; }
+    results.push({ name, ok, detail });
+    list.append(element('li', {}, [
+      element('span', { className: `check-flag ${ok ? 'check-pass' : 'check-fail'}`,
+                        text: ok ? 'PASS' : 'FAIL' }),
+      element('span', {}, [
+        element('span', { text: name }),
+        ...(detail ? [element('div', { className: 'check-detail', text: detail })] : [])
+      ])
+    ]));
+    return ok;
+  }
+
+  let payload;
+  try {
+    payload = await P.load();
+  } catch (error) {
+    P.renderFailState(document.getElementById('checks'), error);
+    window.ODA_CHECK = { ok: false, results: [{ name: 'payload load', ok: false,
+      detail: error.message }] };
+    return;
+  }
+
+  /* --- 0.1 payload client ------------------------------------------------- */
+  check('Manifest loads and every axis hash verifies', () => ({
+    ok: true, detail: `${payload.release}; axes: ${Object.keys(payload.axes).join(', ')}`
+  }));
+
+  check('Donor axis carries 50 providers including EU Institutions', () => ({
+    ok: payload.axes.donor.length === 50 && payload.has('donor', '4EU001'),
+    detail: `${payload.axes.donor.length} donors`
+  }));
+
+  check('Recipient axis is 141 and Kuwait is gone', () => ({
+    ok: payload.axes.recipient.length === 141 && !payload.has('recipient', 'KWT'),
+    detail: `${payload.axes.recipient.length} recipients`
+  }));
+
+  check('Unknown axis value throws rather than returning -1', () => {
+    try { payload.indexOf('recipient', 'ZZZ'); return { ok: false, detail: 'did not throw' }; }
+    catch { return true; }
+  });
+
+  await payload.blobs([
+    'static/baseline_gross__recipient',
+    'scenarios/S1/recipient_year__gross',
+    'scenarios/S7/recipient_year__gross',
+    'tool/need_poverty',
+    'tool/need_humanitarian'
+  ]);
+  check('Blobs inflate and match sha256_raw', () => ({
+    ok: true, detail: 'baseline_gross__recipient, S1 + S7 recipient_year__gross, ' +
+                      'need_poverty, need_humanitarian'
+  }));
+
+  check('Reading a blob before it is loaded throws rather than returning a wrong number', () => {
+    try {
+      payload.at('tool/need_fiscal', { recipient: 'KEN' });
+      return { ok: false, detail: 'did not throw' };
+    } catch (error) { return { ok: true, detail: error.message }; }
+  });
+
+  let supportOk = false;
+  try { supportOk = await payload.verifySupport('cube2024'); } catch (e) { supportOk = e.message; }
+  check('2024 cube support index verifies before any cube read',
+        () => ({ ok: supportOk === true, detail: typeof supportOk === 'string' ? supportOk : '' }));
+
+  check('A corrupt blob name is refused, not guessed', () => {
+    try { payload.entry('scenarios/S1/does_not_exist'); return { ok: false, detail: 'no throw' }; }
+    catch { return true; }
+  });
+
+  /* --- 2024 convention ---------------------------------------------------- */
+  const years = M.displayYears(payload);
+  check('Display years put observed 2024 in front of the projection axis',
+        () => ({ ok: years.length === 5 && years[0] === 2024 && years[4] === 2028,
+                 detail: years.join(', ') }));
+
+  const ken24 = M.valueAt(payload, 'recipient', { scenario: 'S1', measure: 'gross', year: 2024 },
+                          { recipient: 'KEN' });
+  const ken28s1 = M.valueAt(payload, 'recipient', { scenario: 'S1', measure: 'gross', year: 2028 },
+                            { recipient: 'KEN' });
+  const ken28s7 = M.valueAt(payload, 'recipient', { scenario: 'S7', measure: 'gross', year: 2028 },
+                            { recipient: 'KEN' });
+  check('2024 resolves to the baseline blob and is scenario-invariant', () => {
+    const alt = M.valueAt(payload, 'recipient', { scenario: 'S7', measure: 'gross', year: 2024 },
+                          { recipient: 'KEN' });
+    return { ok: alt === ken24 && ken24 > 0,
+             detail: `Kenya 2024 = US$${ken24.toFixed(1)}m under both S1 and S7` };
+  });
+  check('Projected years differ between allocation rules', () => ({
+    ok: ken28s1 !== ken28s7,
+    detail: `Kenya 2028: S1 US$${ken28s1.toFixed(1)}m vs S7 US$${ken28s7.toFixed(1)}m`
+  }));
+
+  /* --- 0.2 missing denominators ------------------------------------------- */
+  const yem = M.denominator(payload, 'YEM', 'gni');
+  const ssd = M.denominator(payload, 'SSD', 'gni');
+  const ken = M.denominator(payload, 'KEN', 'gni');
+  check('Yemen and South Sudan report GNI as unavailable, not zero', () => ({
+    ok: !yem.available && !ssd.available && yem.value === null && ssd.value === null,
+    detail: `Yemen ${yem.available ? 'available' : 'unavailable'}, ` +
+            `South Sudan ${ssd.available ? 'available' : 'unavailable'}`
+  }));
+  check('A present denominator is returned as a positive number', () => ({
+    ok: ken.available && ken.value > 0, detail: `Kenya GNI US$${(ken.value / 1e9).toFixed(1)}bn`
+  }));
+
+  const part = M.partitionByDenominator(payload, payload.axes.recipient, 'gni');
+  check('Recipients missing a denominator are counted, not dropped silently', () => ({
+    ok: part.missing.length > 0 && part.shown.length + part.missing.length === part.total,
+    detail: `${M.nShownText(part)}; missing: ${part.missing.join(', ')}`
+  }));
+
+  const partRev = M.partitionByDenominator(payload, payload.axes.recipient, 'revenue');
+  check('n shown changes with the denominator, as the notes must state', () => ({
+    ok: partRev.shown.length !== part.shown.length,
+    detail: `GNI ${part.shown.length} shown; government revenue ${partRev.shown.length} shown`
+  }));
+
+  const needYem = M.needMass(payload, 'YEM', 'humanitarian');
+  check('NaN need masses read as unavailable rather than zero', () => ({
+    ok: needYem.available === Number.isFinite(needYem.value),
+    detail: `Yemen humanitarian need ${needYem.available ? 'available' : 'unavailable'}`
+  }));
+
+  check('Missing values format as text, never as 0', () => ({
+    ok: M.usd(null) === M.MISSING_TEXT && M.percent(NaN) === M.MISSING_TEXT,
+    detail: `renders as “${M.MISSING_TEXT}”`
+  }));
+
+  /* --- 0.3 controls ------------------------------------------------------- */
+  const state = UI.createState(
+    { scenario: 'S1', measure: 'gross', year: 2028, sort: 'loss', unit: 'usd', recipient: 'KEN' },
+    { dependents: { scenario: ['sort'] } }
+  );
+
+  const scenario = UI.scenarioSelect(state);
+  const measure = UI.measureToggle(state, s => s.unit);
+  const yearCtl = UI.yearControl(state, years);
+  const sort = UI.sortSelect(state, [
+    { value: 'loss', label: 'Loss, largest first' },
+    { value: 'volume', label: '2024 volume' }
+  ]);
+  document.getElementById('controls').append(scenario, measure, yearCtl, sort);
+
+  check('Selection persists across a scenario change', () => {
+    const before = state.get().recipient;
+    state.set({ scenario: 'S5' });
+    const after = state.get().recipient;
+    state.set({ scenario: 'S1' });
+    return { ok: before === after, detail: `recipient stayed ${after}` };
+  });
+
+  check('Measure toggle hides itself when the view is not in US$', () => {
+    state.set({ unit: 'percent' }); measure.sync();
+    const hidden = measure.hidden;
+    state.set({ unit: 'usd' }); measure.sync();
+    return { ok: hidden === true && measure.hidden === false, detail: 'hidden on %, shown on US$' };
+  });
+
+  check('Sort re-selects the population rather than reordering a stale subset', () => {
+    const rows = [{ id: 'a', loss: 5, vol: 1 }, { id: 'b', loss: 1, vol: 9 },
+                  { id: 'c', loss: 3, vol: 4 }];
+    const byLoss = UI.applySort(rows, { compare: (x, y) => y.loss - x.loss, limit: 2 })
+      .map(r => r.id).join('');
+    const byVol = UI.applySort(rows, { compare: (x, y) => y.vol - x.vol, limit: 2 })
+      .map(r => r.id).join('');
+    return { ok: byLoss === 'ac' && byVol === 'bc',
+             detail: `by loss ${byLoss}; by volume ${byVol} — b enters on re-selection` };
+  });
+
+  /* --- readout ------------------------------------------------------------ */
+  const readout = document.getElementById('readout');
+  const s = state.get();
+  await payload.blobs(M.seriesBlobNames('recipient', s));
+  const lines = [
+    `Release: ${payload.release}`,
+    `Kenya, ${s.year}, ${M.scenarioInfo(s.scenario).label}: ` +
+      `${M.usd(M.valueAt(payload, 'recipient', s, { recipient: 'KEN' }))}`,
+    `Kenya GNI: ${ken.available ? M.usd(ken.value / 1e6, { unit: 'bn' }) : M.MISSING_TEXT}`,
+    `Yemen GNI: ${yem.available ? 'available' : M.MISSING_TEXT}`,
+    `Sector 700: ${payload.sectorName(700)}`,
+    `Donor 4EU001: ${payload.donorName('4EU001')}`,
+    `${M.nShownText(part)} on a GNI denominator`
+  ];
+  for (const line of lines) readout.append(element('p', { className: 'notes', text: line }));
+
+  /* --- 0.4 notes ---------------------------------------------------------- */
+  document.getElementById('notes').append(UI.notes({
+    visible: [`${M.nShownText(part)}. Yemen and South Sudan have no GNI in the model inputs.`],
+    notes: [UI.STANDARD_NOTES.prices, UI.STANDARD_NOTES.unallocable,
+            UI.STANDARD_NOTES.baselineYear, UI.STANDARD_NOTES.peersFixed],
+    source: `Source: CGD modelling, ${payload.release}.`
+  }));
+
+  const failed = results.filter(r => !r.ok);
+  window.ODA_CHECK = { ok: failed.length === 0, total: results.length,
+                       failed: failed.length, results };
+  console.log(`[shared-layer-check] ${results.length - failed.length}/${results.length} passed`);
+})();
+</script>
+<script src="shared/cgd-embed.js"></script>
+</body>
+</html>

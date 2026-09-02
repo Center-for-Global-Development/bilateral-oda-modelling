@@ -1,0 +1,7186 @@
+{
+  "schema_version": "1.1.0",
+  "model_build": "static-v2.2.9-swe-exit-scope",
+  "scope_document": "SCOPE.md",
+  "binary_contract": {
+    "byte_order": "little-endian",
+    "element_order": "C (row-major), dimensions as listed per blob",
+    "compression": "gzip, mtime zeroed so identical content hashes identically",
+    "absent_cell_semantics": "zero means no flow, not missing",
+    "nan_semantics": "NaN appears only in tool/need_* and means the need mass is unavailable for that recipient. Treat it as unknown, never as zero, and block any objective weighting that would consume it.",
+    "gross_ge_tolerance_usd_mn": 0.0001,
+    "consumer_rule": "Verify every axis hash before indexing. On any mismatch, refuse to render rather than guess."
+  },
+  "axes": {
+    "donor": {
+      "values": [
+        "4EU001",
+        "ARE",
+        "AUS",
+        "AUT",
+        "AZE",
+        "BEL",
+        "BGR",
+        "CAN",
+        "CHE",
+        "CYP",
+        "CZE",
+        "DEU",
+        "DNK",
+        "ESP",
+        "EST",
+        "FIN",
+        "FRA",
+        "GBR",
+        "GRC",
+        "HRV",
+        "HUN",
+        "IRL",
+        "ISL",
+        "ISR",
+        "ITA",
+        "JPN",
+        "KAZ",
+        "KOR",
+        "KWT",
+        "LIE",
+        "LTU",
+        "LUX",
+        "LVA",
+        "MCO",
+        "MLT",
+        "NLD",
+        "NOR",
+        "NZL",
+        "POL",
+        "PRT",
+        "QAT",
+        "ROU",
+        "SAU",
+        "SVK",
+        "SVN",
+        "SWE",
+        "THA",
+        "TUR",
+        "TWN",
+        "USA"
+      ],
+      "length": 50,
+      "sha256": "6c13d0df1bfb43bb0c83443ca6acd51998da4aaad6da34228fb1069e62d28ce4"
+    },
+    "recipient": {
+      "values": [
+        "AFG",
+        "AGO",
+        "ALB",
+        "ARG",
+        "ARM",
+        "AZE",
+        "BDI",
+        "BEN",
+        "BFA",
+        "BGD",
+        "BIH",
+        "BLR",
+        "BLZ",
+        "BOL",
+        "BRA",
+        "BTN",
+        "BWA",
+        "CAF",
+        "CHN",
+        "CIV",
+        "CMR",
+        "COD",
+        "COG",
+        "COL",
+        "COM",
+        "CPV",
+        "CRI",
+        "CUB",
+        "DJI",
+        "DMA",
+        "DOM",
+        "DZA",
+        "ECU",
+        "EGY",
+        "ERI",
+        "ETH",
+        "FJI",
+        "FSM",
+        "GAB",
+        "GEO",
+        "GHA",
+        "GIN",
+        "GMB",
+        "GNB",
+        "GNQ",
+        "GRD",
+        "GTM",
+        "GUY",
+        "HND",
+        "HTI",
+        "IDN",
+        "IND",
+        "IRN",
+        "IRQ",
+        "JAM",
+        "JOR",
+        "KAZ",
+        "KEN",
+        "KGZ",
+        "KHM",
+        "KIR",
+        "LAO",
+        "LBN",
+        "LBR",
+        "LBY",
+        "LCA",
+        "LKA",
+        "LSO",
+        "MAR",
+        "MDA",
+        "MDG",
+        "MDV",
+        "MEX",
+        "MHL",
+        "MKD",
+        "MLI",
+        "MMR",
+        "MNE",
+        "MNG",
+        "MOZ",
+        "MRT",
+        "MSR",
+        "MUS",
+        "MWI",
+        "MYS",
+        "NAM",
+        "NER",
+        "NGA",
+        "NIC",
+        "NIU",
+        "NPL",
+        "NRU",
+        "PAK",
+        "PAN",
+        "PER",
+        "PHL",
+        "PLW",
+        "PNG",
+        "PRK",
+        "PRY",
+        "PSE",
+        "RWA",
+        "SDN",
+        "SEN",
+        "SHN",
+        "SLB",
+        "SLE",
+        "SLV",
+        "SOM",
+        "SRB",
+        "SSD",
+        "STP",
+        "SUR",
+        "SWZ",
+        "SYR",
+        "TCD",
+        "TGO",
+        "THA",
+        "TJK",
+        "TKL",
+        "TKM",
+        "TLS",
+        "TON",
+        "TUN",
+        "TUR",
+        "TUV",
+        "TZA",
+        "UGA",
+        "UKR",
+        "UZB",
+        "VCT",
+        "VEN",
+        "VNM",
+        "VUT",
+        "WLF",
+        "WSM",
+        "XKV",
+        "YEM",
+        "ZAF",
+        "ZMB",
+        "ZWE"
+      ],
+      "length": 141,
+      "sha256": "1ba8fb2d9a75012f2a3e65955aceb8bb85f5e595264f93b7ad25f56bc81f18b9"
+    },
+    "sector": {
+      "values": [
+        110,
+        120,
+        130,
+        140,
+        150,
+        160,
+        210,
+        220,
+        230,
+        240,
+        250,
+        310,
+        320,
+        331,
+        332,
+        410,
+        430,
+        510,
+        520,
+        530,
+        700
+      ],
+      "length": 21,
+      "sha256": "67cf8235878be5ad4fc00278949053ba26b01bef54a7a7dc10c076800afc8666"
+    },
+    "year": {
+      "values": [
+        2025,
+        2026,
+        2027,
+        2028
+      ],
+      "length": 4,
+      "sha256": "b5993ac107555a3f57e58a499f2a099afec0a76deb663a051a7c54853d566506"
+    },
+    "specification_category": {
+      "values": [
+        "recipient_and_sector_specified",
+        "recipient_specified_sector_missing",
+        "region_only",
+        "wholly_unspecified"
+      ],
+      "length": 4,
+      "sha256": "69b6dc3f63bd8673f08c86545bd192f4a72219e8d893453135bd3797a0e4add8"
+    },
+    "total_oda_year": {
+      "values": [
+        2024,
+        2025,
+        2026,
+        2027,
+        2028
+      ],
+      "length": 5,
+      "sha256": "6a0ee625af6dcf15fbbd6fd6d49d166a419bbe4ec300658b26a4f4ae4e1e88b0"
+    }
+  },
+  "year_convention": "axes.year contains projection years 2025-2028 only. Observed 2024 is served by static/baseline_* and cube/baseline__* on the separate cube/support2024__* support. static/total_oda_* uses axes.total_oda_year.",
+  "scenarios": [
+    "S1",
+    "S2A",
+    "S2B",
+    "S3A",
+    "S3B",
+    "S4",
+    "S5",
+    "S6A",
+    "S6B",
+    "S7"
+  ],
+  "closure_reasons": {
+    "1": "viability",
+    "2": "donor announcement"
+  },
+  "cube": {
+    "purpose": "The full donor x recipient x sector x year allocation, for charts the five aggregate grains cannot serve.",
+    "encoding": "sparse: one shared support index, one value array per scenario and measure",
+    "populated_cells": 79845,
+    "dense_cells": 592200,
+    "support_sha256": "f773e82d917229d05385929e8fd23a5bb7101a1841b8f0d68f730898c76e596a",
+    "support_order": "donor-major, then recipient, sector, year",
+    "donor_slicing": "cube/support__donor_offsets gives exact CSR boundaries: donor i occupies cells [offsets[i], offsets[i+1]).",
+    "absent_cell_semantics": "A key outside the support, or a zero within it, means no allocation. The support is the union across all ten scenarios, so a cell one scenario does not populate is present and reads zero.",
+    "loading": "Not part of the eager payload. Fetch cube/<scenario>__<measure> on demand; one scenario in both measures is about 519 KB gzipped.",
+    "consumer_rule": "Verify support_sha256 against the concatenated support index arrays, in the order donor, recipient, sector, year, before using any value array. On mismatch refuse to render: a value array is meaningless without the index it was built against."
+  },
+  "cube2024": {
+    "purpose": "Observed 2024 donor x recipient x sector allocation baseline.",
+    "populated_cells": 19940,
+    "support_sha256": "d62d4ab0bd5848e716c86b78db3c421e9cbf890226bb3ebda50e6cdcf48fc9ef",
+    "support_order": "donor-major, then recipient, sector",
+    "consumer_rule": "Verify support_sha256 against cube/support2024__donor_index, recipient_index and sector_index before reading cube/baseline__*."
+  },
+  "donor_meta": {
+    "4EU001": {
+      "name": "EU Institutions",
+      "dac_member": 0,
+      "eu_institution": 1,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": false,
+      "include_in_sovereign_effort_total": false,
+      "focus_donor": true
+    },
+    "ARE": {
+      "name": "United Arab Emirates",
+      "dac_member": 0,
+      "eu_institution": 0,
+      "model_status": "static_contextual",
+      "is_cutting_donor": 0,
+      "static_envelope": 1,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "AUS": {
+      "name": "Australia",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "AUT": {
+      "name": "Austria",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "AZE": {
+      "name": "Azerbaijan",
+      "dac_member": 0,
+      "eu_institution": 0,
+      "model_status": "static_contextual",
+      "is_cutting_donor": 0,
+      "static_envelope": 1,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "BEL": {
+      "name": "Belgium",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "BGR": {
+      "name": "Bulgaria",
+      "dac_member": 0,
+      "eu_institution": 0,
+      "model_status": "static_contextual",
+      "is_cutting_donor": 0,
+      "static_envelope": 1,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "CAN": {
+      "name": "Canada",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "CHE": {
+      "name": "Switzerland",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "CYP": {
+      "name": "Cyprus",
+      "dac_member": 0,
+      "eu_institution": 0,
+      "model_status": "static_contextual",
+      "is_cutting_donor": 0,
+      "static_envelope": 1,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "CZE": {
+      "name": "Czechia",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "DEU": {
+      "name": "Germany",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "DNK": {
+      "name": "Denmark",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "ESP": {
+      "name": "Spain",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "EST": {
+      "name": "Estonia",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "FIN": {
+      "name": "Finland",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "FRA": {
+      "name": "France",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "GBR": {
+      "name": "United Kingdom",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "GRC": {
+      "name": "Greece",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "HRV": {
+      "name": "Croatia",
+      "dac_member": 0,
+      "eu_institution": 0,
+      "model_status": "static_contextual",
+      "is_cutting_donor": 0,
+      "static_envelope": 1,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "HUN": {
+      "name": "Hungary",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "IRL": {
+      "name": "Ireland",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "ISL": {
+      "name": "Iceland",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "ISR": {
+      "name": "Israel",
+      "dac_member": 0,
+      "eu_institution": 0,
+      "model_status": "static_contextual",
+      "is_cutting_donor": 0,
+      "static_envelope": 1,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "ITA": {
+      "name": "Italy",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "JPN": {
+      "name": "Japan",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "KAZ": {
+      "name": "Kazakhstan",
+      "dac_member": 0,
+      "eu_institution": 0,
+      "model_status": "static_contextual",
+      "is_cutting_donor": 0,
+      "static_envelope": 1,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "KOR": {
+      "name": "Korea",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "KWT": {
+      "name": "Kuwait",
+      "dac_member": 0,
+      "eu_institution": 0,
+      "model_status": "static_contextual",
+      "is_cutting_donor": 0,
+      "static_envelope": 1,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "LIE": {
+      "name": "Liechtenstein",
+      "dac_member": 0,
+      "eu_institution": 0,
+      "model_status": "static_contextual",
+      "is_cutting_donor": 0,
+      "static_envelope": 1,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "LTU": {
+      "name": "Lithuania",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "LUX": {
+      "name": "Luxembourg",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "LVA": {
+      "name": "Latvia",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "MCO": {
+      "name": "Monaco",
+      "dac_member": 0,
+      "eu_institution": 0,
+      "model_status": "static_contextual",
+      "is_cutting_donor": 0,
+      "static_envelope": 1,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "MLT": {
+      "name": "Malta",
+      "dac_member": 0,
+      "eu_institution": 0,
+      "model_status": "static_contextual",
+      "is_cutting_donor": 0,
+      "static_envelope": 1,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "NLD": {
+      "name": "Netherlands",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "NOR": {
+      "name": "Norway",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "NZL": {
+      "name": "New Zealand",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "POL": {
+      "name": "Poland",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "PRT": {
+      "name": "Portugal",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "QAT": {
+      "name": "Qatar",
+      "dac_member": 0,
+      "eu_institution": 0,
+      "model_status": "static_contextual",
+      "is_cutting_donor": 0,
+      "static_envelope": 1,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "ROU": {
+      "name": "Romania",
+      "dac_member": 0,
+      "eu_institution": 0,
+      "model_status": "static_contextual",
+      "is_cutting_donor": 0,
+      "static_envelope": 1,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "SAU": {
+      "name": "Saudi Arabia",
+      "dac_member": 0,
+      "eu_institution": 0,
+      "model_status": "static_contextual",
+      "is_cutting_donor": 0,
+      "static_envelope": 1,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "SVK": {
+      "name": "Slovak Republic",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "SVN": {
+      "name": "Slovenia",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "SWE": {
+      "name": "Sweden",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "THA": {
+      "name": "Thailand",
+      "dac_member": 0,
+      "eu_institution": 0,
+      "model_status": "static_contextual",
+      "is_cutting_donor": 0,
+      "static_envelope": 1,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "TUR": {
+      "name": "T\u00fcrkiye",
+      "dac_member": 0,
+      "eu_institution": 0,
+      "model_status": "static_contextual",
+      "is_cutting_donor": 0,
+      "static_envelope": 1,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "TWN": {
+      "name": "Chinese Taipei",
+      "dac_member": 0,
+      "eu_institution": 0,
+      "model_status": "static_contextual",
+      "is_cutting_donor": 0,
+      "static_envelope": 1,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    },
+    "USA": {
+      "name": "United States",
+      "dac_member": 1,
+      "eu_institution": 0,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
+      "gni_applicable": true,
+      "include_in_sovereign_effort_total": true,
+      "focus_donor": true
+    }
+  },
+  "sector_meta": {
+    "110": "Education",
+    "120": "Health",
+    "130": "Population policies/programmes and reproductive health",
+    "140": "Water supply and sanitation",
+    "150": "Government and civil society",
+    "160": "Other social infrastructure and services",
+    "210": "Transport and storage",
+    "220": "Communications",
+    "230": "Energy",
+    "240": "Banking and financial services",
+    "250": "Business and other services",
+    "310": "Agriculture, forestry and fishing",
+    "320": "Industry, mining and construction",
+    "331": "Trade policies and regulations",
+    "332": "Tourism",
+    "410": "General environment protection",
+    "430": "Other multisector",
+    "510": "General budget support",
+    "520": "Development food assistance",
+    "530": "Other commodity assistance",
+    "700": "Humanitarian aid"
+  },
+  "recipient_geometry_key": {
+    "mapping": {
+      "AFG": "004",
+      "AGO": "024",
+      "ALB": "008",
+      "ARG": "032",
+      "ARM": "051",
+      "AZE": "031",
+      "BDI": "108",
+      "BEN": "204",
+      "BFA": "854",
+      "BGD": "050",
+      "BIH": "070",
+      "BLR": "112",
+      "BLZ": "084",
+      "BOL": "068",
+      "BRA": "076",
+      "BTN": "064",
+      "BWA": "072",
+      "CAF": "140",
+      "CHN": "156",
+      "CIV": "384",
+      "CMR": "120",
+      "COD": "180",
+      "COG": "178",
+      "COL": "170",
+      "COM": "174",
+      "CPV": "132",
+      "CRI": "188",
+      "CUB": "192",
+      "DJI": "262",
+      "DMA": "212",
+      "DOM": "214",
+      "DZA": "012",
+      "ECU": "218",
+      "EGY": "818",
+      "ERI": "232",
+      "ETH": "231",
+      "FJI": "242",
+      "FSM": "583",
+      "GAB": "266",
+      "GEO": "268",
+      "GHA": "288",
+      "GIN": "324",
+      "GMB": "270",
+      "GNB": "624",
+      "GNQ": "226",
+      "GRD": "308",
+      "GTM": "320",
+      "GUY": "328",
+      "HND": "340",
+      "HTI": "332",
+      "IDN": "360",
+      "IND": "356",
+      "IRN": "364",
+      "IRQ": "368",
+      "JAM": "388",
+      "JOR": "400",
+      "KAZ": "398",
+      "KEN": "404",
+      "KGZ": "417",
+      "KHM": "116",
+      "KIR": "296",
+      "LAO": "418",
+      "LBN": "422",
+      "LBR": "430",
+      "LBY": "434",
+      "LCA": "662",
+      "LKA": "144",
+      "LSO": "426",
+      "MAR": "504",
+      "MDA": "498",
+      "MDG": "450",
+      "MDV": "462",
+      "MEX": "484",
+      "MHL": "584",
+      "MKD": "807",
+      "MLI": "466",
+      "MMR": "104",
+      "MNE": "499",
+      "MNG": "496",
+      "MOZ": "508",
+      "MRT": "478",
+      "MSR": "500",
+      "MUS": "480",
+      "MWI": "454",
+      "MYS": "458",
+      "NAM": "516",
+      "NER": "562",
+      "NGA": "566",
+      "NIC": "558",
+      "NIU": "570",
+      "NPL": "524",
+      "NRU": "520",
+      "PAK": "586",
+      "PAN": "591",
+      "PER": "604",
+      "PHL": "608",
+      "PLW": "585",
+      "PNG": "598",
+      "PRK": "408",
+      "PRY": "600",
+      "PSE": "275",
+      "RWA": "646",
+      "SDN": "729",
+      "SEN": "686",
+      "SHN": "654",
+      "SLB": "090",
+      "SLE": "694",
+      "SLV": "222",
+      "SOM": "706",
+      "SRB": "688",
+      "SSD": "728",
+      "STP": "678",
+      "SUR": "740",
+      "SWZ": "748",
+      "SYR": "760",
+      "TCD": "148",
+      "TGO": "768",
+      "THA": "764",
+      "TJK": "762",
+      "TKL": "772",
+      "TKM": "795",
+      "TLS": "626",
+      "TON": "776",
+      "TUN": "788",
+      "TUR": "792",
+      "TUV": "798",
+      "TZA": "834",
+      "UGA": "800",
+      "UKR": "804",
+      "UZB": "860",
+      "VCT": "670",
+      "VEN": "862",
+      "VNM": "704",
+      "VUT": "548",
+      "WLF": "876",
+      "WSM": "882",
+      "YEM": "887",
+      "ZAF": "710",
+      "ZMB": "894",
+      "ZWE": "716"
+    },
+    "approved_unmapped": {
+      "XKV": {
+        "reason": "Kosovo has no feature in the selected world-atlas geometry.",
+        "oda_2024_ge_usd_mn": 234.246989
+      }
+    },
+    "decision": "Kosovo remains in all model totals and non-map charts but is not shaded on the choropleth until the map bundle supplies a stable Kosovo feature."
+  },
+  "recipient_meta": {
+    "AFG": {
+      "name": "Afghanistan",
+      "region": "South Asia",
+      "income_group": "Low income",
+      "ldc": 1,
+      "gni_usd": 17854760027.0,
+      "population": 43844111.0,
+      "gov_revenue_usd": 2383248321.0
+    },
+    "AGO": {
+      "name": "Angola",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Lower middle income",
+      "ldc": 1,
+      "gni_usd": 117252556230.0,
+      "population": 39040039.0,
+      "gov_revenue_usd": 20408468197.0
+    },
+    "ALB": {
+      "name": "Albania",
+      "region": "Europe & Central Asia",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 30481959825.0,
+      "population": 2349580.0,
+      "gov_revenue_usd": 8189822985.0
+    },
+    "ARG": {
+      "name": "Argentina",
+      "region": "Latin America & Caribbean",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 669197425528.0,
+      "population": 45851378.0,
+      "gov_revenue_usd": 200308431867.0
+    },
+    "ARM": {
+      "name": "Armenia",
+      "region": "Europe & Central Asia",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 28372716200.0,
+      "population": 3086700.0,
+      "gov_revenue_usd": 7430611234.0
+    },
+    "AZE": {
+      "name": "Azerbaijan",
+      "region": "Europe & Central Asia",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 73951167059.0,
+      "population": 10246996.0,
+      "gov_revenue_usd": 28143773984.0
+    },
+    "BDI": {
+      "name": "Burundi",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Low income",
+      "ldc": 1,
+      "gni_usd": 3356671563.0,
+      "population": 14390003.0,
+      "gov_revenue_usd": 488816542.0
+    },
+    "BEN": {
+      "name": "Benin",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Lower middle income",
+      "ldc": 1,
+      "gni_usd": 24286348686.0,
+      "population": 14814460.0,
+      "gov_revenue_usd": 3574957954.0
+    },
+    "BFA": {
+      "name": "Burkina Faso",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Low income",
+      "ldc": 1,
+      "gni_usd": 26003645061.0,
+      "population": 24074580.0,
+      "gov_revenue_usd": 5399954766.0
+    },
+    "BGD": {
+      "name": "Bangladesh",
+      "region": "South Asia",
+      "income_group": "Lower middle income",
+      "ldc": 1,
+      "gni_usd": 481373981511.0,
+      "population": 175686899.0,
+      "gov_revenue_usd": 37308113709.0
+    },
+    "BIH": {
+      "name": "Bosnia and Herzegovina",
+      "region": "Europe & Central Asia",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 32600169887.0,
+      "population": 3140095.0,
+      "gov_revenue_usd": 13401180964.0
+    },
+    "BLR": {
+      "name": "Belarus",
+      "region": "Europe & Central Asia",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 92292540178.0,
+      "population": 9085991.0,
+      "gov_revenue_usd": 38657070182.0
+    },
+    "BLZ": {
+      "name": "Belize",
+      "region": "Latin America & Caribbean",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 3161950512.0,
+      "population": 422924.0,
+      "gov_revenue_usd": 786336098.0
+    },
+    "BOL": {
+      "name": "Bolivia",
+      "region": "Latin America & Caribbean",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 63063368437.0,
+      "population": 12581843.0,
+      "gov_revenue_usd": 17948344339.0
+    },
+    "BRA": {
+      "name": "Brazil",
+      "region": "Latin America & Caribbean",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 2205743179103.0,
+      "population": 212812405.0,
+      "gov_revenue_usd": 897425957175.0
+    },
+    "BTN": {
+      "name": "Bhutan",
+      "region": "South Asia",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 3383529296.0,
+      "population": 796682.0,
+      "gov_revenue_usd": 742847773.0
+    },
+    "BWA": {
+      "name": "Botswana",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 19216757474.0,
+      "population": 2562122.0,
+      "gov_revenue_usd": 5803397212.0
+    },
+    "CAF": {
+      "name": "Central African Republic",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Low income",
+      "ldc": 1,
+      "gni_usd": 3242395788.0,
+      "population": 5513282.0,
+      "gov_revenue_usd": 281015708.0
+    },
+    "CHN": {
+      "name": "China",
+      "region": "East Asia & Pacific",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 19384278970053.0,
+      "population": 1406585000.0,
+      "gov_revenue_usd": 5037238326250.0
+    },
+    "CIV": {
+      "name": "C\u00f4te d'Ivoire",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 94235813306.0,
+      "population": 32711547.0,
+      "gov_revenue_usd": 13863427186.0
+    },
+    "CMR": {
+      "name": "Cameroon",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 58012378538.0,
+      "population": 29879337.0,
+      "gov_revenue_usd": 10428389914.0
+    },
+    "COD": {
+      "name": "Democratic Republic of the Congo",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Low income",
+      "ldc": 1,
+      "gni_usd": 87661648133.0,
+      "population": 112832473.0,
+      "gov_revenue_usd": 13515704347.0
+    },
+    "COG": {
+      "name": "Congo",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 14601079025.0,
+      "population": 6484437.0,
+      "gov_revenue_usd": 6860775738.0
+    },
+    "COL": {
+      "name": "Colombia",
+      "region": "Latin America & Caribbean",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 449477904285.0,
+      "population": 53425635.0,
+      "gov_revenue_usd": 147837425425.0
+    },
+    "COM": {
+      "name": "Comoros",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Lower middle income",
+      "ldc": 1,
+      "gni_usd": 1824491068.0,
+      "population": 882847.0,
+      "gov_revenue_usd": 178312162.0
+    },
+    "CPV": {
+      "name": "Cabo Verde",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 3017027161.0,
+      "population": 527326.0,
+      "gov_revenue_usd": 636653966.0
+    },
+    "CRI": {
+      "name": "Costa Rica",
+      "region": "Latin America & Caribbean",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 93621121135.0,
+      "population": 5152950.0,
+      "gov_revenue_usd": 41030471171.0
+    },
+    "CUB": {
+      "name": "Cuba",
+      "region": "Latin America & Caribbean",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": null,
+      "population": 10937203.0,
+      "gov_revenue_usd": null
+    },
+    "DJI": {
+      "name": "Djibouti",
+      "region": "Middle East & North Africa",
+      "income_group": "Lower middle income",
+      "ldc": 1,
+      "gni_usd": 4737614693.0,
+      "population": 1184076.0,
+      "gov_revenue_usd": 762182748.0
+    },
+    "DMA": {
+      "name": "Dominica",
+      "region": "Latin America & Caribbean",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 705351852.0,
+      "population": 65871.0,
+      "gov_revenue_usd": 401312795.0
+    },
+    "DOM": {
+      "name": "Dominican Republic",
+      "region": "Latin America & Caribbean",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 119665023064.0,
+      "population": 11520487.0,
+      "gov_revenue_usd": 20019058336.0
+    },
+    "DZA": {
+      "name": "Algeria",
+      "region": "Middle East & North Africa",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 281607541094.0,
+      "population": 47435312.0,
+      "gov_revenue_usd": 66002223327.0
+    },
+    "ECU": {
+      "name": "Ecuador",
+      "region": "Latin America & Caribbean",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 126715535528.0,
+      "population": 18289896.0,
+      "gov_revenue_usd": 47781464082.0
+    },
+    "EGY": {
+      "name": "Egypt",
+      "region": "Middle East & North Africa",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 349408930232.0,
+      "population": 118365995.0,
+      "gov_revenue_usd": 76392184974.0
+    },
+    "ERI": {
+      "name": "Eritrea",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Low income",
+      "ldc": 1,
+      "gni_usd": null,
+      "population": 3607003.0,
+      "gov_revenue_usd": null
+    },
+    "ETH": {
+      "name": "Ethiopia",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Low income",
+      "ldc": 1,
+      "gni_usd": 126143243949.0,
+      "population": 135472051.0,
+      "gov_revenue_usd": 9923795751.0
+    },
+    "FJI": {
+      "name": "Fiji",
+      "region": "East Asia & Pacific",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 5827509463.0,
+      "population": 933154.0,
+      "gov_revenue_usd": 1312975988.0
+    },
+    "FSM": {
+      "name": "Micronesia",
+      "region": "East Asia & Pacific",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 553697600.0,
+      "population": 113683.0,
+      "gov_revenue_usd": 175520074.0
+    },
+    "GAB": {
+      "name": "Gabon",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 20891631221.0,
+      "population": 2593130.0,
+      "gov_revenue_usd": 4413415324.0
+    },
+    "GEO": {
+      "name": "Georgia",
+      "region": "Europe & Central Asia",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 35750340655.0,
+      "population": 3935766.0,
+      "gov_revenue_usd": 11480682737.0
+    },
+    "GHA": {
+      "name": "Ghana",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 107224848154.0,
+      "population": 35064272.0,
+      "gov_revenue_usd": 19336078490.0
+    },
+    "GIN": {
+      "name": "Guinea",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Lower middle income",
+      "ldc": 1,
+      "gni_usd": 27142419744.0,
+      "population": 15099727.0,
+      "gov_revenue_usd": 3663456944.0
+    },
+    "GMB": {
+      "name": "Gambia",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Low income",
+      "ldc": 1,
+      "gni_usd": 2559747118.0,
+      "population": 2822093.0,
+      "gov_revenue_usd": 379823073.0
+    },
+    "GNB": {
+      "name": "Guinea-Bissau",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Low income",
+      "ldc": 1,
+      "gni_usd": 2549069581.0,
+      "population": 2249515.0,
+      "gov_revenue_usd": 292380508.0
+    },
+    "GNQ": {
+      "name": "Equatorial Guinea",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 11610721634.0,
+      "population": 1938431.0,
+      "gov_revenue_usd": 3488954593.0
+    },
+    "GRD": {
+      "name": "Grenada",
+      "region": "Latin America & Caribbean",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 1341773229.0,
+      "population": 117303.0,
+      "gov_revenue_usd": 613774249.0
+    },
+    "GTM": {
+      "name": "Guatemala",
+      "region": "Latin America & Caribbean",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 121832769297.0,
+      "population": 18687881.0,
+      "gov_revenue_usd": 15308948153.0
+    },
+    "GUY": {
+      "name": "Guyana",
+      "region": "Latin America & Caribbean",
+      "income_group": "High income",
+      "ldc": 0,
+      "gni_usd": 22226007218.0,
+      "population": 835986.0,
+      "gov_revenue_usd": 4135187295.0
+    },
+    "HND": {
+      "name": "Honduras",
+      "region": "Latin America & Caribbean",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 36558824861.0,
+      "population": 11005850.0,
+      "gov_revenue_usd": 11158708812.0
+    },
+    "HTI": {
+      "name": "Haiti",
+      "region": "Latin America & Caribbean",
+      "income_group": "Lower middle income",
+      "ldc": 1,
+      "gni_usd": 32083817264.0,
+      "population": 11906095.0,
+      "gov_revenue_usd": 1615467229.0
+    },
+    "IDN": {
+      "name": "Indonesia",
+      "region": "East Asia & Pacific",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 1407196008382.0,
+      "population": 285721236.0,
+      "gov_revenue_usd": 219590746345.0
+    },
+    "IND": {
+      "name": "India",
+      "region": "South Asia",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 3906711841714.0,
+      "population": 1463865525.0,
+      "gov_revenue_usd": 781982180261.0
+    },
+    "IRN": {
+      "name": "Iran",
+      "region": "Middle East & North Africa",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 361889136552.0,
+      "population": 92417681.0,
+      "gov_revenue_usd": 70120849455.0
+    },
+    "IRQ": {
+      "name": "Iraq",
+      "region": "Middle East & North Africa",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 254798606537.0,
+      "population": 47020774.0,
+      "gov_revenue_usd": 77378751777.0
+    },
+    "JAM": {
+      "name": "Jamaica",
+      "region": "Latin America & Caribbean",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 22357114803.0,
+      "population": 2837077.0,
+      "gov_revenue_usd": 6925725312.0
+    },
+    "JOR": {
+      "name": "Jordan",
+      "region": "Middle East & North Africa",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 60657799014.0,
+      "population": 11520684.0,
+      "gov_revenue_usd": 21444371873.0
+    },
+    "KAZ": {
+      "name": "Kazakhstan",
+      "region": "Europe & Central Asia",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 284104931358.0,
+      "population": 20843754.0,
+      "gov_revenue_usd": 66764868154.0
+    },
+    "KEN": {
+      "name": "Kenya",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 133806688702.0,
+      "population": 57532493.0,
+      "gov_revenue_usd": 23626190657.0
+    },
+    "KGZ": {
+      "name": "Kyrgyzstan",
+      "region": "Europe & Central Asia",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 22369752069.0,
+      "population": 7343064.0,
+      "gov_revenue_usd": 6916294122.0
+    },
+    "KHM": {
+      "name": "Cambodia",
+      "region": "East Asia & Pacific",
+      "income_group": "Lower middle income",
+      "ldc": 1,
+      "gni_usd": 50363443786.0,
+      "population": 17847982.0,
+      "gov_revenue_usd": 7962713635.0
+    },
+    "KIR": {
+      "name": "Kiribati",
+      "region": "East Asia & Pacific",
+      "income_group": "Lower middle income",
+      "ldc": 1,
+      "gni_usd": 539397262.0,
+      "population": 136488.0,
+      "gov_revenue_usd": 295550114.0
+    },
+    "LAO": {
+      "name": "Lao People's Democratic Republic",
+      "region": "East Asia & Pacific",
+      "income_group": "Lower middle income",
+      "ldc": 1,
+      "gni_usd": 17278050750.0,
+      "population": 7873046.0,
+      "gov_revenue_usd": 2433352108.0
+    },
+    "LBN": {
+      "name": "Lebanon",
+      "region": "Middle East & North Africa",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 25703873441.0,
+      "population": 5849421.0,
+      "gov_revenue_usd": 3601073316.0
+    },
+    "LBR": {
+      "name": "Liberia",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Low income",
+      "ldc": 1,
+      "gni_usd": 4881938900.0,
+      "population": 5731206.0,
+      "gov_revenue_usd": 757819315.0
+    },
+    "LBY": {
+      "name": "Libya",
+      "region": "Middle East & North Africa",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 49916192300.0,
+      "population": 7458555.0,
+      "gov_revenue_usd": 35388201164.0
+    },
+    "LCA": {
+      "name": "Saint Lucia",
+      "region": "Latin America & Caribbean",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 2425744444.0,
+      "population": 180149.0,
+      "gov_revenue_usd": 575537283.0
+    },
+    "LKA": {
+      "name": "Sri Lanka",
+      "region": "South Asia",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 106802803147.0,
+      "population": 21756000.0,
+      "gov_revenue_usd": 8950603932.0
+    },
+    "LSO": {
+      "name": "Lesotho",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Lower middle income",
+      "ldc": 1,
+      "gni_usd": 3151686884.0,
+      "population": 2363325.0,
+      "gov_revenue_usd": 1069198045.0
+    },
+    "MAR": {
+      "name": "Morocco",
+      "region": "Middle East & North Africa",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 179878245703.0,
+      "population": 38430770.0,
+      "gov_revenue_usd": 59887429539.0
+    },
+    "MDA": {
+      "name": "Moldova",
+      "region": "Europe & Central Asia",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 20343909341.0,
+      "population": 2360527.0,
+      "gov_revenue_usd": 6569113297.0
+    },
+    "MDG": {
+      "name": "Madagascar",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Low income",
+      "ldc": 1,
+      "gni_usd": 19165450147.0,
+      "population": 32740678.0,
+      "gov_revenue_usd": 2333285471.0
+    },
+    "MDV": {
+      "name": "Maldives",
+      "region": "South Asia",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 6939732453.0,
+      "population": 529676.0,
+      "gov_revenue_usd": 2280859384.0
+    },
+    "MEX": {
+      "name": "Mexico",
+      "region": "Latin America & Caribbean",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 1776305335401.0,
+      "population": 131946900.0,
+      "gov_revenue_usd": 419140962479.0
+    },
+    "MHL": {
+      "name": "Marshall Islands",
+      "region": "East Asia & Pacific",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 364000000.0,
+      "population": 36282.0,
+      "gov_revenue_usd": 81923810.0
+    },
+    "MKD": {
+      "name": "North Macedonia",
+      "region": "Europe & Central Asia",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 18183139433.0,
+      "population": 1820909.0,
+      "gov_revenue_usd": 6346080692.0
+    },
+    "MLI": {
+      "name": "Mali",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Low income",
+      "ldc": 1,
+      "gni_usd": 29216350332.0,
+      "population": 25198821.0,
+      "gov_revenue_usd": 5846636113.0
+    },
+    "MMR": {
+      "name": "Myanmar",
+      "region": "East Asia & Pacific",
+      "income_group": "Lower middle income",
+      "ldc": 1,
+      "gni_usd": 79987773810.0,
+      "population": 54850648.0,
+      "gov_revenue_usd": 13551182758.0
+    },
+    "MNE": {
+      "name": "Montenegro",
+      "region": "Europe & Central Asia",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 9303872698.0,
+      "population": 623129.0,
+      "gov_revenue_usd": 3762063806.0
+    },
+    "MNG": {
+      "name": "Mongolia",
+      "region": "East Asia & Pacific",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 22522239146.0,
+      "population": 3568978.0,
+      "gov_revenue_usd": 8582379685.0
+    },
+    "MOZ": {
+      "name": "Mozambique",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Low income",
+      "ldc": 1,
+      "gni_usd": 20298584787.0,
+      "population": 35631653.0,
+      "gov_revenue_usd": 5486239658.0
+    },
+    "MRT": {
+      "name": "Mauritania",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Lower middle income",
+      "ldc": 1,
+      "gni_usd": 11621320368.0,
+      "population": 5315065.0,
+      "gov_revenue_usd": 2586030061.0
+    },
+    "MSR": {
+      "name": "Montserrat",
+      "region": "Latin America & Caribbean",
+      "income_group": "High income",
+      "ldc": 0,
+      "gni_usd": null,
+      "population": null,
+      "gov_revenue_usd": null
+    },
+    "MUS": {
+      "name": "Mauritius",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 17755453311.0,
+      "population": 1243741.0,
+      "gov_revenue_usd": 3843595443.0
+    },
+    "MWI": {
+      "name": "Malawi",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Low income",
+      "ldc": 1,
+      "gni_usd": 14756725420.0,
+      "population": 22216120.0,
+      "gov_revenue_usd": 2145908516.0
+    },
+    "MYS": {
+      "name": "Malaysia",
+      "region": "East Asia & Pacific",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 455977279560.0,
+      "population": 35977838.0,
+      "gov_revenue_usd": 78699251223.0
+    },
+    "NAM": {
+      "name": "Namibia",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 14170883306.0,
+      "population": 3092816.0,
+      "gov_revenue_usd": 4764795586.0
+    },
+    "NER": {
+      "name": "Niger",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Low income",
+      "ldc": 1,
+      "gni_usd": 21330594774.0,
+      "population": 27917831.0,
+      "gov_revenue_usd": 2252194160.0
+    },
+    "NGA": {
+      "name": "Nigeria",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 281704192171.0,
+      "population": 237527782.0,
+      "gov_revenue_usd": 25430860142.0
+    },
+    "NIC": {
+      "name": "Nicaragua",
+      "region": "Latin America & Caribbean",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 21031157113.0,
+      "population": 7007502.0,
+      "gov_revenue_usd": 6325470778.0
+    },
+    "NIU": {
+      "name": "Niue",
+      "region": "East Asia & Pacific",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": null,
+      "population": null,
+      "gov_revenue_usd": null
+    },
+    "NPL": {
+      "name": "Nepal",
+      "region": "South Asia",
+      "income_group": "Lower middle income",
+      "ldc": 1,
+      "gni_usd": 46065540648.0,
+      "population": 29618118.0,
+      "gov_revenue_usd": 8627295509.0
+    },
+    "NRU": {
+      "name": "Nauru",
+      "region": "East Asia & Pacific",
+      "income_group": "High income",
+      "ldc": 0,
+      "gni_usd": 250468739.0,
+      "population": 12025.0,
+      "gov_revenue_usd": 143027387.0
+    },
+    "PAK": {
+      "name": "Pakistan",
+      "region": "South Asia",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 398207214476.0,
+      "population": 255219554.0,
+      "gov_revenue_usd": 46550826139.0
+    },
+    "PAN": {
+      "name": "Panama",
+      "region": "Latin America & Caribbean",
+      "income_group": "High income",
+      "ldc": 0,
+      "gni_usd": 86074833401.0,
+      "population": 4571189.0,
+      "gov_revenue_usd": 16464193200.0
+    },
+    "PER": {
+      "name": "Peru",
+      "region": "Latin America & Caribbean",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 312161545072.0,
+      "population": 34576665.0,
+      "gov_revenue_usd": 71889524937.0
+    },
+    "PHL": {
+      "name": "Philippines",
+      "region": "East Asia & Pacific",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 559930093023.0,
+      "population": 116786962.0,
+      "gov_revenue_usd": 98416797945.0
+    },
+    "PLW": {
+      "name": "Palau",
+      "region": "East Asia & Pacific",
+      "income_group": "High income",
+      "ldc": 0,
+      "gni_usd": 351400000.0,
+      "population": 17663.0,
+      "gov_revenue_usd": 152724320.0
+    },
+    "PNG": {
+      "name": "Papua New Guinea",
+      "region": "East Asia & Pacific",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 30160658654.0,
+      "population": 10762817.0,
+      "gov_revenue_usd": 4985803136.0
+    },
+    "PRK": {
+      "name": "Korea, Dem. People's Rep.",
+      "region": "East Asia & Pacific",
+      "income_group": "Low income",
+      "ldc": 0,
+      "gni_usd": null,
+      "population": 26571036.0,
+      "gov_revenue_usd": null
+    },
+    "PRY": {
+      "name": "Paraguay",
+      "region": "Latin America & Caribbean",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 47346592808.0,
+      "population": 7013078.0,
+      "gov_revenue_usd": 8966133428.0
+    },
+    "PSE": {
+      "name": "West Bank and Gaza Strip",
+      "region": "Middle East & North Africa",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 18245600000.0,
+      "population": 5413596.0,
+      "gov_revenue_usd": null
+    },
+    "RWA": {
+      "name": "Rwanda",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Low income",
+      "ldc": 1,
+      "gni_usd": 16011146337.0,
+      "population": 14569341.0,
+      "gov_revenue_usd": 3169733848.0
+    },
+    "SDN": {
+      "name": "Sudan",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Low income",
+      "ldc": 1,
+      "gni_usd": 58614383548.0,
+      "population": 51662147.0,
+      "gov_revenue_usd": 2310531404.0
+    },
+    "SEN": {
+      "name": "Senegal",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Lower middle income",
+      "ldc": 1,
+      "gni_usd": 34537521494.0,
+      "population": 18931966.0,
+      "gov_revenue_usd": 7867933035.0
+    },
+    "SHN": {
+      "name": "Saint Helena",
+      "region": "Sub-Saharan Africa",
+      "income_group": "nan",
+      "ldc": 0,
+      "gni_usd": null,
+      "population": null,
+      "gov_revenue_usd": null
+    },
+    "SLB": {
+      "name": "Solomon Islands",
+      "region": "East Asia & Pacific",
+      "income_group": "Lower middle income",
+      "ldc": 1,
+      "gni_usd": 1751318939.0,
+      "population": 838645.0,
+      "gov_revenue_usd": 406262150.0
+    },
+    "SLE": {
+      "name": "Sierra Leone",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Low income",
+      "ldc": 1,
+      "gni_usd": 7413957906.0,
+      "population": 8819794.0,
+      "gov_revenue_usd": 598336990.0
+    },
+    "SLV": {
+      "name": "El Salvador",
+      "region": "Latin America & Caribbean",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 34211410000.0,
+      "population": 6365503.0,
+      "gov_revenue_usd": 10013512686.0
+    },
+    "SOM": {
+      "name": "Somalia",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Low income",
+      "ldc": 1,
+      "gni_usd": 12944200000.0,
+      "population": 19654739.0,
+      "gov_revenue_usd": 546693702.0
+    },
+    "SRB": {
+      "name": "Serbia",
+      "region": "Europe & Central Asia",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 93669728763.0,
+      "population": 6549143.0,
+      "gov_revenue_usd": 46018251585.0
+    },
+    "SSD": {
+      "name": "South Sudan",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Low income",
+      "ldc": 1,
+      "gni_usd": null,
+      "population": 12188788.0,
+      "gov_revenue_usd": null
+    },
+    "STP": {
+      "name": "Sao Tome and Principe",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 1062325758.0,
+      "population": 240254.0,
+      "gov_revenue_usd": 139481405.0
+    },
+    "SUR": {
+      "name": "Suriname",
+      "region": "Latin America & Caribbean",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 4194657769.0,
+      "population": 639850.0,
+      "gov_revenue_usd": 1207942583.0
+    },
+    "SWZ": {
+      "name": "Eswatini",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 4691814925.0,
+      "population": 1256174.0,
+      "gov_revenue_usd": 1445349347.0
+    },
+    "SYR": {
+      "name": "Syrian Arab Republic",
+      "region": "Middle East & North Africa",
+      "income_group": "Low income",
+      "ldc": 0,
+      "gni_usd": 22932930814.0,
+      "population": 25620427.0,
+      "gov_revenue_usd": 4948776309.0
+    },
+    "TCD": {
+      "name": "Chad",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Low income",
+      "ldc": 1,
+      "gni_usd": 20500249472.0,
+      "population": 21003705.0,
+      "gov_revenue_usd": 2396567075.0
+    },
+    "TGO": {
+      "name": "Togo",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Low income",
+      "ldc": 1,
+      "gni_usd": 11915668552.0,
+      "population": 8591626.0,
+      "gov_revenue_usd": 2198626685.0
+    },
+    "THA": {
+      "name": "Thailand",
+      "region": "East Asia & Pacific",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 562095014450.0,
+      "population": 71619863.0,
+      "gov_revenue_usd": 119896473059.0
+    },
+    "TJK": {
+      "name": "Tajikistan",
+      "region": "Europe & Central Asia",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 24557335181.0,
+      "population": 10786734.0,
+      "gov_revenue_usd": 4395757860.0
+    },
+    "TKL": {
+      "name": "Tokelau",
+      "region": "East Asia & Pacific",
+      "income_group": "nan",
+      "ldc": 0,
+      "gni_usd": null,
+      "population": null,
+      "gov_revenue_usd": null
+    },
+    "TKM": {
+      "name": "Turkmenistan",
+      "region": "Europe & Central Asia",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 50332496459.0,
+      "population": 7618847.0,
+      "gov_revenue_usd": 7194889109.0
+    },
+    "TLS": {
+      "name": "Timor-Leste",
+      "region": "East Asia & Pacific",
+      "income_group": "Lower middle income",
+      "ldc": 1,
+      "gni_usd": 2026080430.0,
+      "population": 1418517.0,
+      "gov_revenue_usd": 980104758.0
+    },
+    "TON": {
+      "name": "Tonga",
+      "region": "East Asia & Pacific",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 723351984.0,
+      "population": 103742.0,
+      "gov_revenue_usd": 179498983.0
+    },
+    "TUN": {
+      "name": "Tunisia",
+      "region": "Middle East & North Africa",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 56113423772.0,
+      "population": 12348573.0,
+      "gov_revenue_usd": 21961185207.0
+    },
+    "TUR": {
+      "name": "Turkey",
+      "region": "Europe & Central Asia",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 1574034229288.0,
+      "population": 85878556.0,
+      "gov_revenue_usd": 494209990888.0
+    },
+    "TUV": {
+      "name": "Tuvalu",
+      "region": "East Asia & Pacific",
+      "income_group": "Upper middle income",
+      "ldc": 1,
+      "gni_usd": 93353793.0,
+      "population": 9492.0,
+      "gov_revenue_usd": 47219490.0
+    },
+    "TZA": {
+      "name": "Tanzania",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Lower middle income",
+      "ldc": 1,
+      "gni_usd": 88069152014.0,
+      "population": 70545865.0,
+      "gov_revenue_usd": 12319179097.0
+    },
+    "UGA": {
+      "name": "Uganda",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Low income",
+      "ldc": 1,
+      "gni_usd": 60570387009.0,
+      "population": 51384894.0,
+      "gov_revenue_usd": 7671369243.0
+    },
+    "UKR": {
+      "name": "Ukraine",
+      "region": "Europe & Central Asia",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 212427312784.0,
+      "population": 38980376.0,
+      "gov_revenue_usd": 82417584522.0
+    },
+    "UZB": {
+      "name": "Uzbekistan",
+      "region": "Europe & Central Asia",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 147409506131.0,
+      "population": 37053428.0,
+      "gov_revenue_usd": 39598761485.0
+    },
+    "VCT": {
+      "name": "Saint Vincent and the Grenadines",
+      "region": "Latin America & Caribbean",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 1230170370.0,
+      "population": 99924.0,
+      "gov_revenue_usd": 340929617.0
+    },
+    "VEN": {
+      "name": "Venezuela",
+      "region": "Latin America & Caribbean",
+      "income_group": "nan",
+      "ldc": 0,
+      "gni_usd": 98061244156.0,
+      "population": 28516896.0,
+      "gov_revenue_usd": 8464324925.0
+    },
+    "VNM": {
+      "name": "Viet Nam",
+      "region": "East Asia & Pacific",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 500206158992.0,
+      "population": 101598527.0,
+      "gov_revenue_usd": 94594059974.0
+    },
+    "VUT": {
+      "name": "Vanuatu",
+      "region": "East Asia & Pacific",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 1486446260.0,
+      "population": 335169.0,
+      "gov_revenue_usd": 328322297.0
+    },
+    "WLF": {
+      "name": "Wallis and Futuna",
+      "region": "East Asia & Pacific",
+      "income_group": "nan",
+      "ldc": 0,
+      "gni_usd": null,
+      "population": null,
+      "gov_revenue_usd": null
+    },
+    "WSM": {
+      "name": "Samoa",
+      "region": "East Asia & Pacific",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 1285852895.0,
+      "population": 219306.0,
+      "gov_revenue_usd": 448878513.0
+    },
+    "XKV": {
+      "name": "Kosovo",
+      "region": "Europe & Central Asia",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": null,
+      "population": null,
+      "gov_revenue_usd": null
+    },
+    "YEM": {
+      "name": "Yemen",
+      "region": "Middle East & North Africa",
+      "income_group": "Low income",
+      "ldc": 1,
+      "gni_usd": null,
+      "population": 41773878.0,
+      "gov_revenue_usd": null
+    },
+    "ZAF": {
+      "name": "South Africa",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Upper middle income",
+      "ldc": 0,
+      "gni_usd": 418992808525.0,
+      "population": 64747319.0,
+      "gov_revenue_usd": 155216379789.0
+    },
+    "ZMB": {
+      "name": "Zambia",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Lower middle income",
+      "ldc": 1,
+      "gni_usd": 26313122398.0,
+      "population": 21913874.0,
+      "gov_revenue_usd": 6300069618.0
+    },
+    "ZWE": {
+      "name": "Zimbabwe",
+      "region": "Sub-Saharan Africa",
+      "income_group": "Lower middle income",
+      "ldc": 0,
+      "gni_usd": 50609511092.0,
+      "population": 16950795.0,
+      "gov_revenue_usd": 6625517127.0
+    }
+  },
+  "recipient_meta_note": "Denominators for the exposure ratios. Null means unavailable, and the interface must show the ratio as unavailable rather than substituting a value. Yemen and South Sudan have no source GNI and remain null rather than receiving a GDP proxy. Population is supplied where available.",
+  "total_oda_aggregation_rule": "Per-provider values include EU Institutions. Sovereign headline totals sum only donor_meta entries with include_in_sovereign_effort_total=true; adding EU Institutions would double count member-state contributions.",
+  "total_oda_gross_status": "Not emitted for 2025-2028. donor_envelopes.csv is a grant-equivalent series, while the documented pooled 2022-2024 GE-to-gross conversion applies to recipient-sector cells and cannot validly convert regional, core-multilateral or other total-ODA components. Scenario and baseline matrix gross blobs use the documented cell/instrument conversion.",
+  "coverage_note": "Share of each donor's ODA the recipient-level figures cover. A low of_total_oda can mean the donor gives multilaterally, which is a policy choice, not a reporting failure.",
+  "coverage_by_donor": {
+    "4EU001": {
+      "of_total_oda": 0.776004,
+      "of_allocable_bilateral": 0.814024,
+      "of_dac1_bilateral": 0.77611
+    },
+    "ARE": {
+      "of_total_oda": 0.903478,
+      "of_allocable_bilateral": 0.989138,
+      "of_dac1_bilateral": 0.916333
+    },
+    "AUS": {
+      "of_total_oda": 0.53436,
+      "of_allocable_bilateral": 0.759065,
+      "of_dac1_bilateral": 0.668513
+    },
+    "AUT": {
+      "of_total_oda": 0.133864,
+      "of_allocable_bilateral": 0.570689,
+      "of_dac1_bilateral": 0.258483
+    },
+    "AZE": {
+      "of_total_oda": 0.769388,
+      "of_allocable_bilateral": 0.922738,
+      "of_dac1_bilateral": 0.840514
+    },
+    "BEL": {
+      "of_total_oda": 0.189972,
+      "of_allocable_bilateral": 0.716705,
+      "of_dac1_bilateral": 0.41113
+    },
+    "BGR": {
+      "of_total_oda": 0.039568,
+      "of_allocable_bilateral": 0.938085,
+      "of_dac1_bilateral": 0.613642
+    },
+    "CAN": {
+      "of_total_oda": 0.3447,
+      "of_allocable_bilateral": 0.73471,
+      "of_dac1_bilateral": 0.422611
+    },
+    "CHE": {
+      "of_total_oda": 0.320106,
+      "of_allocable_bilateral": 0.677779,
+      "of_dac1_bilateral": 0.405202
+    },
+    "CYP": {
+      "of_total_oda": 0.245682,
+      "of_allocable_bilateral": 0.970471,
+      "of_dac1_bilateral": 0.700629
+    },
+    "CZE": {
+      "of_total_oda": 0.12873,
+      "of_allocable_bilateral": 0.984809,
+      "of_dac1_bilateral": 0.290039
+    },
+    "DEU": {
+      "of_total_oda": 0.230987,
+      "of_allocable_bilateral": 0.523818,
+      "of_dac1_bilateral": 0.305944
+    },
+    "DNK": {
+      "of_total_oda": 0.268855,
+      "of_allocable_bilateral": 0.567748,
+      "of_dac1_bilateral": 0.39359
+    },
+    "ESP": {
+      "of_total_oda": 0.169083,
+      "of_allocable_bilateral": 0.707171,
+      "of_dac1_bilateral": 0.417932
+    },
+    "EST": {
+      "of_total_oda": 0.271497,
+      "of_allocable_bilateral": 0.961901,
+      "of_dac1_bilateral": 0.675611
+    },
+    "FIN": {
+      "of_total_oda": 0.16381,
+      "of_allocable_bilateral": 0.600595,
+      "of_dac1_bilateral": 0.294065
+    },
+    "FRA": {
+      "of_total_oda": 0.237654,
+      "of_allocable_bilateral": 0.767439,
+      "of_dac1_bilateral": 0.422128
+    },
+    "GBR": {
+      "of_total_oda": 0.17669,
+      "of_allocable_bilateral": 0.430467,
+      "of_dac1_bilateral": 0.23638
+    },
+    "GRC": {
+      "of_total_oda": 0.039616,
+      "of_allocable_bilateral": 0.880054,
+      "of_dac1_bilateral": 0.223226
+    },
+    "HRV": {
+      "of_total_oda": 0.288333,
+      "of_allocable_bilateral": 0.82305,
+      "of_dac1_bilateral": 0.548752
+    },
+    "HUN": {
+      "of_total_oda": 0.282449,
+      "of_allocable_bilateral": 0.992633,
+      "of_dac1_bilateral": 0.34955
+    },
+    "IRL": {
+      "of_total_oda": 0.172209,
+      "of_allocable_bilateral": 0.671834,
+      "of_dac1_bilateral": 0.243705
+    },
+    "ISL": {
+      "of_total_oda": 0.427831,
+      "of_allocable_bilateral": 0.79747,
+      "of_dac1_bilateral": 0.529634
+    },
+    "ISR": {
+      "of_total_oda": 0.291614,
+      "of_allocable_bilateral": 0.811463,
+      "of_dac1_bilateral": 0.323705
+    },
+    "ITA": {
+      "of_total_oda": 0.128411,
+      "of_allocable_bilateral": 0.752117,
+      "of_dac1_bilateral": 0.273334
+    },
+    "JPN": {
+      "of_total_oda": 0.626483,
+      "of_allocable_bilateral": 0.817138,
+      "of_dac1_bilateral": 0.750544
+    },
+    "KAZ": {
+      "of_total_oda": 0.442863,
+      "of_allocable_bilateral": 0.739535,
+      "of_dac1_bilateral": 0.527642
+    },
+    "KOR": {
+      "of_total_oda": 0.597964,
+      "of_allocable_bilateral": 0.858231,
+      "of_dac1_bilateral": 0.755936
+    },
+    "KWT": {
+      "of_total_oda": 0.779904,
+      "of_allocable_bilateral": 0.990789,
+      "of_dac1_bilateral": 0.990038
+    },
+    "LIE": {
+      "of_total_oda": 0.49179,
+      "of_allocable_bilateral": 0.739896,
+      "of_dac1_bilateral": 0.508765
+    },
+    "LTU": {
+      "of_total_oda": 0.340692,
+      "of_allocable_bilateral": 0.838087,
+      "of_dac1_bilateral": 0.612202
+    },
+    "LUX": {
+      "of_total_oda": 0.422056,
+      "of_allocable_bilateral": 0.722051,
+      "of_dac1_bilateral": 0.596291
+    },
+    "LVA": {
+      "of_total_oda": 0.116815,
+      "of_allocable_bilateral": 0.974239,
+      "of_dac1_bilateral": 0.37843
+    },
+    "MCO": {
+      "of_total_oda": 0.577133,
+      "of_allocable_bilateral": 0.776025,
+      "of_dac1_bilateral": 0.641035
+    },
+    "MLT": {
+      "of_total_oda": 0.031666,
+      "of_allocable_bilateral": 0.160022,
+      "of_dac1_bilateral": 0.052859
+    },
+    "NLD": {
+      "of_total_oda": 0.141331,
+      "of_allocable_bilateral": 0.31727,
+      "of_dac1_bilateral": 0.203386
+    },
+    "NOR": {
+      "of_total_oda": 0.433645,
+      "of_allocable_bilateral": 0.676859,
+      "of_dac1_bilateral": 0.538
+    },
+    "NZL": {
+      "of_total_oda": 0.400223,
+      "of_allocable_bilateral": 0.554336,
+      "of_dac1_bilateral": 0.454805
+    },
+    "POL": {
+      "of_total_oda": 0.109371,
+      "of_allocable_bilateral": 0.979866,
+      "of_dac1_bilateral": 0.261113
+    },
+    "PRT": {
+      "of_total_oda": 0.169224,
+      "of_allocable_bilateral": 0.879905,
+      "of_dac1_bilateral": 0.573054
+    },
+    "QAT": {
+      "of_total_oda": 0.610569,
+      "of_allocable_bilateral": 0.917764,
+      "of_dac1_bilateral": 0.69284
+    },
+    "ROU": {
+      "of_total_oda": 0.050112,
+      "of_allocable_bilateral": 0.976239,
+      "of_dac1_bilateral": 0.1852
+    },
+    "SAU": {
+      "of_total_oda": 0.839702,
+      "of_allocable_bilateral": 0.987297,
+      "of_dac1_bilateral": 0.924262
+    },
+    "SVK": {
+      "of_total_oda": 0.089426,
+      "of_allocable_bilateral": 0.795399,
+      "of_dac1_bilateral": 0.464331
+    },
+    "SVN": {
+      "of_total_oda": 0.139233,
+      "of_allocable_bilateral": 0.820621,
+      "of_dac1_bilateral": 0.399524
+    },
+    "SWE": {
+      "of_total_oda": 0.358652,
+      "of_allocable_bilateral": 0.675144,
+      "of_dac1_bilateral": 0.549506
+    },
+    "THA": {
+      "of_total_oda": 0.285656,
+      "of_allocable_bilateral": 0.630334,
+      "of_dac1_bilateral": 0.451603
+    },
+    "TUR": {
+      "of_total_oda": 0.85123,
+      "of_allocable_bilateral": 0.956561,
+      "of_dac1_bilateral": 0.862369
+    },
+    "TWN": {
+      "of_total_oda": 0.076916,
+      "of_allocable_bilateral": 0.081239,
+      "of_dac1_bilateral": 0.076916
+    },
+    "USA": {
+      "of_total_oda": 0.516202,
+      "of_allocable_bilateral": 0.737854,
+      "of_dac1_bilateral": 0.574126
+    }
+  },
+  "donors_without_discretionary_allocation": [
+    {
+      "scenario": "S1",
+      "donor": "EST",
+      "year": 2025
+    },
+    {
+      "scenario": "S1",
+      "donor": "EST",
+      "year": 2026
+    },
+    {
+      "scenario": "S1",
+      "donor": "EST",
+      "year": 2027
+    },
+    {
+      "scenario": "S1",
+      "donor": "EST",
+      "year": 2028
+    },
+    {
+      "scenario": "S1",
+      "donor": "LTU",
+      "year": 2025
+    },
+    {
+      "scenario": "S1",
+      "donor": "LTU",
+      "year": 2026
+    },
+    {
+      "scenario": "S1",
+      "donor": "LTU",
+      "year": 2027
+    },
+    {
+      "scenario": "S1",
+      "donor": "LTU",
+      "year": 2028
+    },
+    {
+      "scenario": "S1",
+      "donor": "LVA",
+      "year": 2025
+    },
+    {
+      "scenario": "S1",
+      "donor": "LVA",
+      "year": 2026
+    },
+    {
+      "scenario": "S1",
+      "donor": "LVA",
+      "year": 2027
+    },
+    {
+      "scenario": "S1",
+      "donor": "LVA",
+      "year": 2028
+    },
+    {
+      "scenario": "S1",
+      "donor": "POL",
+      "year": 2025
+    },
+    {
+      "scenario": "S1",
+      "donor": "POL",
+      "year": 2026
+    },
+    {
+      "scenario": "S1",
+      "donor": "POL",
+      "year": 2027
+    },
+    {
+      "scenario": "S1",
+      "donor": "POL",
+      "year": 2028
+    },
+    {
+      "scenario": "S2A",
+      "donor": "EST",
+      "year": 2025
+    },
+    {
+      "scenario": "S2A",
+      "donor": "EST",
+      "year": 2026
+    },
+    {
+      "scenario": "S2A",
+      "donor": "EST",
+      "year": 2027
+    },
+    {
+      "scenario": "S2A",
+      "donor": "EST",
+      "year": 2028
+    },
+    {
+      "scenario": "S2A",
+      "donor": "LTU",
+      "year": 2025
+    },
+    {
+      "scenario": "S2A",
+      "donor": "LTU",
+      "year": 2026
+    },
+    {
+      "scenario": "S2A",
+      "donor": "LTU",
+      "year": 2027
+    },
+    {
+      "scenario": "S2A",
+      "donor": "LTU",
+      "year": 2028
+    },
+    {
+      "scenario": "S2A",
+      "donor": "LVA",
+      "year": 2025
+    },
+    {
+      "scenario": "S2A",
+      "donor": "LVA",
+      "year": 2026
+    },
+    {
+      "scenario": "S2A",
+      "donor": "LVA",
+      "year": 2027
+    },
+    {
+      "scenario": "S2A",
+      "donor": "LVA",
+      "year": 2028
+    },
+    {
+      "scenario": "S2A",
+      "donor": "POL",
+      "year": 2025
+    },
+    {
+      "scenario": "S2A",
+      "donor": "POL",
+      "year": 2026
+    },
+    {
+      "scenario": "S2A",
+      "donor": "POL",
+      "year": 2027
+    },
+    {
+      "scenario": "S2A",
+      "donor": "POL",
+      "year": 2028
+    },
+    {
+      "scenario": "S2B",
+      "donor": "EST",
+      "year": 2025
+    },
+    {
+      "scenario": "S2B",
+      "donor": "EST",
+      "year": 2026
+    },
+    {
+      "scenario": "S2B",
+      "donor": "EST",
+      "year": 2027
+    },
+    {
+      "scenario": "S2B",
+      "donor": "EST",
+      "year": 2028
+    },
+    {
+      "scenario": "S2B",
+      "donor": "LTU",
+      "year": 2025
+    },
+    {
+      "scenario": "S2B",
+      "donor": "LTU",
+      "year": 2026
+    },
+    {
+      "scenario": "S2B",
+      "donor": "LTU",
+      "year": 2027
+    },
+    {
+      "scenario": "S2B",
+      "donor": "LTU",
+      "year": 2028
+    },
+    {
+      "scenario": "S2B",
+      "donor": "LVA",
+      "year": 2025
+    },
+    {
+      "scenario": "S2B",
+      "donor": "LVA",
+      "year": 2026
+    },
+    {
+      "scenario": "S2B",
+      "donor": "LVA",
+      "year": 2027
+    },
+    {
+      "scenario": "S2B",
+      "donor": "LVA",
+      "year": 2028
+    },
+    {
+      "scenario": "S2B",
+      "donor": "POL",
+      "year": 2025
+    },
+    {
+      "scenario": "S2B",
+      "donor": "POL",
+      "year": 2026
+    },
+    {
+      "scenario": "S2B",
+      "donor": "POL",
+      "year": 2027
+    },
+    {
+      "scenario": "S2B",
+      "donor": "POL",
+      "year": 2028
+    },
+    {
+      "scenario": "S3A",
+      "donor": "EST",
+      "year": 2025
+    },
+    {
+      "scenario": "S3A",
+      "donor": "EST",
+      "year": 2026
+    },
+    {
+      "scenario": "S3A",
+      "donor": "EST",
+      "year": 2027
+    },
+    {
+      "scenario": "S3A",
+      "donor": "EST",
+      "year": 2028
+    },
+    {
+      "scenario": "S3A",
+      "donor": "LTU",
+      "year": 2025
+    },
+    {
+      "scenario": "S3A",
+      "donor": "LTU",
+      "year": 2026
+    },
+    {
+      "scenario": "S3A",
+      "donor": "LTU",
+      "year": 2027
+    },
+    {
+      "scenario": "S3A",
+      "donor": "LTU",
+      "year": 2028
+    },
+    {
+      "scenario": "S3A",
+      "donor": "LVA",
+      "year": 2025
+    },
+    {
+      "scenario": "S3A",
+      "donor": "LVA",
+      "year": 2026
+    },
+    {
+      "scenario": "S3A",
+      "donor": "LVA",
+      "year": 2027
+    },
+    {
+      "scenario": "S3A",
+      "donor": "LVA",
+      "year": 2028
+    },
+    {
+      "scenario": "S3A",
+      "donor": "POL",
+      "year": 2025
+    },
+    {
+      "scenario": "S3A",
+      "donor": "POL",
+      "year": 2026
+    },
+    {
+      "scenario": "S3A",
+      "donor": "POL",
+      "year": 2027
+    },
+    {
+      "scenario": "S3A",
+      "donor": "POL",
+      "year": 2028
+    },
+    {
+      "scenario": "S3B",
+      "donor": "EST",
+      "year": 2025
+    },
+    {
+      "scenario": "S3B",
+      "donor": "EST",
+      "year": 2026
+    },
+    {
+      "scenario": "S3B",
+      "donor": "EST",
+      "year": 2027
+    },
+    {
+      "scenario": "S3B",
+      "donor": "EST",
+      "year": 2028
+    },
+    {
+      "scenario": "S3B",
+      "donor": "LTU",
+      "year": 2025
+    },
+    {
+      "scenario": "S3B",
+      "donor": "LTU",
+      "year": 2026
+    },
+    {
+      "scenario": "S3B",
+      "donor": "LTU",
+      "year": 2027
+    },
+    {
+      "scenario": "S3B",
+      "donor": "LTU",
+      "year": 2028
+    },
+    {
+      "scenario": "S3B",
+      "donor": "LVA",
+      "year": 2025
+    },
+    {
+      "scenario": "S3B",
+      "donor": "LVA",
+      "year": 2026
+    },
+    {
+      "scenario": "S3B",
+      "donor": "LVA",
+      "year": 2027
+    },
+    {
+      "scenario": "S3B",
+      "donor": "LVA",
+      "year": 2028
+    },
+    {
+      "scenario": "S3B",
+      "donor": "POL",
+      "year": 2025
+    },
+    {
+      "scenario": "S3B",
+      "donor": "POL",
+      "year": 2026
+    },
+    {
+      "scenario": "S3B",
+      "donor": "POL",
+      "year": 2027
+    },
+    {
+      "scenario": "S3B",
+      "donor": "POL",
+      "year": 2028
+    },
+    {
+      "scenario": "S4",
+      "donor": "EST",
+      "year": 2025
+    },
+    {
+      "scenario": "S4",
+      "donor": "EST",
+      "year": 2026
+    },
+    {
+      "scenario": "S4",
+      "donor": "EST",
+      "year": 2027
+    },
+    {
+      "scenario": "S4",
+      "donor": "EST",
+      "year": 2028
+    },
+    {
+      "scenario": "S4",
+      "donor": "LTU",
+      "year": 2025
+    },
+    {
+      "scenario": "S4",
+      "donor": "LTU",
+      "year": 2026
+    },
+    {
+      "scenario": "S4",
+      "donor": "LTU",
+      "year": 2027
+    },
+    {
+      "scenario": "S4",
+      "donor": "LTU",
+      "year": 2028
+    },
+    {
+      "scenario": "S4",
+      "donor": "LVA",
+      "year": 2025
+    },
+    {
+      "scenario": "S4",
+      "donor": "LVA",
+      "year": 2026
+    },
+    {
+      "scenario": "S4",
+      "donor": "LVA",
+      "year": 2027
+    },
+    {
+      "scenario": "S4",
+      "donor": "LVA",
+      "year": 2028
+    },
+    {
+      "scenario": "S4",
+      "donor": "POL",
+      "year": 2025
+    },
+    {
+      "scenario": "S4",
+      "donor": "POL",
+      "year": 2026
+    },
+    {
+      "scenario": "S4",
+      "donor": "POL",
+      "year": 2027
+    },
+    {
+      "scenario": "S4",
+      "donor": "POL",
+      "year": 2028
+    },
+    {
+      "scenario": "S5",
+      "donor": "EST",
+      "year": 2025
+    },
+    {
+      "scenario": "S5",
+      "donor": "EST",
+      "year": 2026
+    },
+    {
+      "scenario": "S5",
+      "donor": "EST",
+      "year": 2027
+    },
+    {
+      "scenario": "S5",
+      "donor": "EST",
+      "year": 2028
+    },
+    {
+      "scenario": "S5",
+      "donor": "LTU",
+      "year": 2025
+    },
+    {
+      "scenario": "S5",
+      "donor": "LTU",
+      "year": 2026
+    },
+    {
+      "scenario": "S5",
+      "donor": "LTU",
+      "year": 2027
+    },
+    {
+      "scenario": "S5",
+      "donor": "LTU",
+      "year": 2028
+    },
+    {
+      "scenario": "S5",
+      "donor": "LVA",
+      "year": 2025
+    },
+    {
+      "scenario": "S5",
+      "donor": "LVA",
+      "year": 2026
+    },
+    {
+      "scenario": "S5",
+      "donor": "LVA",
+      "year": 2027
+    },
+    {
+      "scenario": "S5",
+      "donor": "LVA",
+      "year": 2028
+    },
+    {
+      "scenario": "S5",
+      "donor": "POL",
+      "year": 2025
+    },
+    {
+      "scenario": "S5",
+      "donor": "POL",
+      "year": 2026
+    },
+    {
+      "scenario": "S5",
+      "donor": "POL",
+      "year": 2027
+    },
+    {
+      "scenario": "S5",
+      "donor": "POL",
+      "year": 2028
+    },
+    {
+      "scenario": "S6A",
+      "donor": "EST",
+      "year": 2025
+    },
+    {
+      "scenario": "S6A",
+      "donor": "EST",
+      "year": 2026
+    },
+    {
+      "scenario": "S6A",
+      "donor": "EST",
+      "year": 2027
+    },
+    {
+      "scenario": "S6A",
+      "donor": "EST",
+      "year": 2028
+    },
+    {
+      "scenario": "S6A",
+      "donor": "LTU",
+      "year": 2025
+    },
+    {
+      "scenario": "S6A",
+      "donor": "LTU",
+      "year": 2026
+    },
+    {
+      "scenario": "S6A",
+      "donor": "LTU",
+      "year": 2027
+    },
+    {
+      "scenario": "S6A",
+      "donor": "LTU",
+      "year": 2028
+    },
+    {
+      "scenario": "S6A",
+      "donor": "LVA",
+      "year": 2025
+    },
+    {
+      "scenario": "S6A",
+      "donor": "LVA",
+      "year": 2026
+    },
+    {
+      "scenario": "S6A",
+      "donor": "LVA",
+      "year": 2027
+    },
+    {
+      "scenario": "S6A",
+      "donor": "LVA",
+      "year": 2028
+    },
+    {
+      "scenario": "S6A",
+      "donor": "POL",
+      "year": 2025
+    },
+    {
+      "scenario": "S6A",
+      "donor": "POL",
+      "year": 2026
+    },
+    {
+      "scenario": "S6A",
+      "donor": "POL",
+      "year": 2027
+    },
+    {
+      "scenario": "S6A",
+      "donor": "POL",
+      "year": 2028
+    },
+    {
+      "scenario": "S6B",
+      "donor": "EST",
+      "year": 2025
+    },
+    {
+      "scenario": "S6B",
+      "donor": "EST",
+      "year": 2026
+    },
+    {
+      "scenario": "S6B",
+      "donor": "EST",
+      "year": 2027
+    },
+    {
+      "scenario": "S6B",
+      "donor": "EST",
+      "year": 2028
+    },
+    {
+      "scenario": "S6B",
+      "donor": "LTU",
+      "year": 2025
+    },
+    {
+      "scenario": "S6B",
+      "donor": "LTU",
+      "year": 2026
+    },
+    {
+      "scenario": "S6B",
+      "donor": "LTU",
+      "year": 2027
+    },
+    {
+      "scenario": "S6B",
+      "donor": "LTU",
+      "year": 2028
+    },
+    {
+      "scenario": "S6B",
+      "donor": "LVA",
+      "year": 2025
+    },
+    {
+      "scenario": "S6B",
+      "donor": "LVA",
+      "year": 2026
+    },
+    {
+      "scenario": "S6B",
+      "donor": "LVA",
+      "year": 2027
+    },
+    {
+      "scenario": "S6B",
+      "donor": "LVA",
+      "year": 2028
+    },
+    {
+      "scenario": "S6B",
+      "donor": "POL",
+      "year": 2025
+    },
+    {
+      "scenario": "S6B",
+      "donor": "POL",
+      "year": 2026
+    },
+    {
+      "scenario": "S6B",
+      "donor": "POL",
+      "year": 2027
+    },
+    {
+      "scenario": "S6B",
+      "donor": "POL",
+      "year": 2028
+    },
+    {
+      "scenario": "S7",
+      "donor": "EST",
+      "year": 2025
+    },
+    {
+      "scenario": "S7",
+      "donor": "EST",
+      "year": 2026
+    },
+    {
+      "scenario": "S7",
+      "donor": "EST",
+      "year": 2027
+    },
+    {
+      "scenario": "S7",
+      "donor": "EST",
+      "year": 2028
+    },
+    {
+      "scenario": "S7",
+      "donor": "LTU",
+      "year": 2025
+    },
+    {
+      "scenario": "S7",
+      "donor": "LTU",
+      "year": 2026
+    },
+    {
+      "scenario": "S7",
+      "donor": "LTU",
+      "year": 2027
+    },
+    {
+      "scenario": "S7",
+      "donor": "LTU",
+      "year": 2028
+    },
+    {
+      "scenario": "S7",
+      "donor": "LVA",
+      "year": 2025
+    },
+    {
+      "scenario": "S7",
+      "donor": "LVA",
+      "year": 2026
+    },
+    {
+      "scenario": "S7",
+      "donor": "LVA",
+      "year": 2027
+    },
+    {
+      "scenario": "S7",
+      "donor": "LVA",
+      "year": 2028
+    },
+    {
+      "scenario": "S7",
+      "donor": "POL",
+      "year": 2025
+    },
+    {
+      "scenario": "S7",
+      "donor": "POL",
+      "year": 2026
+    },
+    {
+      "scenario": "S7",
+      "donor": "POL",
+      "year": 2027
+    },
+    {
+      "scenario": "S7",
+      "donor": "POL",
+      "year": 2028
+    }
+  ],
+  "blobs": {
+    "static/baseline_ge__donor": {
+      "file": "static/baseline_ge__donor.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor"
+      ],
+      "shape": [
+        50
+      ],
+      "count": 50,
+      "raw_bytes": 200,
+      "gzip_bytes": 246,
+      "sha256_raw": "6e03bfdf2c6fd189a932bc92a51183ba27ba7f21dad6d7c806645aa7d0ec7700",
+      "units": "US$ million, 2024 observed, constant 2024 prices",
+      "note": "Invariant across scenarios; stored once."
+    },
+    "static/baseline_gross__donor": {
+      "file": "static/baseline_gross__donor.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor"
+      ],
+      "shape": [
+        50
+      ],
+      "count": 50,
+      "raw_bytes": 200,
+      "gzip_bytes": 249,
+      "sha256_raw": "e032a12ebd1c728479202e9cb5068b1ca7524e3e54b5f59b68abded6c0bce11f",
+      "units": "US$ million, 2024 observed, constant 2024 prices",
+      "note": "Invariant across scenarios; stored once."
+    },
+    "static/baseline_ge__donor_sector": {
+      "file": "static/baseline_ge__donor_sector.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "sector"
+      ],
+      "shape": [
+        50,
+        21
+      ],
+      "count": 1050,
+      "raw_bytes": 4200,
+      "gzip_bytes": 3260,
+      "sha256_raw": "4401c154c874b3a76d6cf571f00732ae2fc6cbe01e4a9f76d6058f5186b2a5a4",
+      "units": "US$ million, 2024 observed, constant 2024 prices",
+      "note": "Invariant across scenarios; stored once."
+    },
+    "static/baseline_gross__donor_sector": {
+      "file": "static/baseline_gross__donor_sector.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "sector"
+      ],
+      "shape": [
+        50,
+        21
+      ],
+      "count": 1050,
+      "raw_bytes": 4200,
+      "gzip_bytes": 3263,
+      "sha256_raw": "29119e2c18f626461628311904936b7be3d9d23111d314b6e430ae92ba1c0728",
+      "units": "US$ million, 2024 observed, constant 2024 prices",
+      "note": "Invariant across scenarios; stored once."
+    },
+    "static/baseline_ge__recipient": {
+      "file": "static/baseline_ge__recipient.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient"
+      ],
+      "shape": [
+        141
+      ],
+      "count": 141,
+      "raw_bytes": 564,
+      "gzip_bytes": 614,
+      "sha256_raw": "66ad1ec317f180ad7dfd7a0e8456827cb3ca4cc67e787faf94c15f4fdc035628",
+      "units": "US$ million, 2024 observed, constant 2024 prices",
+      "note": "Invariant across scenarios; stored once."
+    },
+    "static/baseline_gross__recipient": {
+      "file": "static/baseline_gross__recipient.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient"
+      ],
+      "shape": [
+        141
+      ],
+      "count": 141,
+      "raw_bytes": 564,
+      "gzip_bytes": 617,
+      "sha256_raw": "dcf2e6db6589defcb7afd6a00fbd8c68e600cbd6f04a2e4ad5bc13221f6f82bc",
+      "units": "US$ million, 2024 observed, constant 2024 prices",
+      "note": "Invariant across scenarios; stored once."
+    },
+    "static/baseline_ge__sector": {
+      "file": "static/baseline_ge__sector.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "sector"
+      ],
+      "shape": [
+        21
+      ],
+      "count": 21,
+      "raw_bytes": 84,
+      "gzip_bytes": 131,
+      "sha256_raw": "58993fa39630bf718a368a70fc8654a3919dd07c75200875bea7a56a190a5c99",
+      "units": "US$ million, 2024 observed, constant 2024 prices",
+      "note": "Invariant across scenarios; stored once."
+    },
+    "static/baseline_gross__sector": {
+      "file": "static/baseline_gross__sector.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "sector"
+      ],
+      "shape": [
+        21
+      ],
+      "count": 21,
+      "raw_bytes": 84,
+      "gzip_bytes": 134,
+      "sha256_raw": "32c99cfc552403550ebb4ad09faff690a09362185fa0bc12520e7d33727c93c2",
+      "units": "US$ million, 2024 observed, constant 2024 prices",
+      "note": "Invariant across scenarios; stored once."
+    },
+    "static/baseline_ge__donor_recipient": {
+      "file": "static/baseline_ge__donor_recipient.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient"
+      ],
+      "shape": [
+        50,
+        141
+      ],
+      "count": 7050,
+      "raw_bytes": 28200,
+      "gzip_bytes": 14849,
+      "sha256_raw": "bd8df194836a7472cf5f3d025267ac847d89a586cfc4150ae3b686fe21c5cd79",
+      "units": "US$ million, 2024 observed, constant 2024 prices",
+      "note": "Invariant across scenarios; stored once."
+    },
+    "static/baseline_gross__donor_recipient": {
+      "file": "static/baseline_gross__donor_recipient.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient"
+      ],
+      "shape": [
+        50,
+        141
+      ],
+      "count": 7050,
+      "raw_bytes": 28200,
+      "gzip_bytes": 14852,
+      "sha256_raw": "bcf5e7117c544cc9ef97ded99733b4d9b686f0e1b1399e6f8d6e2a85ec1c9cc8",
+      "units": "US$ million, 2024 observed, constant 2024 prices",
+      "note": "Invariant across scenarios; stored once."
+    },
+    "static/baseline_ge__recipient_sector": {
+      "file": "static/baseline_ge__recipient_sector.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "sector"
+      ],
+      "shape": [
+        141,
+        21
+      ],
+      "count": 2961,
+      "raw_bytes": 11844,
+      "gzip_bytes": 10156,
+      "sha256_raw": "2b357c6bcf338ce48b0bfa047115fd974d96a5d5fc780a58a2ad599d3601bbe4",
+      "units": "US$ million, 2024 observed, constant 2024 prices",
+      "note": "Invariant across scenarios; stored once."
+    },
+    "static/baseline_gross__recipient_sector": {
+      "file": "static/baseline_gross__recipient_sector.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "sector"
+      ],
+      "shape": [
+        141,
+        21
+      ],
+      "count": 2961,
+      "raw_bytes": 11844,
+      "gzip_bytes": 10162,
+      "sha256_raw": "3850636427920f9e0886793c8f60aced60f175b8ca9ec5ceab5c2c27b7ee58db",
+      "units": "US$ million, 2024 observed, constant 2024 prices",
+      "note": "Invariant across scenarios; stored once."
+    },
+    "static/total_oda_ge__donor_year": {
+      "file": "static/total_oda_ge__donor_year.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "total_oda_year"
+      ],
+      "shape": [
+        50,
+        5
+      ],
+      "count": 250,
+      "raw_bytes": 1000,
+      "gzip_bytes": 1025,
+      "sha256_raw": "3bdc7de1f006c360a18af1fcbbd644e5bfcbd27a3e859d5f08679a0d2fc161ef",
+      "units": "US$ million, grant-equivalent, constant 2024 prices",
+      "note": "Per-provider values. Do not sum EU Institutions with sovereign donors: member-state contributions would be double counted."
+    },
+    "static/specification_split__donor": {
+      "file": "static/specification_split__donor.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "specification_category"
+      ],
+      "shape": [
+        50,
+        4
+      ],
+      "count": 200,
+      "raw_bytes": 800,
+      "gzip_bytes": 720,
+      "sha256_raw": "22a4d6b1a3b83fe9d5570fe839a2e7d8be35c57ecfd3cfba0197ca1be599528b",
+      "units": "US$ million, gross CRS disbursements, constant 2024 prices",
+      "note": "Categories are recipient+sector specified, recipient specified/sector missing, region-only, wholly unspecified."
+    },
+    "cube/support2024__donor_index": {
+      "file": "cube/support2024__donor_index.bin.gz",
+      "dtype": "uint8",
+      "dims": [
+        "cell2024"
+      ],
+      "shape": [
+        19940
+      ],
+      "count": 19940,
+      "raw_bytes": 19940,
+      "gzip_bytes": 203,
+      "sha256_raw": "7e3a2f8f237d14219416999c2c625cacd9e5f6117d3396efff7527ad433fe379",
+      "units": "index into the named axis"
+    },
+    "cube/support2024__recipient_index": {
+      "file": "cube/support2024__recipient_index.bin.gz",
+      "dtype": "uint8",
+      "dims": [
+        "cell2024"
+      ],
+      "shape": [
+        19940
+      ],
+      "count": 19940,
+      "raw_bytes": 19940,
+      "gzip_bytes": 4532,
+      "sha256_raw": "ff387bbeee47379f40e77204a6c8c2045f4d2b79f3ebf088fc6ffdac2303a2a0",
+      "units": "index into the named axis"
+    },
+    "cube/support2024__sector_index": {
+      "file": "cube/support2024__sector_index.bin.gz",
+      "dtype": "uint8",
+      "dims": [
+        "cell2024"
+      ],
+      "shape": [
+        19940
+      ],
+      "count": 19940,
+      "raw_bytes": 19940,
+      "gzip_bytes": 6710,
+      "sha256_raw": "f327b36d2aba5256e9c1def30ec724defb02112eeac5d6c80ffe16f7387731c8",
+      "units": "index into the named axis"
+    },
+    "cube/baseline__ge": {
+      "file": "cube/baseline__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "cell2024"
+      ],
+      "shape": [
+        19940
+      ],
+      "count": 19940,
+      "raw_bytes": 79760,
+      "gzip_bytes": 71667,
+      "sha256_raw": "3d2032f3d4acd4689a95f3c40e51bf73e312f8b28f708bfd9cfc3f34d5e62564",
+      "units": "US$ million, grant-equivalent, constant 2024 prices",
+      "note": "Aligned to cube/support2024__{donor,recipient,sector}_index."
+    },
+    "cube/baseline__gross": {
+      "file": "cube/baseline__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "cell2024"
+      ],
+      "shape": [
+        19940
+      ],
+      "count": 19940,
+      "raw_bytes": 79760,
+      "gzip_bytes": 71685,
+      "sha256_raw": "aae2349f9f3e6078f8be03b7207fa92ed245b46642ba29a0d36b6f86dd2d36c7",
+      "units": "US$ million, gross, constant 2024 prices",
+      "note": "Aligned to cube/support2024__{donor,recipient,sector}_index."
+    },
+    "scenarios/S1/donor_year__ge": {
+      "file": "scenarios/S1/donor_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "year"
+      ],
+      "shape": [
+        50,
+        4
+      ],
+      "count": 200,
+      "raw_bytes": 800,
+      "gzip_bytes": 806,
+      "sha256_raw": "2deeac4e2795b57d48eed71d16452aadb2ad0a6a8a83a1f9c19cab39c76e4692",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S1/donor_year__gross": {
+      "file": "scenarios/S1/donor_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "year"
+      ],
+      "shape": [
+        50,
+        4
+      ],
+      "count": 200,
+      "raw_bytes": 800,
+      "gzip_bytes": 808,
+      "sha256_raw": "31cbc29bec0ca593691f8b28bd5289ca3f0f5530b267959dd01f469d632d163c",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S1/donor_sector_year__ge": {
+      "file": "scenarios/S1/donor_sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        50,
+        21,
+        4
+      ],
+      "count": 4200,
+      "raw_bytes": 16800,
+      "gzip_bytes": 11583,
+      "sha256_raw": "ddd55110bc0b393b4d89b159d53f13ea73b3d8e7cc6f11ab9e4046a760442957",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S1/donor_sector_year__gross": {
+      "file": "scenarios/S1/donor_sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        50,
+        21,
+        4
+      ],
+      "count": 4200,
+      "raw_bytes": 16800,
+      "gzip_bytes": 11450,
+      "sha256_raw": "efbf42207575312155a21599eb96cd76c051efab81f7fadbc11114f25bff494e",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S1/recipient_year__ge": {
+      "file": "scenarios/S1/recipient_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        141,
+        4
+      ],
+      "count": 564,
+      "raw_bytes": 2256,
+      "gzip_bytes": 2141,
+      "sha256_raw": "0e1fad2ad17c7cd3d850cbc7070bc85fd9af03ea78f36f6bfaec90e086e59120",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S1/recipient_year__gross": {
+      "file": "scenarios/S1/recipient_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        141,
+        4
+      ],
+      "count": 564,
+      "raw_bytes": 2256,
+      "gzip_bytes": 2141,
+      "sha256_raw": "6fcde2b633ad3fdcd72ed8f46d329676dcd98834b67df574205756d9fd1a81c4",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S1/sector_year__ge": {
+      "file": "scenarios/S1/sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "sector",
+        "year"
+      ],
+      "shape": [
+        21,
+        4
+      ],
+      "count": 84,
+      "raw_bytes": 336,
+      "gzip_bytes": 379,
+      "sha256_raw": "99f34961084d429a1bafd51fb7521e3cf342d7ec41d3d7b61ae104fe38333d58",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S1/sector_year__gross": {
+      "file": "scenarios/S1/sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "sector",
+        "year"
+      ],
+      "shape": [
+        21,
+        4
+      ],
+      "count": 84,
+      "raw_bytes": 336,
+      "gzip_bytes": 382,
+      "sha256_raw": "ad0ac5d6d3defcfabf600508856118e3829263adf6d3a66c92f71f0ff3f38c47",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S1/donor_recipient_year__ge": {
+      "file": "scenarios/S1/donor_recipient_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        50,
+        141,
+        4
+      ],
+      "count": 28200,
+      "raw_bytes": 112800,
+      "gzip_bytes": 51794,
+      "sha256_raw": "9668665e0ed65fa65e770ab3e995f191fe71b69a4578081dbb9be905a78ddba8",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S1/donor_recipient_year__gross": {
+      "file": "scenarios/S1/donor_recipient_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        50,
+        141,
+        4
+      ],
+      "count": 28200,
+      "raw_bytes": 112800,
+      "gzip_bytes": 50572,
+      "sha256_raw": "9ec8b857f9c80b757d7fc9520d6867e9f5ffbe74c84c5da8881de86fa4b194e5",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S1/recipient_sector_year__ge": {
+      "file": "scenarios/S1/recipient_sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        141,
+        21,
+        4
+      ],
+      "count": 11844,
+      "raw_bytes": 47376,
+      "gzip_bytes": 38599,
+      "sha256_raw": "a51f45ff8eb98adb9b2a2122ab2c80d31ad0209804f01190e755c0238ed30219",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S1/recipient_sector_year__gross": {
+      "file": "scenarios/S1/recipient_sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        141,
+        21,
+        4
+      ],
+      "count": 11844,
+      "raw_bytes": 47376,
+      "gzip_bytes": 38642,
+      "sha256_raw": "890f6d3034daba359b6a48e03c176bd920d72be593ae2ec3cb5f06b2e66c81d2",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S1/closures__donor_index": {
+      "file": "scenarios/S1/closures__donor_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        2030
+      ],
+      "count": 2030,
+      "raw_bytes": 4060,
+      "gzip_bytes": 122,
+      "sha256_raw": "f09c574f3739640ba19baabf3725de5989ee02e79f0811f65d40124124fd5b38",
+      "units": "index into the named axis"
+    },
+    "scenarios/S1/closures__recipient_index": {
+      "file": "scenarios/S1/closures__recipient_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        2030
+      ],
+      "count": 2030,
+      "raw_bytes": 4060,
+      "gzip_bytes": 505,
+      "sha256_raw": "58f18afbabcebc49fe10eca79fd3c82161719c4185f48bf598a5211eeb0cc4d7",
+      "units": "index into the named axis"
+    },
+    "scenarios/S1/closures__sector_index": {
+      "file": "scenarios/S1/closures__sector_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        2030
+      ],
+      "count": 2030,
+      "raw_bytes": 4060,
+      "gzip_bytes": 567,
+      "sha256_raw": "055d65aab83cce89005b3c38e511600c4366416b4743d304eb98ca15bc1c4855",
+      "units": "index into the named axis"
+    },
+    "scenarios/S1/closures__year_index": {
+      "file": "scenarios/S1/closures__year_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        2030
+      ],
+      "count": 2030,
+      "raw_bytes": 4060,
+      "gzip_bytes": 71,
+      "sha256_raw": "c249efc555df9c2d3d8e1589f1b0ccd8493301bb4fef58b819553afc6a9baefc",
+      "units": "index into the named axis"
+    },
+    "scenarios/S1/closures__reason": {
+      "file": "scenarios/S1/closures__reason.bin.gz",
+      "dtype": "uint8",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        2030
+      ],
+      "count": 2030,
+      "raw_bytes": 2030,
+      "gzip_bytes": 126,
+      "sha256_raw": "f99f13da44159dcbcfcb0cca3f702630b8be458889e52015fa99b5605e93e128",
+      "units": "1 = viability, 2 = donor announcement"
+    },
+    "scenarios/S2A/donor_year__ge": {
+      "file": "scenarios/S2A/donor_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "year"
+      ],
+      "shape": [
+        50,
+        4
+      ],
+      "count": 200,
+      "raw_bytes": 800,
+      "gzip_bytes": 806,
+      "sha256_raw": "2deeac4e2795b57d48eed71d16452aadb2ad0a6a8a83a1f9c19cab39c76e4692",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S2A/donor_year__gross": {
+      "file": "scenarios/S2A/donor_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "year"
+      ],
+      "shape": [
+        50,
+        4
+      ],
+      "count": 200,
+      "raw_bytes": 800,
+      "gzip_bytes": 816,
+      "sha256_raw": "83355aee96826faad4bf77f82fb7b90c7fae6402910da44d44140708b25800f9",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S2A/donor_sector_year__ge": {
+      "file": "scenarios/S2A/donor_sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        50,
+        21,
+        4
+      ],
+      "count": 4200,
+      "raw_bytes": 16800,
+      "gzip_bytes": 11666,
+      "sha256_raw": "b63f9dac77d118d5eef539ea336721195b1848a7f2467a9337d171574ea1cf36",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S2A/donor_sector_year__gross": {
+      "file": "scenarios/S2A/donor_sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        50,
+        21,
+        4
+      ],
+      "count": 4200,
+      "raw_bytes": 16800,
+      "gzip_bytes": 11579,
+      "sha256_raw": "f823622ac19aac2862ff8816095a95147cfff004c7b2b188fecde63b702bd6e8",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S2A/recipient_year__ge": {
+      "file": "scenarios/S2A/recipient_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        141,
+        4
+      ],
+      "count": 564,
+      "raw_bytes": 2256,
+      "gzip_bytes": 2150,
+      "sha256_raw": "3098c54e47b89209c0d82194189c759265a9c31d63ee015ce63a7d25f6b8b112",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S2A/recipient_year__gross": {
+      "file": "scenarios/S2A/recipient_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        141,
+        4
+      ],
+      "count": 564,
+      "raw_bytes": 2256,
+      "gzip_bytes": 2149,
+      "sha256_raw": "6e3fdb3aa76c41c365bb8a86a5225c6c4eec779170237ef031d90376c3459c8c",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S2A/sector_year__ge": {
+      "file": "scenarios/S2A/sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "sector",
+        "year"
+      ],
+      "shape": [
+        21,
+        4
+      ],
+      "count": 84,
+      "raw_bytes": 336,
+      "gzip_bytes": 379,
+      "sha256_raw": "80b1251bb256fa419f1f18b763def0b734a2e895002a273897d0be4d430da4c3",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S2A/sector_year__gross": {
+      "file": "scenarios/S2A/sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "sector",
+        "year"
+      ],
+      "shape": [
+        21,
+        4
+      ],
+      "count": 84,
+      "raw_bytes": 336,
+      "gzip_bytes": 382,
+      "sha256_raw": "898e90617990c93e2a4edfa95de658156b46194b352617f5d1af83af316cc045",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S2A/donor_recipient_year__ge": {
+      "file": "scenarios/S2A/donor_recipient_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        50,
+        141,
+        4
+      ],
+      "count": 28200,
+      "raw_bytes": 112800,
+      "gzip_bytes": 51152,
+      "sha256_raw": "2181193f234de545362329c0a797b400e8464197b17f812866853137b50e0e7d",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S2A/donor_recipient_year__gross": {
+      "file": "scenarios/S2A/donor_recipient_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        50,
+        141,
+        4
+      ],
+      "count": 28200,
+      "raw_bytes": 112800,
+      "gzip_bytes": 50490,
+      "sha256_raw": "d1daded622c0a67ca7fca207227ac8b18bcc448e88e20d8ce1e9b0a50ca1cacf",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S2A/recipient_sector_year__ge": {
+      "file": "scenarios/S2A/recipient_sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        141,
+        21,
+        4
+      ],
+      "count": 11844,
+      "raw_bytes": 47376,
+      "gzip_bytes": 38401,
+      "sha256_raw": "724f1cb3d76c033d1e47ca0e89b80b6ea6c857af62904325ba2370fc92a7695b",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S2A/recipient_sector_year__gross": {
+      "file": "scenarios/S2A/recipient_sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        141,
+        21,
+        4
+      ],
+      "count": 11844,
+      "raw_bytes": 47376,
+      "gzip_bytes": 38445,
+      "sha256_raw": "8da58361a9e775e81234b99ba634c4f3e1761d03521b74bb3de387ac08e1bccf",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S2A/closures__donor_index": {
+      "file": "scenarios/S2A/closures__donor_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        6802
+      ],
+      "count": 6802,
+      "raw_bytes": 13604,
+      "gzip_bytes": 163,
+      "sha256_raw": "c5200b46eb491221caaa2b6f5a5e1c46e513bae1bf611f4de49ea7eac3090ce9",
+      "units": "index into the named axis"
+    },
+    "scenarios/S2A/closures__recipient_index": {
+      "file": "scenarios/S2A/closures__recipient_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        6802
+      ],
+      "count": 6802,
+      "raw_bytes": 13604,
+      "gzip_bytes": 1149,
+      "sha256_raw": "784d878efafaeb585c91e61920ca8c81b73f3f3c66354ad37a50de0af4421bee",
+      "units": "index into the named axis"
+    },
+    "scenarios/S2A/closures__sector_index": {
+      "file": "scenarios/S2A/closures__sector_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        6802
+      ],
+      "count": 6802,
+      "raw_bytes": 13604,
+      "gzip_bytes": 1324,
+      "sha256_raw": "d57e9b95925c8ef1107bb914c275449da8dce0e120573ed80ef1323f4a2578dd",
+      "units": "index into the named axis"
+    },
+    "scenarios/S2A/closures__year_index": {
+      "file": "scenarios/S2A/closures__year_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        6802
+      ],
+      "count": 6802,
+      "raw_bytes": 13604,
+      "gzip_bytes": 82,
+      "sha256_raw": "5f398a682b832480d73f1b7935144ca925fabf41fcbd8784e4ebf604c89c09e2",
+      "units": "index into the named axis"
+    },
+    "scenarios/S2A/closures__reason": {
+      "file": "scenarios/S2A/closures__reason.bin.gz",
+      "dtype": "uint8",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        6802
+      ],
+      "count": 6802,
+      "raw_bytes": 6802,
+      "gzip_bytes": 160,
+      "sha256_raw": "8fde69a11a65e4948b20ca2df1f762686f3c04879db1727c65a4931c831a920c",
+      "units": "1 = viability, 2 = donor announcement"
+    },
+    "scenarios/S2B/donor_year__ge": {
+      "file": "scenarios/S2B/donor_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "year"
+      ],
+      "shape": [
+        50,
+        4
+      ],
+      "count": 200,
+      "raw_bytes": 800,
+      "gzip_bytes": 806,
+      "sha256_raw": "2deeac4e2795b57d48eed71d16452aadb2ad0a6a8a83a1f9c19cab39c76e4692",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S2B/donor_year__gross": {
+      "file": "scenarios/S2B/donor_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "year"
+      ],
+      "shape": [
+        50,
+        4
+      ],
+      "count": 200,
+      "raw_bytes": 800,
+      "gzip_bytes": 815,
+      "sha256_raw": "516d3edbdfd56f6456c37500b2fb6a271bf1eb0334a4033801b179138628decd",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S2B/donor_sector_year__ge": {
+      "file": "scenarios/S2B/donor_sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        50,
+        21,
+        4
+      ],
+      "count": 4200,
+      "raw_bytes": 16800,
+      "gzip_bytes": 11655,
+      "sha256_raw": "c30d0dc441d9533a29a6c31c0640dde69d86219cdbe480cbcb054992a0b71ef4",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S2B/donor_sector_year__gross": {
+      "file": "scenarios/S2B/donor_sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        50,
+        21,
+        4
+      ],
+      "count": 4200,
+      "raw_bytes": 16800,
+      "gzip_bytes": 11503,
+      "sha256_raw": "34cead067901183fbfb02bbf1300b623355fdab531d411b453e24185289b1447",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S2B/recipient_year__ge": {
+      "file": "scenarios/S2B/recipient_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        141,
+        4
+      ],
+      "count": 564,
+      "raw_bytes": 2256,
+      "gzip_bytes": 2147,
+      "sha256_raw": "e88020049e903a0b5f3e956fa7c173d1ca60d5a150f5caa0e96494d2914c6bbe",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S2B/recipient_year__gross": {
+      "file": "scenarios/S2B/recipient_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        141,
+        4
+      ],
+      "count": 564,
+      "raw_bytes": 2256,
+      "gzip_bytes": 2151,
+      "sha256_raw": "cf4ac52238f2fc123d0c683ecdbe12b62ad96e4e0be0fba5a4e930220748c639",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S2B/sector_year__ge": {
+      "file": "scenarios/S2B/sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "sector",
+        "year"
+      ],
+      "shape": [
+        21,
+        4
+      ],
+      "count": 84,
+      "raw_bytes": 336,
+      "gzip_bytes": 379,
+      "sha256_raw": "8f3a3c76c8976bb0dabff871211e2276a62769f395887e1c78701b2d75cb3bea",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S2B/sector_year__gross": {
+      "file": "scenarios/S2B/sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "sector",
+        "year"
+      ],
+      "shape": [
+        21,
+        4
+      ],
+      "count": 84,
+      "raw_bytes": 336,
+      "gzip_bytes": 382,
+      "sha256_raw": "17e23bdc89ed77a0b74d00666ffdc270baf82668601489efc285e5255be71f08",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S2B/donor_recipient_year__ge": {
+      "file": "scenarios/S2B/donor_recipient_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        50,
+        141,
+        4
+      ],
+      "count": 28200,
+      "raw_bytes": 112800,
+      "gzip_bytes": 51960,
+      "sha256_raw": "545aca21ae1490fa52d93bb9ca891ca923fb936c4b720641e802749c56dabd8f",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S2B/donor_recipient_year__gross": {
+      "file": "scenarios/S2B/donor_recipient_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        50,
+        141,
+        4
+      ],
+      "count": 28200,
+      "raw_bytes": 112800,
+      "gzip_bytes": 50750,
+      "sha256_raw": "dca80feebfa284410fc9ce4970956fbc216d994dc5203bd20afab1509ed75ae8",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S2B/recipient_sector_year__ge": {
+      "file": "scenarios/S2B/recipient_sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        141,
+        21,
+        4
+      ],
+      "count": 11844,
+      "raw_bytes": 47376,
+      "gzip_bytes": 38568,
+      "sha256_raw": "d9e6353202342f513769a90c5ced9461df092a62e1636ac9cd0163d657d44ec1",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S2B/recipient_sector_year__gross": {
+      "file": "scenarios/S2B/recipient_sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        141,
+        21,
+        4
+      ],
+      "count": 11844,
+      "raw_bytes": 47376,
+      "gzip_bytes": 38574,
+      "sha256_raw": "1e97b73fe6686dceb61ec057ba3aad6d95525a309bd238489ee74a645d6b3db4",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S2B/closures__donor_index": {
+      "file": "scenarios/S2B/closures__donor_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        3603
+      ],
+      "count": 3603,
+      "raw_bytes": 7206,
+      "gzip_bytes": 129,
+      "sha256_raw": "9f216b078c7adec0c190963e0cee7145360bc95c491ba796bc8ccee830897f3e",
+      "units": "index into the named axis"
+    },
+    "scenarios/S2B/closures__recipient_index": {
+      "file": "scenarios/S2B/closures__recipient_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        3603
+      ],
+      "count": 3603,
+      "raw_bytes": 7206,
+      "gzip_bytes": 874,
+      "sha256_raw": "54a85d11851818e1c3b24d07485cedb5fc8648c847a19c3c82be9a3ef5f418fc",
+      "units": "index into the named axis"
+    },
+    "scenarios/S2B/closures__sector_index": {
+      "file": "scenarios/S2B/closures__sector_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        3603
+      ],
+      "count": 3603,
+      "raw_bytes": 7206,
+      "gzip_bytes": 969,
+      "sha256_raw": "8c7897b2b6cc7d9fede191ba1b6706a6959645f3ada6dca04475bfe287779d7b",
+      "units": "index into the named axis"
+    },
+    "scenarios/S2B/closures__year_index": {
+      "file": "scenarios/S2B/closures__year_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        3603
+      ],
+      "count": 3603,
+      "raw_bytes": 7206,
+      "gzip_bytes": 73,
+      "sha256_raw": "2c713e809dfddee79c145cc5db2591b4c4aa1c4c5c5760367c143fc3f5c93a11",
+      "units": "index into the named axis"
+    },
+    "scenarios/S2B/closures__reason": {
+      "file": "scenarios/S2B/closures__reason.bin.gz",
+      "dtype": "uint8",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        3603
+      ],
+      "count": 3603,
+      "raw_bytes": 3603,
+      "gzip_bytes": 136,
+      "sha256_raw": "bfc9d2ce0d68ca8125df54844aa90caf2548d5996f773ba9fe30cac0b57d97cd",
+      "units": "1 = viability, 2 = donor announcement"
+    },
+    "scenarios/S3A/donor_year__ge": {
+      "file": "scenarios/S3A/donor_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "year"
+      ],
+      "shape": [
+        50,
+        4
+      ],
+      "count": 200,
+      "raw_bytes": 800,
+      "gzip_bytes": 806,
+      "sha256_raw": "2deeac4e2795b57d48eed71d16452aadb2ad0a6a8a83a1f9c19cab39c76e4692",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S3A/donor_year__gross": {
+      "file": "scenarios/S3A/donor_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "year"
+      ],
+      "shape": [
+        50,
+        4
+      ],
+      "count": 200,
+      "raw_bytes": 800,
+      "gzip_bytes": 812,
+      "sha256_raw": "969de54be7c8c1403f0e7d201ef1aae99033d50370ad23dd17797f7df0066cbb",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S3A/donor_sector_year__ge": {
+      "file": "scenarios/S3A/donor_sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        50,
+        21,
+        4
+      ],
+      "count": 4200,
+      "raw_bytes": 16800,
+      "gzip_bytes": 11561,
+      "sha256_raw": "5be83c5189ec10f74cbaa1323eb598b0289383884da7656c856b3caf423ae18f",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S3A/donor_sector_year__gross": {
+      "file": "scenarios/S3A/donor_sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        50,
+        21,
+        4
+      ],
+      "count": 4200,
+      "raw_bytes": 16800,
+      "gzip_bytes": 11491,
+      "sha256_raw": "77ee7a159e52b185ff5b57e07b7fc36d3b0684dee93e0039be1437dcce2a6858",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S3A/recipient_year__ge": {
+      "file": "scenarios/S3A/recipient_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        141,
+        4
+      ],
+      "count": 564,
+      "raw_bytes": 2256,
+      "gzip_bytes": 2138,
+      "sha256_raw": "5d896210ac1c10af8783cf8ac5c5822d81c919993b8403dff177fb17ac0a3177",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S3A/recipient_year__gross": {
+      "file": "scenarios/S3A/recipient_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        141,
+        4
+      ],
+      "count": 564,
+      "raw_bytes": 2256,
+      "gzip_bytes": 2144,
+      "sha256_raw": "d7584cfef6fbf1c4d78072eb88af63b6613ccfed2b505c73e06f09f144af40d0",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S3A/sector_year__ge": {
+      "file": "scenarios/S3A/sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "sector",
+        "year"
+      ],
+      "shape": [
+        21,
+        4
+      ],
+      "count": 84,
+      "raw_bytes": 336,
+      "gzip_bytes": 379,
+      "sha256_raw": "c5f86879c16caf24acc436cb1b56de44d5f100862411966f5097b97ac9506526",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S3A/sector_year__gross": {
+      "file": "scenarios/S3A/sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "sector",
+        "year"
+      ],
+      "shape": [
+        21,
+        4
+      ],
+      "count": 84,
+      "raw_bytes": 336,
+      "gzip_bytes": 382,
+      "sha256_raw": "45d64ba0b12b320e6e876217de253bb2858d000de8e3c37f486d0295fdce1036",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S3A/donor_recipient_year__ge": {
+      "file": "scenarios/S3A/donor_recipient_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        50,
+        141,
+        4
+      ],
+      "count": 28200,
+      "raw_bytes": 112800,
+      "gzip_bytes": 50711,
+      "sha256_raw": "9bd0c3a2b4883b2ad1580a506b614348983bc9cba4055c77f42bdb658654b00c",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S3A/donor_recipient_year__gross": {
+      "file": "scenarios/S3A/donor_recipient_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        50,
+        141,
+        4
+      ],
+      "count": 28200,
+      "raw_bytes": 112800,
+      "gzip_bytes": 49975,
+      "sha256_raw": "ec8597a3de9135c6249cb6dea9c71b4752a4dfee09cca0230f0287253fea9bed",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S3A/recipient_sector_year__ge": {
+      "file": "scenarios/S3A/recipient_sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        141,
+        21,
+        4
+      ],
+      "count": 11844,
+      "raw_bytes": 47376,
+      "gzip_bytes": 38702,
+      "sha256_raw": "0ead226c07d5197782a6eed2eed1d3be6ee031c99ce969dc92979d31505b847f",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S3A/recipient_sector_year__gross": {
+      "file": "scenarios/S3A/recipient_sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        141,
+        21,
+        4
+      ],
+      "count": 11844,
+      "raw_bytes": 47376,
+      "gzip_bytes": 38735,
+      "sha256_raw": "0302f8643abd9719c93d05bccadde8979111c7501fcc2489f0bd03095a14f061",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S3A/closures__donor_index": {
+      "file": "scenarios/S3A/closures__donor_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        2545
+      ],
+      "count": 2545,
+      "raw_bytes": 5090,
+      "gzip_bytes": 138,
+      "sha256_raw": "425db005845ca1ac128ee4e51ef59063a93f3623f61cf74e16e0408d1661ef8d",
+      "units": "index into the named axis"
+    },
+    "scenarios/S3A/closures__recipient_index": {
+      "file": "scenarios/S3A/closures__recipient_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        2545
+      ],
+      "count": 2545,
+      "raw_bytes": 5090,
+      "gzip_bytes": 750,
+      "sha256_raw": "e193ea074b2ecd927204716afbdb0bea7a309650a39e50dd54c60c49c59d01e8",
+      "units": "index into the named axis"
+    },
+    "scenarios/S3A/closures__sector_index": {
+      "file": "scenarios/S3A/closures__sector_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        2545
+      ],
+      "count": 2545,
+      "raw_bytes": 5090,
+      "gzip_bytes": 801,
+      "sha256_raw": "a108b233c6b00b99474d901f13c36b0e00007590c1c32a8432d10a471159ec68",
+      "units": "index into the named axis"
+    },
+    "scenarios/S3A/closures__year_index": {
+      "file": "scenarios/S3A/closures__year_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        2545
+      ],
+      "count": 2545,
+      "raw_bytes": 5090,
+      "gzip_bytes": 72,
+      "sha256_raw": "bf62ee040ce699d88941020d6ea2358127ecd70ba8cb02f02193dc10b7a2a1d0",
+      "units": "index into the named axis"
+    },
+    "scenarios/S3A/closures__reason": {
+      "file": "scenarios/S3A/closures__reason.bin.gz",
+      "dtype": "uint8",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        2545
+      ],
+      "count": 2545,
+      "raw_bytes": 2545,
+      "gzip_bytes": 136,
+      "sha256_raw": "b9ef2555a2976303bff3e1d3ceaf23f45b614708c075d88cefa71248169429f7",
+      "units": "1 = viability, 2 = donor announcement"
+    },
+    "scenarios/S3B/donor_year__ge": {
+      "file": "scenarios/S3B/donor_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "year"
+      ],
+      "shape": [
+        50,
+        4
+      ],
+      "count": 200,
+      "raw_bytes": 800,
+      "gzip_bytes": 806,
+      "sha256_raw": "2deeac4e2795b57d48eed71d16452aadb2ad0a6a8a83a1f9c19cab39c76e4692",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S3B/donor_year__gross": {
+      "file": "scenarios/S3B/donor_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "year"
+      ],
+      "shape": [
+        50,
+        4
+      ],
+      "count": 200,
+      "raw_bytes": 800,
+      "gzip_bytes": 810,
+      "sha256_raw": "cfbea6443892e47e2394f7ddfc1620cc729a1f1698b116ea5e09ac68277d7de9",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S3B/donor_sector_year__ge": {
+      "file": "scenarios/S3B/donor_sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        50,
+        21,
+        4
+      ],
+      "count": 4200,
+      "raw_bytes": 16800,
+      "gzip_bytes": 11561,
+      "sha256_raw": "6a2763d249263085965632ab8307a5d021e19f9eb5c9d07300c25cedbd22cd4a",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S3B/donor_sector_year__gross": {
+      "file": "scenarios/S3B/donor_sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        50,
+        21,
+        4
+      ],
+      "count": 4200,
+      "raw_bytes": 16800,
+      "gzip_bytes": 11429,
+      "sha256_raw": "0520d0ca8c3de055171a44b6a7503b8eb62dc7f2af8e4ec6b61bc32c6dffba46",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S3B/recipient_year__ge": {
+      "file": "scenarios/S3B/recipient_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        141,
+        4
+      ],
+      "count": 564,
+      "raw_bytes": 2256,
+      "gzip_bytes": 2146,
+      "sha256_raw": "07605949ff8ac389befe02923ca57047a900effdc25861ff8c525b6fe272a647",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S3B/recipient_year__gross": {
+      "file": "scenarios/S3B/recipient_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        141,
+        4
+      ],
+      "count": 564,
+      "raw_bytes": 2256,
+      "gzip_bytes": 2145,
+      "sha256_raw": "553f1fd260036160f90300717773bb7f35fdebe8ced95a3eac8712dc19e246fb",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S3B/sector_year__ge": {
+      "file": "scenarios/S3B/sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "sector",
+        "year"
+      ],
+      "shape": [
+        21,
+        4
+      ],
+      "count": 84,
+      "raw_bytes": 336,
+      "gzip_bytes": 379,
+      "sha256_raw": "76eab113e56e0c3e748dfa2bfc1021eb1d497d94ee5e0f6e8104214ac4eb9745",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S3B/sector_year__gross": {
+      "file": "scenarios/S3B/sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "sector",
+        "year"
+      ],
+      "shape": [
+        21,
+        4
+      ],
+      "count": 84,
+      "raw_bytes": 336,
+      "gzip_bytes": 382,
+      "sha256_raw": "7e15a03a2e3cd3c6371601d0ad3d0c6807908be7b253e4458fb3f640bc7485de",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S3B/donor_recipient_year__ge": {
+      "file": "scenarios/S3B/donor_recipient_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        50,
+        141,
+        4
+      ],
+      "count": 28200,
+      "raw_bytes": 112800,
+      "gzip_bytes": 52400,
+      "sha256_raw": "53626436dccc6c59c7dbba30b7ea8e247b59df64b1fcf2ecfb5e4d764675e8ff",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S3B/donor_recipient_year__gross": {
+      "file": "scenarios/S3B/donor_recipient_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        50,
+        141,
+        4
+      ],
+      "count": 28200,
+      "raw_bytes": 112800,
+      "gzip_bytes": 51038,
+      "sha256_raw": "b4ebeceabc655e461094fce603ad08ab8c05485824080a3682a4485ece9a122a",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S3B/recipient_sector_year__ge": {
+      "file": "scenarios/S3B/recipient_sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        141,
+        21,
+        4
+      ],
+      "count": 11844,
+      "raw_bytes": 47376,
+      "gzip_bytes": 38641,
+      "sha256_raw": "4a6d25a4a336e0aeda865ac28b37cdad9c5a9d04c3740a79bff06b29eab14a6e",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S3B/recipient_sector_year__gross": {
+      "file": "scenarios/S3B/recipient_sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        141,
+        21,
+        4
+      ],
+      "count": 11844,
+      "raw_bytes": 47376,
+      "gzip_bytes": 38659,
+      "sha256_raw": "5e50a39f1c967e2a77309ce1aec985643cb56e64eac0d616178eb64e26b517df",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S3B/closures__donor_index": {
+      "file": "scenarios/S3B/closures__donor_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        3945
+      ],
+      "count": 3945,
+      "raw_bytes": 7890,
+      "gzip_bytes": 131,
+      "sha256_raw": "45a59e76a7bd8e7e5748f68540d367167e2a33b617cf97445cb8b75e05e51527",
+      "units": "index into the named axis"
+    },
+    "scenarios/S3B/closures__recipient_index": {
+      "file": "scenarios/S3B/closures__recipient_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        3945
+      ],
+      "count": 3945,
+      "raw_bytes": 7890,
+      "gzip_bytes": 680,
+      "sha256_raw": "9480c88bf1fa8ddc82bc9242c1bf62d19cd3dff1dda4fb3ef09a5e4f11b6cfec",
+      "units": "index into the named axis"
+    },
+    "scenarios/S3B/closures__sector_index": {
+      "file": "scenarios/S3B/closures__sector_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        3945
+      ],
+      "count": 3945,
+      "raw_bytes": 7890,
+      "gzip_bytes": 873,
+      "sha256_raw": "40e99c06ea918dc60b5aede125bff2617e921a52f650c15146870c86f184d537",
+      "units": "index into the named axis"
+    },
+    "scenarios/S3B/closures__year_index": {
+      "file": "scenarios/S3B/closures__year_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        3945
+      ],
+      "count": 3945,
+      "raw_bytes": 7890,
+      "gzip_bytes": 74,
+      "sha256_raw": "fbadd0bdd47f90b15706301d6b1edfd8516eb92d4c1996f380161f09ebc7cbf5",
+      "units": "index into the named axis"
+    },
+    "scenarios/S3B/closures__reason": {
+      "file": "scenarios/S3B/closures__reason.bin.gz",
+      "dtype": "uint8",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        3945
+      ],
+      "count": 3945,
+      "raw_bytes": 3945,
+      "gzip_bytes": 140,
+      "sha256_raw": "25f84996bdb87b42c9fd32b809796d13c17d87e30f910f8c7c08adaac50907aa",
+      "units": "1 = viability, 2 = donor announcement"
+    },
+    "scenarios/S4/donor_year__ge": {
+      "file": "scenarios/S4/donor_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "year"
+      ],
+      "shape": [
+        50,
+        4
+      ],
+      "count": 200,
+      "raw_bytes": 800,
+      "gzip_bytes": 806,
+      "sha256_raw": "2deeac4e2795b57d48eed71d16452aadb2ad0a6a8a83a1f9c19cab39c76e4692",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S4/donor_year__gross": {
+      "file": "scenarios/S4/donor_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "year"
+      ],
+      "shape": [
+        50,
+        4
+      ],
+      "count": 200,
+      "raw_bytes": 800,
+      "gzip_bytes": 813,
+      "sha256_raw": "de9f4d56803326753dce4d80aaa8050690e9cc8e3a0a739f71fec1f7989cb007",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S4/donor_sector_year__ge": {
+      "file": "scenarios/S4/donor_sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        50,
+        21,
+        4
+      ],
+      "count": 4200,
+      "raw_bytes": 16800,
+      "gzip_bytes": 11776,
+      "sha256_raw": "ad17a368ea95e5aefa9f8766f2dfac4d32fcea0b01ac6c13d5f35316dbe00d7c",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S4/donor_sector_year__gross": {
+      "file": "scenarios/S4/donor_sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        50,
+        21,
+        4
+      ],
+      "count": 4200,
+      "raw_bytes": 16800,
+      "gzip_bytes": 11640,
+      "sha256_raw": "620c0624cac4756d7aa168febb427210757a39a02cf392506e23763eb750ad8e",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S4/recipient_year__ge": {
+      "file": "scenarios/S4/recipient_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        141,
+        4
+      ],
+      "count": 564,
+      "raw_bytes": 2256,
+      "gzip_bytes": 2145,
+      "sha256_raw": "46ab0b839beaf1deeee310e17fafad579ff38f9b27aef69e539b3e8aac35406b",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S4/recipient_year__gross": {
+      "file": "scenarios/S4/recipient_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        141,
+        4
+      ],
+      "count": 564,
+      "raw_bytes": 2256,
+      "gzip_bytes": 2150,
+      "sha256_raw": "c582485267b153008d427e7b5c1d25789f6435d17d8129f90ec20c94dd662418",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S4/sector_year__ge": {
+      "file": "scenarios/S4/sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "sector",
+        "year"
+      ],
+      "shape": [
+        21,
+        4
+      ],
+      "count": 84,
+      "raw_bytes": 336,
+      "gzip_bytes": 379,
+      "sha256_raw": "757d1d060456f5eb4c2a53fc4b846fdac3708ea3c4da44eaa7f3c6d1f9dae72b",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S4/sector_year__gross": {
+      "file": "scenarios/S4/sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "sector",
+        "year"
+      ],
+      "shape": [
+        21,
+        4
+      ],
+      "count": 84,
+      "raw_bytes": 336,
+      "gzip_bytes": 382,
+      "sha256_raw": "8848ff266ef7d965b65af1ef9a025105c5aebd85de6aa530c747ba3ea2825fc0",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S4/donor_recipient_year__ge": {
+      "file": "scenarios/S4/donor_recipient_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        50,
+        141,
+        4
+      ],
+      "count": 28200,
+      "raw_bytes": 112800,
+      "gzip_bytes": 51837,
+      "sha256_raw": "fdbcf9cf9c069cbfd56dbbda204bb0fe48b87fcd71af2e45f2f409811bbba128",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S4/donor_recipient_year__gross": {
+      "file": "scenarios/S4/donor_recipient_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        50,
+        141,
+        4
+      ],
+      "count": 28200,
+      "raw_bytes": 112800,
+      "gzip_bytes": 50689,
+      "sha256_raw": "16fbc926f9d163fbe63e6f1fe8506036d20500b5238ad033101a18e83bd82608",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S4/recipient_sector_year__ge": {
+      "file": "scenarios/S4/recipient_sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        141,
+        21,
+        4
+      ],
+      "count": 11844,
+      "raw_bytes": 47376,
+      "gzip_bytes": 38524,
+      "sha256_raw": "06ef222caf99110f7e56c3e76447a9fc8db7de60a5a6477e83280a828deb8567",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S4/recipient_sector_year__gross": {
+      "file": "scenarios/S4/recipient_sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        141,
+        21,
+        4
+      ],
+      "count": 11844,
+      "raw_bytes": 47376,
+      "gzip_bytes": 38536,
+      "sha256_raw": "66fc8158d5cbb72d594bb9e34cdeed8bf2ed5a1f592d72a2fb2ce3e43fb0ca44",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S4/closures__donor_index": {
+      "file": "scenarios/S4/closures__donor_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        4430
+      ],
+      "count": 4430,
+      "raw_bytes": 8860,
+      "gzip_bytes": 135,
+      "sha256_raw": "c41eeb09e8d4fa4a3ab68e6ad90bab71072efccf5fa575c027651b540d8ab1ab",
+      "units": "index into the named axis"
+    },
+    "scenarios/S4/closures__recipient_index": {
+      "file": "scenarios/S4/closures__recipient_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        4430
+      ],
+      "count": 4430,
+      "raw_bytes": 8860,
+      "gzip_bytes": 875,
+      "sha256_raw": "6cb58e17468a60098776ca8bb941927d9ce43297c37f5326d2e8bf64080fcbb4",
+      "units": "index into the named axis"
+    },
+    "scenarios/S4/closures__sector_index": {
+      "file": "scenarios/S4/closures__sector_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        4430
+      ],
+      "count": 4430,
+      "raw_bytes": 8860,
+      "gzip_bytes": 1152,
+      "sha256_raw": "b3a665d3709b5223a2be27f45e2515c80d4d85050915af376562f3eda9dcbfce",
+      "units": "index into the named axis"
+    },
+    "scenarios/S4/closures__year_index": {
+      "file": "scenarios/S4/closures__year_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        4430
+      ],
+      "count": 4430,
+      "raw_bytes": 8860,
+      "gzip_bytes": 75,
+      "sha256_raw": "af3d6d8aa97b6597f0a68e439b0fc5dd7fda90c68e131c9d4ec2cb112e1d877e",
+      "units": "index into the named axis"
+    },
+    "scenarios/S4/closures__reason": {
+      "file": "scenarios/S4/closures__reason.bin.gz",
+      "dtype": "uint8",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        4430
+      ],
+      "count": 4430,
+      "raw_bytes": 4430,
+      "gzip_bytes": 138,
+      "sha256_raw": "6655eb3d8223fb6ca62d62c44568d6220f0077709c3acc4ee225799d3000743c",
+      "units": "1 = viability, 2 = donor announcement"
+    },
+    "scenarios/S5/donor_year__ge": {
+      "file": "scenarios/S5/donor_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "year"
+      ],
+      "shape": [
+        50,
+        4
+      ],
+      "count": 200,
+      "raw_bytes": 800,
+      "gzip_bytes": 806,
+      "sha256_raw": "2deeac4e2795b57d48eed71d16452aadb2ad0a6a8a83a1f9c19cab39c76e4692",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S5/donor_year__gross": {
+      "file": "scenarios/S5/donor_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "year"
+      ],
+      "shape": [
+        50,
+        4
+      ],
+      "count": 200,
+      "raw_bytes": 800,
+      "gzip_bytes": 800,
+      "sha256_raw": "d609cbc9376ef093cb7226232040876fe316d01d3b8e4a5da5887033a1db4c00",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S5/donor_sector_year__ge": {
+      "file": "scenarios/S5/donor_sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        50,
+        21,
+        4
+      ],
+      "count": 4200,
+      "raw_bytes": 16800,
+      "gzip_bytes": 11572,
+      "sha256_raw": "8760c1bac8a27ee3db9360c74218d6ebbfd14d7f61ac00854e98629fca9cd513",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S5/donor_sector_year__gross": {
+      "file": "scenarios/S5/donor_sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        50,
+        21,
+        4
+      ],
+      "count": 4200,
+      "raw_bytes": 16800,
+      "gzip_bytes": 11430,
+      "sha256_raw": "9e5d73ddb33c98cc7cc7f16519222e78e83d1131600680cbe6c7e90f06bbd8ca",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S5/recipient_year__ge": {
+      "file": "scenarios/S5/recipient_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        141,
+        4
+      ],
+      "count": 564,
+      "raw_bytes": 2256,
+      "gzip_bytes": 2147,
+      "sha256_raw": "07e206891b31ae55d4b9242c38eefb998dfe0cebf0f73ee3febe0737cb819378",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S5/recipient_year__gross": {
+      "file": "scenarios/S5/recipient_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        141,
+        4
+      ],
+      "count": 564,
+      "raw_bytes": 2256,
+      "gzip_bytes": 2155,
+      "sha256_raw": "522fd8c9362344a96fb8bb193a0f90cfe35c09cf7c4fbbf7a28fcf6b0a9fc731",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S5/sector_year__ge": {
+      "file": "scenarios/S5/sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "sector",
+        "year"
+      ],
+      "shape": [
+        21,
+        4
+      ],
+      "count": 84,
+      "raw_bytes": 336,
+      "gzip_bytes": 379,
+      "sha256_raw": "d71a32901e2e455ac753b87064cdd8a3e5751067f0cef498fba6e226f42f0c8e",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S5/sector_year__gross": {
+      "file": "scenarios/S5/sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "sector",
+        "year"
+      ],
+      "shape": [
+        21,
+        4
+      ],
+      "count": 84,
+      "raw_bytes": 336,
+      "gzip_bytes": 382,
+      "sha256_raw": "fa840a37c7654e09710f495f11cf56f7df80179807c0fc10b1fe115c780499bd",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S5/donor_recipient_year__ge": {
+      "file": "scenarios/S5/donor_recipient_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        50,
+        141,
+        4
+      ],
+      "count": 28200,
+      "raw_bytes": 112800,
+      "gzip_bytes": 51942,
+      "sha256_raw": "c8083f9565fbc97359831b1e5e0ea1edfdbcc004ee446f033779935f7c2139b2",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S5/donor_recipient_year__gross": {
+      "file": "scenarios/S5/donor_recipient_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        50,
+        141,
+        4
+      ],
+      "count": 28200,
+      "raw_bytes": 112800,
+      "gzip_bytes": 50523,
+      "sha256_raw": "20b4394aa2ff7d0ddbffb5fdb1727a152f31bb9ba34db9f920426ad9ce84f509",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S5/recipient_sector_year__ge": {
+      "file": "scenarios/S5/recipient_sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        141,
+        21,
+        4
+      ],
+      "count": 11844,
+      "raw_bytes": 47376,
+      "gzip_bytes": 38721,
+      "sha256_raw": "2240eaf2c641f6c88cdfd3955ab7c0b305493b023b4538e898e564b0c5d57f29",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S5/recipient_sector_year__gross": {
+      "file": "scenarios/S5/recipient_sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        141,
+        21,
+        4
+      ],
+      "count": 11844,
+      "raw_bytes": 47376,
+      "gzip_bytes": 38744,
+      "sha256_raw": "2cfbedecfd75cbf235ea73e1303a91197a8274c579926e688a729d5eecd7241d",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S5/closures__donor_index": {
+      "file": "scenarios/S5/closures__donor_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        4170
+      ],
+      "count": 4170,
+      "raw_bytes": 8340,
+      "gzip_bytes": 164,
+      "sha256_raw": "684ae366681d2d31fdf5b657fcf9781d2709fad4db0997b962ccef8e23c2ee7d",
+      "units": "index into the named axis"
+    },
+    "scenarios/S5/closures__recipient_index": {
+      "file": "scenarios/S5/closures__recipient_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        4170
+      ],
+      "count": 4170,
+      "raw_bytes": 8340,
+      "gzip_bytes": 967,
+      "sha256_raw": "d044edb891aa1e92bb2ff5032c7ba4e8736ab5122300c89c73310aab5c981758",
+      "units": "index into the named axis"
+    },
+    "scenarios/S5/closures__sector_index": {
+      "file": "scenarios/S5/closures__sector_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        4170
+      ],
+      "count": 4170,
+      "raw_bytes": 8340,
+      "gzip_bytes": 1217,
+      "sha256_raw": "8cb22dead5e51c80a67904399543d7c08fdb7cbe75837f0a5359e0868fa633f4",
+      "units": "index into the named axis"
+    },
+    "scenarios/S5/closures__year_index": {
+      "file": "scenarios/S5/closures__year_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        4170
+      ],
+      "count": 4170,
+      "raw_bytes": 8340,
+      "gzip_bytes": 76,
+      "sha256_raw": "a94ff592cb744b3cb2ba86551a07899e06be62cdfaee037b8be1401daa5bca9a",
+      "units": "index into the named axis"
+    },
+    "scenarios/S5/closures__reason": {
+      "file": "scenarios/S5/closures__reason.bin.gz",
+      "dtype": "uint8",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        4170
+      ],
+      "count": 4170,
+      "raw_bytes": 4170,
+      "gzip_bytes": 149,
+      "sha256_raw": "0f8de8451f9537ba9d17828d648dbe5415e831b07cebc9333d352c1a00845b74",
+      "units": "1 = viability, 2 = donor announcement"
+    },
+    "scenarios/S6A/donor_year__ge": {
+      "file": "scenarios/S6A/donor_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "year"
+      ],
+      "shape": [
+        50,
+        4
+      ],
+      "count": 200,
+      "raw_bytes": 800,
+      "gzip_bytes": 806,
+      "sha256_raw": "2deeac4e2795b57d48eed71d16452aadb2ad0a6a8a83a1f9c19cab39c76e4692",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S6A/donor_year__gross": {
+      "file": "scenarios/S6A/donor_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "year"
+      ],
+      "shape": [
+        50,
+        4
+      ],
+      "count": 200,
+      "raw_bytes": 800,
+      "gzip_bytes": 812,
+      "sha256_raw": "7bcd09f250308bdd88f2ed9520cca47c834bbfd5c10c191f2fb8ad2d5970f6d3",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S6A/donor_sector_year__ge": {
+      "file": "scenarios/S6A/donor_sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        50,
+        21,
+        4
+      ],
+      "count": 4200,
+      "raw_bytes": 16800,
+      "gzip_bytes": 11529,
+      "sha256_raw": "814761c8169a3c7a53f4124c3072e8bc26cc7ae127709021c25b4ff96d9c2c21",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S6A/donor_sector_year__gross": {
+      "file": "scenarios/S6A/donor_sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        50,
+        21,
+        4
+      ],
+      "count": 4200,
+      "raw_bytes": 16800,
+      "gzip_bytes": 11418,
+      "sha256_raw": "551bfd7af1d5c300c8df248b5d71f01a6ccde73036f17207bbd9f36fbe129fc6",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S6A/recipient_year__ge": {
+      "file": "scenarios/S6A/recipient_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        141,
+        4
+      ],
+      "count": 564,
+      "raw_bytes": 2256,
+      "gzip_bytes": 2148,
+      "sha256_raw": "9ed74b3b774226dbaca6604d5d9864d15c5ba3c3f6f47e90241f6c9b9c2660ba",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S6A/recipient_year__gross": {
+      "file": "scenarios/S6A/recipient_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        141,
+        4
+      ],
+      "count": 564,
+      "raw_bytes": 2256,
+      "gzip_bytes": 2151,
+      "sha256_raw": "5e7bbe488b064b4e5350c7dcedd2fc4745241d35c7705043b24fd46da180a290",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S6A/sector_year__ge": {
+      "file": "scenarios/S6A/sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "sector",
+        "year"
+      ],
+      "shape": [
+        21,
+        4
+      ],
+      "count": 84,
+      "raw_bytes": 336,
+      "gzip_bytes": 379,
+      "sha256_raw": "9b2b56619f3ae30a84689de0b9febd49ca5c4488d4b4708f2591fe181458f940",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S6A/sector_year__gross": {
+      "file": "scenarios/S6A/sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "sector",
+        "year"
+      ],
+      "shape": [
+        21,
+        4
+      ],
+      "count": 84,
+      "raw_bytes": 336,
+      "gzip_bytes": 382,
+      "sha256_raw": "547322e1052bb5886d9d348a4e2e7202ca31c8defa3e8546aa727503bccb47bd",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S6A/donor_recipient_year__ge": {
+      "file": "scenarios/S6A/donor_recipient_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        50,
+        141,
+        4
+      ],
+      "count": 28200,
+      "raw_bytes": 112800,
+      "gzip_bytes": 51071,
+      "sha256_raw": "2c948c97b05538d42455a39d2247597f0777001604f19de5c5ed627c28dabb95",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S6A/donor_recipient_year__gross": {
+      "file": "scenarios/S6A/donor_recipient_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        50,
+        141,
+        4
+      ],
+      "count": 28200,
+      "raw_bytes": 112800,
+      "gzip_bytes": 49747,
+      "sha256_raw": "73a9575e911cae4cc56684b8e919b16372d6b1685a26e6f1616b35b18dd3eba9",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S6A/recipient_sector_year__ge": {
+      "file": "scenarios/S6A/recipient_sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        141,
+        21,
+        4
+      ],
+      "count": 11844,
+      "raw_bytes": 47376,
+      "gzip_bytes": 38533,
+      "sha256_raw": "9ec173413fd0a7730e1244216f6b3af80e4ae88114644aac87211b4efe1fa879",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S6A/recipient_sector_year__gross": {
+      "file": "scenarios/S6A/recipient_sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        141,
+        21,
+        4
+      ],
+      "count": 11844,
+      "raw_bytes": 47376,
+      "gzip_bytes": 38590,
+      "sha256_raw": "31d551d3e0188d5ae0e124be140c286c8131fee9d87ac247b0d954641cbeb7bb",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S6A/closures__donor_index": {
+      "file": "scenarios/S6A/closures__donor_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        5307
+      ],
+      "count": 5307,
+      "raw_bytes": 10614,
+      "gzip_bytes": 179,
+      "sha256_raw": "e3423a4d6a0b8ef553a0aba0a94ef3e6b57342d56f1f42d7078e55b0ec61b732",
+      "units": "index into the named axis"
+    },
+    "scenarios/S6A/closures__recipient_index": {
+      "file": "scenarios/S6A/closures__recipient_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        5307
+      ],
+      "count": 5307,
+      "raw_bytes": 10614,
+      "gzip_bytes": 1039,
+      "sha256_raw": "98ecaac5e16e2b225543e52a94757ffd657fa3ceda0133322e5a8932ad1330f3",
+      "units": "index into the named axis"
+    },
+    "scenarios/S6A/closures__sector_index": {
+      "file": "scenarios/S6A/closures__sector_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        5307
+      ],
+      "count": 5307,
+      "raw_bytes": 10614,
+      "gzip_bytes": 1292,
+      "sha256_raw": "6a9905b7ebf8927250941c195aab85e6cc9b0973ec2642f349b4ee90541791ff",
+      "units": "index into the named axis"
+    },
+    "scenarios/S6A/closures__year_index": {
+      "file": "scenarios/S6A/closures__year_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        5307
+      ],
+      "count": 5307,
+      "raw_bytes": 10614,
+      "gzip_bytes": 77,
+      "sha256_raw": "b352857a40b6bf663b2ffb798ad94da41c91934038bd5271b83ddad84a230a5c",
+      "units": "index into the named axis"
+    },
+    "scenarios/S6A/closures__reason": {
+      "file": "scenarios/S6A/closures__reason.bin.gz",
+      "dtype": "uint8",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        5307
+      ],
+      "count": 5307,
+      "raw_bytes": 5307,
+      "gzip_bytes": 157,
+      "sha256_raw": "5c9c60b6e13f304088c7530b1b78fe91a2d7149f6791eedffa58694c458c9170",
+      "units": "1 = viability, 2 = donor announcement"
+    },
+    "scenarios/S6B/donor_year__ge": {
+      "file": "scenarios/S6B/donor_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "year"
+      ],
+      "shape": [
+        50,
+        4
+      ],
+      "count": 200,
+      "raw_bytes": 800,
+      "gzip_bytes": 806,
+      "sha256_raw": "2deeac4e2795b57d48eed71d16452aadb2ad0a6a8a83a1f9c19cab39c76e4692",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S6B/donor_year__gross": {
+      "file": "scenarios/S6B/donor_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "year"
+      ],
+      "shape": [
+        50,
+        4
+      ],
+      "count": 200,
+      "raw_bytes": 800,
+      "gzip_bytes": 810,
+      "sha256_raw": "30b1bed86d98efeaf036e66134ba43ef83e4bfd5072ff215142fa655e9ca62ae",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S6B/donor_sector_year__ge": {
+      "file": "scenarios/S6B/donor_sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        50,
+        21,
+        4
+      ],
+      "count": 4200,
+      "raw_bytes": 16800,
+      "gzip_bytes": 11909,
+      "sha256_raw": "c5ead26a5dc584a27ec3957d53661f89eee35f93832399438a99ca8af5333bb4",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S6B/donor_sector_year__gross": {
+      "file": "scenarios/S6B/donor_sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        50,
+        21,
+        4
+      ],
+      "count": 4200,
+      "raw_bytes": 16800,
+      "gzip_bytes": 11768,
+      "sha256_raw": "047acd3e37f90488e5e77eba26775b239a9b3f7682f78d399e64ed603f526a27",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S6B/recipient_year__ge": {
+      "file": "scenarios/S6B/recipient_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        141,
+        4
+      ],
+      "count": 564,
+      "raw_bytes": 2256,
+      "gzip_bytes": 2149,
+      "sha256_raw": "31d846b4e62b8d11516b0745bd4ee484307dfe50bf4371d61b872c8aab507eb2",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S6B/recipient_year__gross": {
+      "file": "scenarios/S6B/recipient_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        141,
+        4
+      ],
+      "count": 564,
+      "raw_bytes": 2256,
+      "gzip_bytes": 2156,
+      "sha256_raw": "6ddb85fe593dcd87177d74ef72d25b38bb11ac0685ea47f12564afce58f01618",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S6B/sector_year__ge": {
+      "file": "scenarios/S6B/sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "sector",
+        "year"
+      ],
+      "shape": [
+        21,
+        4
+      ],
+      "count": 84,
+      "raw_bytes": 336,
+      "gzip_bytes": 379,
+      "sha256_raw": "dc9627b35e4258d62748d8794e880a71e140c69379a4f06110d23275a50b64d6",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S6B/sector_year__gross": {
+      "file": "scenarios/S6B/sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "sector",
+        "year"
+      ],
+      "shape": [
+        21,
+        4
+      ],
+      "count": 84,
+      "raw_bytes": 336,
+      "gzip_bytes": 382,
+      "sha256_raw": "83e9997d49dfcd3f7a05ef6ed5471bd0ba857b119753ddaaa8a8c2b2a3282134",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S6B/donor_recipient_year__ge": {
+      "file": "scenarios/S6B/donor_recipient_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        50,
+        141,
+        4
+      ],
+      "count": 28200,
+      "raw_bytes": 112800,
+      "gzip_bytes": 51909,
+      "sha256_raw": "4ab2643f2fbc4abe1cc22268aca8fea1fefd22a0b950299f37179e2798ae81f6",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S6B/donor_recipient_year__gross": {
+      "file": "scenarios/S6B/donor_recipient_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        50,
+        141,
+        4
+      ],
+      "count": 28200,
+      "raw_bytes": 112800,
+      "gzip_bytes": 50696,
+      "sha256_raw": "39e7c7a40bd2b6c27655875fe3a7c3ecda08e295952688bbf7bf8aec5539800c",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S6B/recipient_sector_year__ge": {
+      "file": "scenarios/S6B/recipient_sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        141,
+        21,
+        4
+      ],
+      "count": 11844,
+      "raw_bytes": 47376,
+      "gzip_bytes": 38549,
+      "sha256_raw": "a38dca95380e4e25a96cf1d1c9685e8bce607d457543d46dd66bd2bbeaec1e8e",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S6B/recipient_sector_year__gross": {
+      "file": "scenarios/S6B/recipient_sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        141,
+        21,
+        4
+      ],
+      "count": 11844,
+      "raw_bytes": 47376,
+      "gzip_bytes": 38564,
+      "sha256_raw": "94df931e9044c000dbe02d2d3a9473a0c6d69d530768c1bb6f5ae4a06634b6a0",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S6B/closures__donor_index": {
+      "file": "scenarios/S6B/closures__donor_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        3702
+      ],
+      "count": 3702,
+      "raw_bytes": 7404,
+      "gzip_bytes": 126,
+      "sha256_raw": "09cee6330aee689f66d3115d59f4346509b669429bfff0c71ce45e737beaebf3",
+      "units": "index into the named axis"
+    },
+    "scenarios/S6B/closures__recipient_index": {
+      "file": "scenarios/S6B/closures__recipient_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        3702
+      ],
+      "count": 3702,
+      "raw_bytes": 7404,
+      "gzip_bytes": 717,
+      "sha256_raw": "63757b5f29b8e501f447fd221d274ea46dd1f203b8352e4fce2965c1c0297b3f",
+      "units": "index into the named axis"
+    },
+    "scenarios/S6B/closures__sector_index": {
+      "file": "scenarios/S6B/closures__sector_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        3702
+      ],
+      "count": 3702,
+      "raw_bytes": 7404,
+      "gzip_bytes": 943,
+      "sha256_raw": "c9b3e4362e69778cbc661d866e3981bd5614276cded44a0ca48cb42865932d26",
+      "units": "index into the named axis"
+    },
+    "scenarios/S6B/closures__year_index": {
+      "file": "scenarios/S6B/closures__year_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        3702
+      ],
+      "count": 3702,
+      "raw_bytes": 7404,
+      "gzip_bytes": 75,
+      "sha256_raw": "67f3f34899d02111f5fafec74c035f22f7628f399997d3dedafbbdc96a1dd065",
+      "units": "index into the named axis"
+    },
+    "scenarios/S6B/closures__reason": {
+      "file": "scenarios/S6B/closures__reason.bin.gz",
+      "dtype": "uint8",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        3702
+      ],
+      "count": 3702,
+      "raw_bytes": 3702,
+      "gzip_bytes": 134,
+      "sha256_raw": "84418f14469f5f25a41281056cee95e2aa30321395a16a1a8e07089f2c12d5f1",
+      "units": "1 = viability, 2 = donor announcement"
+    },
+    "scenarios/S7/donor_year__ge": {
+      "file": "scenarios/S7/donor_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "year"
+      ],
+      "shape": [
+        50,
+        4
+      ],
+      "count": 200,
+      "raw_bytes": 800,
+      "gzip_bytes": 806,
+      "sha256_raw": "2deeac4e2795b57d48eed71d16452aadb2ad0a6a8a83a1f9c19cab39c76e4692",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S7/donor_year__gross": {
+      "file": "scenarios/S7/donor_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "year"
+      ],
+      "shape": [
+        50,
+        4
+      ],
+      "count": 200,
+      "raw_bytes": 800,
+      "gzip_bytes": 813,
+      "sha256_raw": "be10e615b84da5d89b5b434602f5ee0c55c5fb565a6925cdc6c6f54f6ac39906",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S7/donor_sector_year__ge": {
+      "file": "scenarios/S7/donor_sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        50,
+        21,
+        4
+      ],
+      "count": 4200,
+      "raw_bytes": 16800,
+      "gzip_bytes": 11620,
+      "sha256_raw": "b6c2369582a9fd81e4c7338e8691d68afc2a65ef9d50ec070ca18c2525f67cc4",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S7/donor_sector_year__gross": {
+      "file": "scenarios/S7/donor_sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        50,
+        21,
+        4
+      ],
+      "count": 4200,
+      "raw_bytes": 16800,
+      "gzip_bytes": 11475,
+      "sha256_raw": "171acf40c866ec12b1ed5aa4938e691683a8b18471158dd9bcd5f5a1ad0c6eab",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S7/recipient_year__ge": {
+      "file": "scenarios/S7/recipient_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        141,
+        4
+      ],
+      "count": 564,
+      "raw_bytes": 2256,
+      "gzip_bytes": 2150,
+      "sha256_raw": "388854957ef0505b84c2450aa519f954811d0222078419917027868d392ab794",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S7/recipient_year__gross": {
+      "file": "scenarios/S7/recipient_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        141,
+        4
+      ],
+      "count": 564,
+      "raw_bytes": 2256,
+      "gzip_bytes": 2150,
+      "sha256_raw": "6bafb84c22321f9afe08a4820a2e37d2d28016cbabaea3bd9345a9e96e4b857a",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S7/sector_year__ge": {
+      "file": "scenarios/S7/sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "sector",
+        "year"
+      ],
+      "shape": [
+        21,
+        4
+      ],
+      "count": 84,
+      "raw_bytes": 336,
+      "gzip_bytes": 379,
+      "sha256_raw": "1025a690aebdf0406b6fd4e912a6b29dd35caba08b3afaada1b4d4db654cae4c",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S7/sector_year__gross": {
+      "file": "scenarios/S7/sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "sector",
+        "year"
+      ],
+      "shape": [
+        21,
+        4
+      ],
+      "count": 84,
+      "raw_bytes": 336,
+      "gzip_bytes": 382,
+      "sha256_raw": "85925bcff8c0f6b56d8462ba3e233d2a5636952284fff1942b3ad48ab242c39c",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S7/donor_recipient_year__ge": {
+      "file": "scenarios/S7/donor_recipient_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        50,
+        141,
+        4
+      ],
+      "count": 28200,
+      "raw_bytes": 112800,
+      "gzip_bytes": 52658,
+      "sha256_raw": "ff986ebe471c28800105b073787544312069cf7a18a876d6eaafc40b23eb473d",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S7/donor_recipient_year__gross": {
+      "file": "scenarios/S7/donor_recipient_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient",
+        "year"
+      ],
+      "shape": [
+        50,
+        141,
+        4
+      ],
+      "count": 28200,
+      "raw_bytes": 112800,
+      "gzip_bytes": 51393,
+      "sha256_raw": "3c901d5a9cf4966cbf6becb227d0df32126ecf0fe68d5dd3b968b8aec275e122",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S7/recipient_sector_year__ge": {
+      "file": "scenarios/S7/recipient_sector_year__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        141,
+        21,
+        4
+      ],
+      "count": 11844,
+      "raw_bytes": 47376,
+      "gzip_bytes": 38598,
+      "sha256_raw": "c3dc95408c890783b219b4dc804c1a357d06089bb298da32558e97391a6ab211",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "scenarios/S7/recipient_sector_year__gross": {
+      "file": "scenarios/S7/recipient_sector_year__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient",
+        "sector",
+        "year"
+      ],
+      "shape": [
+        141,
+        21,
+        4
+      ],
+      "count": 11844,
+      "raw_bytes": 47376,
+      "gzip_bytes": 38613,
+      "sha256_raw": "10c6c355bc63fff7b53a7c729582def9657f5e089ce68f315a125c0483a934b1",
+      "units": "US$ million, gross, constant 2024 prices"
+    },
+    "scenarios/S7/closures__donor_index": {
+      "file": "scenarios/S7/closures__donor_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        3319
+      ],
+      "count": 3319,
+      "raw_bytes": 6638,
+      "gzip_bytes": 133,
+      "sha256_raw": "e92cf4eee2f1c0efc591493977aa53ef61304cb17e25a01a991ad6bbb7b04093",
+      "units": "index into the named axis"
+    },
+    "scenarios/S7/closures__recipient_index": {
+      "file": "scenarios/S7/closures__recipient_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        3319
+      ],
+      "count": 3319,
+      "raw_bytes": 6638,
+      "gzip_bytes": 655,
+      "sha256_raw": "1fd0f8e446a392760cb6967e50a837765e34747acca5c6cc31bb525ccf6c52e4",
+      "units": "index into the named axis"
+    },
+    "scenarios/S7/closures__sector_index": {
+      "file": "scenarios/S7/closures__sector_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        3319
+      ],
+      "count": 3319,
+      "raw_bytes": 6638,
+      "gzip_bytes": 841,
+      "sha256_raw": "a55652cef87b313a29aa75b33441c17c37f07532ba2d98071dc2c30fe91128c0",
+      "units": "index into the named axis"
+    },
+    "scenarios/S7/closures__year_index": {
+      "file": "scenarios/S7/closures__year_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        3319
+      ],
+      "count": 3319,
+      "raw_bytes": 6638,
+      "gzip_bytes": 74,
+      "sha256_raw": "95a9a4244559c0fe220c0c0137d9653d8bfc6fc94a84ca0a0809d5d79d3c4146",
+      "units": "index into the named axis"
+    },
+    "scenarios/S7/closures__reason": {
+      "file": "scenarios/S7/closures__reason.bin.gz",
+      "dtype": "uint8",
+      "dims": [
+        "closure"
+      ],
+      "shape": [
+        3319
+      ],
+      "count": 3319,
+      "raw_bytes": 3319,
+      "gzip_bytes": 140,
+      "sha256_raw": "1b9fa8da6250c16522e2b7edbd0f293abaee7e8fbb3768eb600eb2ed6f5090f2",
+      "units": "1 = viability, 2 = donor announcement"
+    },
+    "static/reallocation_vs_s1__scenario_donor_year": {
+      "file": "static/reallocation_vs_s1__scenario_donor_year.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "scenario",
+        "donor",
+        "year"
+      ],
+      "shape": [
+        10,
+        50,
+        4
+      ],
+      "count": 2000,
+      "raw_bytes": 8000,
+      "gzip_bytes": 6752,
+      "sha256_raw": "9b3f33caf6858fdc6e82e58612f795aaa22542020720413cc29f959c201ba3bf",
+      "units": "percent of the S1 grant-equivalent donor-year matrix envelope",
+      "note": "0.5 * sum over recipient-sector cells of |scenario - S1|, divided by the S1 envelope."
+    },
+    "cube/support__donor_index": {
+      "file": "cube/support__donor_index.bin.gz",
+      "dtype": "uint8",
+      "dims": [
+        "cell"
+      ],
+      "shape": [
+        79845
+      ],
+      "count": 79845,
+      "raw_bytes": 79845,
+      "gzip_bytes": 260,
+      "sha256_raw": "3c6c387ffebe2e8aec1cbd2929f4f9c7e79c996cfe556e6bee6e34d54cb7c77a",
+      "units": "index into the named axis",
+      "note": "sorted donor-major, then recipient, sector, year"
+    },
+    "cube/support__recipient_index": {
+      "file": "cube/support__recipient_index.bin.gz",
+      "dtype": "uint8",
+      "dims": [
+        "cell"
+      ],
+      "shape": [
+        79845
+      ],
+      "count": 79845,
+      "raw_bytes": 79845,
+      "gzip_bytes": 5535,
+      "sha256_raw": "357e3a17514b4d7546bb7bdaad62e872053f432b45ae4f7a6166d1ef9718f934",
+      "units": "index into the named axis",
+      "note": "sorted donor-major, then recipient, sector, year"
+    },
+    "cube/support__sector_index": {
+      "file": "cube/support__sector_index.bin.gz",
+      "dtype": "uint8",
+      "dims": [
+        "cell"
+      ],
+      "shape": [
+        79845
+      ],
+      "count": 79845,
+      "raw_bytes": 79845,
+      "gzip_bytes": 8538,
+      "sha256_raw": "bc5bf1138838705622f50d2f8d3a21fd11c257956d3428c87b7b5d244752ec9c",
+      "units": "index into the named axis",
+      "note": "sorted donor-major, then recipient, sector, year"
+    },
+    "cube/support__year_index": {
+      "file": "cube/support__year_index.bin.gz",
+      "dtype": "uint8",
+      "dims": [
+        "cell"
+      ],
+      "shape": [
+        79845
+      ],
+      "count": 79845,
+      "raw_bytes": 79845,
+      "gzip_bytes": 166,
+      "sha256_raw": "b90399dc6d878e00cb1464a103d23794dc5e2fceb0f4c9185418de55f67370fa",
+      "units": "index into the named axis",
+      "note": "sorted donor-major, then recipient, sector, year"
+    },
+    "cube/support__donor_offsets": {
+      "file": "cube/support__donor_offsets.bin.gz",
+      "dtype": "int32",
+      "dims": [
+        "donor_boundary"
+      ],
+      "shape": [
+        51
+      ],
+      "count": 51,
+      "raw_bytes": 204,
+      "gzip_bytes": 219,
+      "sha256_raw": "a28e44e690a459486107bff6a59319400a315d0b439111bc02774c9a1ecf60c6",
+      "units": "offset into the cell axis",
+      "note": "donor i occupies cells [offsets[i], offsets[i+1]); the support is sorted donor-major, so this is exact, not a hint"
+    },
+    "cube/S1__ge": {
+      "file": "cube/S1__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "cell"
+      ],
+      "shape": [
+        79845
+      ],
+      "count": 79845,
+      "raw_bytes": 319380,
+      "gzip_bytes": 268401,
+      "sha256_raw": "acf70677cfef66d6d9f4fa0c93ffba5e9aa7723122273faff9344c73fc0c4b91",
+      "units": "US$ million, grant-equivalent, constant 2024 prices",
+      "note": "aligned to cube/support__*; verify support_sha256 first"
+    },
+    "cube/S1__gross": {
+      "file": "cube/S1__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "cell"
+      ],
+      "shape": [
+        79845
+      ],
+      "count": 79845,
+      "raw_bytes": 319380,
+      "gzip_bytes": 265952,
+      "sha256_raw": "f00c2b2a9883b3a511c0c7b6e2f88af8e3bc92f13f8e5ff80b6dc9e6875577f0",
+      "units": "US$ million, gross, constant 2024 prices",
+      "note": "aligned to cube/support__*; verify support_sha256 first"
+    },
+    "cube/S2A__ge": {
+      "file": "cube/S2A__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "cell"
+      ],
+      "shape": [
+        79845
+      ],
+      "count": 79845,
+      "raw_bytes": 319380,
+      "gzip_bytes": 259533,
+      "sha256_raw": "1389800b2aad3a18cf8d4e743e48eab22cb864cc147375ed2c43e2b5f1847d51",
+      "units": "US$ million, grant-equivalent, constant 2024 prices",
+      "note": "aligned to cube/support__*; verify support_sha256 first"
+    },
+    "cube/S2A__gross": {
+      "file": "cube/S2A__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "cell"
+      ],
+      "shape": [
+        79845
+      ],
+      "count": 79845,
+      "raw_bytes": 319380,
+      "gzip_bytes": 258192,
+      "sha256_raw": "a3663627b9a039dc8454377466859edd64e715a3f7f897a9422e509ef713335a",
+      "units": "US$ million, gross, constant 2024 prices",
+      "note": "aligned to cube/support__*; verify support_sha256 first"
+    },
+    "cube/S2B__ge": {
+      "file": "cube/S2B__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "cell"
+      ],
+      "shape": [
+        79845
+      ],
+      "count": 79845,
+      "raw_bytes": 319380,
+      "gzip_bytes": 269238,
+      "sha256_raw": "66d21f2d9e985a0776e45ecde0dbae42ae7f02329aa818caae6474a271c471f5",
+      "units": "US$ million, grant-equivalent, constant 2024 prices",
+      "note": "aligned to cube/support__*; verify support_sha256 first"
+    },
+    "cube/S2B__gross": {
+      "file": "cube/S2B__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "cell"
+      ],
+      "shape": [
+        79845
+      ],
+      "count": 79845,
+      "raw_bytes": 319380,
+      "gzip_bytes": 266506,
+      "sha256_raw": "f0ad0542786e99fa9fa4fea609874be1d4705c4ffb3263ac4e7c27aa99d44c83",
+      "units": "US$ million, gross, constant 2024 prices",
+      "note": "aligned to cube/support__*; verify support_sha256 first"
+    },
+    "cube/S3A__ge": {
+      "file": "cube/S3A__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "cell"
+      ],
+      "shape": [
+        79845
+      ],
+      "count": 79845,
+      "raw_bytes": 319380,
+      "gzip_bytes": 278108,
+      "sha256_raw": "af5d64a6b6a427a192a48454ed837cec06310a1e2fe6cfebbfb0f4b331a0e62b",
+      "units": "US$ million, grant-equivalent, constant 2024 prices",
+      "note": "aligned to cube/support__*; verify support_sha256 first"
+    },
+    "cube/S3A__gross": {
+      "file": "cube/S3A__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "cell"
+      ],
+      "shape": [
+        79845
+      ],
+      "count": 79845,
+      "raw_bytes": 319380,
+      "gzip_bytes": 276745,
+      "sha256_raw": "790cdc2c3b2ac1e2e5da26e387d655ddce94f5b2b1c3b4aa49cd0599cecbadc7",
+      "units": "US$ million, gross, constant 2024 prices",
+      "note": "aligned to cube/support__*; verify support_sha256 first"
+    },
+    "cube/S3B__ge": {
+      "file": "cube/S3B__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "cell"
+      ],
+      "shape": [
+        79845
+      ],
+      "count": 79845,
+      "raw_bytes": 319380,
+      "gzip_bytes": 274692,
+      "sha256_raw": "ad9180b4a15373b136a84bb3108a56a18ea7f4167d76f1dc944bbb5fc1dda33e",
+      "units": "US$ million, grant-equivalent, constant 2024 prices",
+      "note": "aligned to cube/support__*; verify support_sha256 first"
+    },
+    "cube/S3B__gross": {
+      "file": "cube/S3B__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "cell"
+      ],
+      "shape": [
+        79845
+      ],
+      "count": 79845,
+      "raw_bytes": 319380,
+      "gzip_bytes": 271874,
+      "sha256_raw": "1c16dab88f8cabd4e0071df915aae433d8557d88060c3d41d3483512f66ab683",
+      "units": "US$ million, gross, constant 2024 prices",
+      "note": "aligned to cube/support__*; verify support_sha256 first"
+    },
+    "cube/S4__ge": {
+      "file": "cube/S4__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "cell"
+      ],
+      "shape": [
+        79845
+      ],
+      "count": 79845,
+      "raw_bytes": 319380,
+      "gzip_bytes": 260565,
+      "sha256_raw": "f5d0d33a855e9655e37e79d458d7642054f67a62e3d0e037f19fcdcdc9b1df2d",
+      "units": "US$ million, grant-equivalent, constant 2024 prices",
+      "note": "aligned to cube/support__*; verify support_sha256 first"
+    },
+    "cube/S4__gross": {
+      "file": "cube/S4__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "cell"
+      ],
+      "shape": [
+        79845
+      ],
+      "count": 79845,
+      "raw_bytes": 319380,
+      "gzip_bytes": 258404,
+      "sha256_raw": "aa904fa5c594b105377c0bcec41f5fc05e5e1931386675bac53c60cedc7c3331",
+      "units": "US$ million, gross, constant 2024 prices",
+      "note": "aligned to cube/support__*; verify support_sha256 first"
+    },
+    "cube/S5__ge": {
+      "file": "cube/S5__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "cell"
+      ],
+      "shape": [
+        79845
+      ],
+      "count": 79845,
+      "raw_bytes": 319380,
+      "gzip_bytes": 273118,
+      "sha256_raw": "a309ff0012b5416cc5cb6be8c7f4556c901de22e4406823a381231d85fca4fb3",
+      "units": "US$ million, grant-equivalent, constant 2024 prices",
+      "note": "aligned to cube/support__*; verify support_sha256 first"
+    },
+    "cube/S5__gross": {
+      "file": "cube/S5__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "cell"
+      ],
+      "shape": [
+        79845
+      ],
+      "count": 79845,
+      "raw_bytes": 319380,
+      "gzip_bytes": 270128,
+      "sha256_raw": "77e252c2317938fe13ef9120d0f323728070924b65f92de772287f417c6a8a18",
+      "units": "US$ million, gross, constant 2024 prices",
+      "note": "aligned to cube/support__*; verify support_sha256 first"
+    },
+    "cube/S6A__ge": {
+      "file": "cube/S6A__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "cell"
+      ],
+      "shape": [
+        79845
+      ],
+      "count": 79845,
+      "raw_bytes": 319380,
+      "gzip_bytes": 270234,
+      "sha256_raw": "15e5bad95082aafbdca70921e9a8b89024d4df5ec303a416c3ddd205425f5b20",
+      "units": "US$ million, grant-equivalent, constant 2024 prices",
+      "note": "aligned to cube/support__*; verify support_sha256 first"
+    },
+    "cube/S6A__gross": {
+      "file": "cube/S6A__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "cell"
+      ],
+      "shape": [
+        79845
+      ],
+      "count": 79845,
+      "raw_bytes": 319380,
+      "gzip_bytes": 267552,
+      "sha256_raw": "78c861272533a3884a884d17b361381be0a4b9f912e7a94892e3fe5a44e369d7",
+      "units": "US$ million, gross, constant 2024 prices",
+      "note": "aligned to cube/support__*; verify support_sha256 first"
+    },
+    "cube/S6B__ge": {
+      "file": "cube/S6B__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "cell"
+      ],
+      "shape": [
+        79845
+      ],
+      "count": 79845,
+      "raw_bytes": 319380,
+      "gzip_bytes": 264909,
+      "sha256_raw": "7127e5c86124bf395fd4c90ae2f9cc2f102288e5ec3ac100e4499bcd48fd6992",
+      "units": "US$ million, grant-equivalent, constant 2024 prices",
+      "note": "aligned to cube/support__*; verify support_sha256 first"
+    },
+    "cube/S6B__gross": {
+      "file": "cube/S6B__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "cell"
+      ],
+      "shape": [
+        79845
+      ],
+      "count": 79845,
+      "raw_bytes": 319380,
+      "gzip_bytes": 262448,
+      "sha256_raw": "e83abe6313a05c55b45b2270790049d5276641e895b3c4d36d1d7bacaa4d810f",
+      "units": "US$ million, gross, constant 2024 prices",
+      "note": "aligned to cube/support__*; verify support_sha256 first"
+    },
+    "cube/S7__ge": {
+      "file": "cube/S7__ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "cell"
+      ],
+      "shape": [
+        79845
+      ],
+      "count": 79845,
+      "raw_bytes": 319380,
+      "gzip_bytes": 273121,
+      "sha256_raw": "636d61e9e2fa6b88801d06c5b9934a3f6d602d5cdd9e3e59dbdcdfc2c50cfb1f",
+      "units": "US$ million, grant-equivalent, constant 2024 prices",
+      "note": "aligned to cube/support__*; verify support_sha256 first"
+    },
+    "cube/S7__gross": {
+      "file": "cube/S7__gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "cell"
+      ],
+      "shape": [
+        79845
+      ],
+      "count": 79845,
+      "raw_bytes": 319380,
+      "gzip_bytes": 270535,
+      "sha256_raw": "8768c04e810e72a8bc6608a6b693874aa256041089bf332b47b6c5857544508d",
+      "units": "US$ million, gross, constant 2024 prices",
+      "note": "aligned to cube/support__*; verify support_sha256 first"
+    },
+    "tool/baseline_recipient_ge": {
+      "file": "tool/baseline_recipient_ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient"
+      ],
+      "shape": [
+        50,
+        141
+      ],
+      "count": 7050,
+      "raw_bytes": 28200,
+      "gzip_bytes": 14842,
+      "sha256_raw": "bd8df194836a7472cf5f3d025267ac847d89a586cfc4150ae3b686fe21c5cd79",
+      "units": "US$ million, grant-equivalent, 2024 observed, constant 2024 prices"
+    },
+    "tool/baseline_recipient_gross": {
+      "file": "tool/baseline_recipient_gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient"
+      ],
+      "shape": [
+        50,
+        141
+      ],
+      "count": 7050,
+      "raw_bytes": 28200,
+      "gzip_bytes": 14845,
+      "sha256_raw": "bcf5e7117c544cc9ef97ded99733b4d9b686f0e1b1399e6f8d6e2a85ec1c9cc8",
+      "units": "US$ million, gross, 2024 observed, constant 2024 prices"
+    },
+    "tool/country_floor_gross": {
+      "file": "tool/country_floor_gross.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "donor",
+        "recipient"
+      ],
+      "shape": [
+        50,
+        141
+      ],
+      "count": 7050,
+      "raw_bytes": 28200,
+      "gzip_bytes": 12840,
+      "sha256_raw": "d789272e472b5a74db96a16aed5e539a5eb2c3cfebd8fb076ebd2d6a593b35a4",
+      "units": "US$ million, gross, constant 2024 prices",
+      "note": "max(0.05*baseline, min(abs_floor_country_gross, 0.30*baseline))"
+    },
+    "tool/envelope_ge": {
+      "file": "tool/envelope_ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "scenario",
+        "donor",
+        "year"
+      ],
+      "shape": [
+        10,
+        50,
+        4
+      ],
+      "count": 2000,
+      "raw_bytes": 8000,
+      "gzip_bytes": 865,
+      "sha256_raw": "517ca0849834ff28e5dde437d17896ceb9c1c8aafa3427c39a4f61b5012bf0b9",
+      "units": "US$ million, grant-equivalent, constant 2024 prices"
+    },
+    "tool/pinned_donor_index": {
+      "file": "tool/pinned_donor_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "pin"
+      ],
+      "shape": [
+        96
+      ],
+      "count": 96,
+      "raw_bytes": 192,
+      "gzip_bytes": 122,
+      "sha256_raw": "923a5c59a6a09d7af0caa95acd91534bee5576b2eccac8179943e95215827843",
+      "units": "index"
+    },
+    "tool/pinned_recipient_index": {
+      "file": "tool/pinned_recipient_index.bin.gz",
+      "dtype": "uint16",
+      "dims": [
+        "pin"
+      ],
+      "shape": [
+        96
+      ],
+      "count": 96,
+      "raw_bytes": 192,
+      "gzip_bytes": 140,
+      "sha256_raw": "9b3bc3a5324b28878e23d916b860fadb3a07bbf8895091974c50b8749dcda398",
+      "units": "index"
+    },
+    "tool/pinned_ge": {
+      "file": "tool/pinned_ge.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "scenario",
+        "pin",
+        "year"
+      ],
+      "shape": [
+        10,
+        96,
+        4
+      ],
+      "count": 3840,
+      "raw_bytes": 15360,
+      "gzip_bytes": 5954,
+      "sha256_raw": "6140f98287d331f9ebc4f14361d285a870660c36f802dbf9bcf6e1a5f59cb5e6",
+      "units": "US$ million, grant-equivalent, constant 2024 prices",
+      "note": "Audited projected value; the tool holds these fixed."
+    },
+    "tool/need_poverty": {
+      "file": "tool/need_poverty.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient"
+      ],
+      "shape": [
+        141
+      ],
+      "count": 141,
+      "raw_bytes": 564,
+      "gzip_bytes": 577,
+      "sha256_raw": "9fdf4c7e207c6a44ba6d28ab958b6f95f159f290f5e941f50b2c3c29fa5ae52d",
+      "units": "persons below the poverty line",
+      "note": "Static across scenarios and years. NaN means unavailable, not zero: block any objective weighting that would use it."
+    },
+    "tool/need_humanitarian": {
+      "file": "tool/need_humanitarian.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient"
+      ],
+      "shape": [
+        141
+      ],
+      "count": 141,
+      "raw_bytes": 564,
+      "gzip_bytes": 609,
+      "sha256_raw": "c48fa4b5097e7efd828aebd36773869be9fd752ad5d13fc7e5b7594b14924b5d",
+      "units": "population weighted by INFORM risk",
+      "note": "Static across scenarios and years. NaN means unavailable, not zero: block any objective weighting that would use it."
+    },
+    "tool/need_fiscal": {
+      "file": "tool/need_fiscal.bin.gz",
+      "dtype": "float32",
+      "dims": [
+        "recipient"
+      ],
+      "shape": [
+        141
+      ],
+      "count": 141,
+      "raw_bytes": 564,
+      "gzip_bytes": 603,
+      "sha256_raw": "9d5c71f65d0db791482e9e6c4863a974002a3e444ea19a2cf625301e8f284331",
+      "units": "population weighted by the fiscal vulnerability composite",
+      "note": "Static across scenarios and years. NaN means unavailable, not zero: block any objective weighting that would use it."
+    }
+  }
+}

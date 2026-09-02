@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en" data-cgd-interactive-name="oda-f6-donor-attributed-losses">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Which donors account for the largest aid losses?</title>
+<link rel="stylesheet" href="shared/cgd-figure.css"><link rel="stylesheet" href="shared/cgd-responsive.css"><link rel="stylesheet" href="shared/oda-figure.css">
+<style>
+  .loss-head,.loss-row{display:grid;grid-template-columns:minmax(118px,190px) minmax(150px,1fr) 70px;gap:8px;align-items:center}
+  .loss-head{padding:5px;border-bottom:1px solid var(--cgd-border);font-size:12px;font-weight:600;color:var(--cgd-dark-gray)}
+  .loss-row{min-height:42px;padding:3px 5px;border-bottom:1px solid var(--cgd-light-gray)}
+  .loss-name{border:0;background:transparent;color:inherit;text-align:left;font:inherit;font-size:12px;font-weight:600;padding:0;text-decoration:underline;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-height:30px;width:100%}
+  .loss-bar svg{display:block;width:100%;height:27px}.loss-total{text-align:right;font-size:11.5px;font-weight:600;font-variant-numeric:tabular-nums}
+  .axis-wrap{display:grid;grid-template-columns:minmax(118px,190px) minmax(150px,1fr) 70px;gap:8px;padding:0 5px}.axis-wrap svg{width:100%;height:30px}
+  .advanced-toggle{border:0;background:transparent;color:var(--cgd-light-teal);font:inherit;
+                   font-size:11.6px;padding:4px 2px;cursor:pointer;text-decoration:underline}
+  .advanced-line[hidden]{display:none}
+  .advanced-line{display:flex;align-items:center;gap:7px;font-size:11.6px;color:var(--cgd-dark-gray)}
+  .donor-legend{display:flex;gap:8px 12px;flex-wrap:wrap;font-size:11.5px}.legend-key{display:inline-flex;align-items:center;gap:4px}.legend-swatch{width:10px;height:10px}
+  .detail-popup{position:absolute;z-index:30;left:4%;right:4%;top:150px;background:#fff;border:1px solid var(--cgd-border);box-shadow:0 6px 18px rgba(0,0,0,.16);padding:12px}
+  .detail-popup[hidden]{display:none}.popup-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.popup-head h2{margin:0;font-size:16px}.popup-close{border:0;background:transparent;font:inherit;font-size:20px;cursor:pointer}
+  .dot-head,.dot-row{display:grid;grid-template-columns:minmax(105px,170px) minmax(140px,1fr) 62px;gap:8px;align-items:center}.dot-row{min-height:34px;border-bottom:1px solid var(--cgd-light-gray);font-size:11.5px}.dot-row svg{width:100%;height:30px}.dot-value{text-align:right;font-variant-numeric:tabular-nums}.tooltip{position:absolute;z-index:40;max-width:280px}
+  @media(max-width:520px){.loss-head,.loss-row,.axis-wrap{grid-template-columns:86px minmax(105px,1fr) 48px;gap:3px}.loss-name,.loss-total,.loss-head{font-size:11px}.loss-row{padding-inline:2px}.detail-popup{left:2px;right:2px;top:175px;padding:9px}.dot-head,.dot-row{grid-template-columns:82px minmax(100px,1fr) 48px;gap:4px}.popup-head h2{font-size:14px}}
+</style></head>
+<body><main id="vizRoot" class="viz-wrapper">
+  <div class="header-row"><div class="title-block"><h1>Which donors account for the largest aid losses?</h1><p class="viz-sub" id="vizSub"></p></div>
+    <button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="View fullscreen" title="View fullscreen"><svg class="icon-expand" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5" stroke="currentColor" stroke-width="1.8"/></svg><svg class="icon-compress" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5" stroke="currentColor" stroke-width="1.8"/></svg></button>
+  </div>
+  <div class="controls" id="controls">
+    <div class="control-group oda-advanced oda-span-row">
+      <button class="advanced-toggle" id="advancedBtn" type="button"
+              aria-expanded="false" aria-controls="advancedPanel">Advanced</button>
+      <div class="advanced-line" id="advancedPanel" hidden>
+        <label for="excludeOutliers"><input type="checkbox" id="excludeOutliers">Exclude recipients losing more than 50% of GNI</label>
+      </div>
+    </div>
+  </div>
+  <section class="panel"><div class="panel-header"><div class="donor-legend" id="legend"></div></div><div class="chart-area" id="chartArea">
+    <div class="loss-head"><span>Recipient</span><span>Gross bilateral ODA cuts as % of GNI (log scale)</span><span>Total</span></div><div id="rows"></div><div class="axis-wrap"><span></span><svg id="axisSvg" aria-hidden="true"></svg><span></span></div>
+  </div></section>
+  <p id="chartSummary" class="notes"></p><div id="notes"></div><div class="tooltip" id="tooltip" hidden></div>
+  <section class="detail-popup" id="detailPopup" role="dialog" aria-modal="true" hidden><div class="popup-head"><div><h2 id="popupTitle"></h2><p class="viz-sub">Gross bilateral ODA as a share of recipient GNI</p></div><button class="popup-close" id="popupClose" type="button" aria-label="Close">×</button></div><div class="dot-head"><span>Donor</span><span>2024 to 2028</span><span>2028</span></div><div id="dotRows"></div><div id="popupControls"></div></section>
+</main>
+<script src="shared/dom.js"></script><script src="shared/chart-core.js"></script><script src="shared/set-config.js"></script><script src="shared/oda-payload.js"></script><script src="shared/oda-model.js"></script><script src="shared/oda-ui.js"></script>
+<script>
+(async()=>{'use strict';
+  window.CGD_READY = false;
+  const{element,svgEl}=window.CGDDom,C=window.CGDCore,P=window.ODAPayload,M=window.ODAModel,UI=window.ODAUI;
+  const root=document.getElementById('vizRoot'),chartArea=document.getElementById('chartArea');let payload;
+  try{payload=await P.load();}catch(error){P.renderFailState(chartArea,error); window.CGD_READY = true;return;}
+  const pageSize=10,OTHER='Other cutting donors';
+  const OUTLIER_THRESHOLD=.5;
+  const state=UI.createState({scenario:'S1',page:0,popupPage:0,selected:null,excludeOutliers:false},{dependents:{scenario:['page','popupPage'],excludeOutliers:['page']},onChange:()=>schedule()});
+  await ensure(state.get());
+  const controlsRow=document.getElementById('controls');
+  controlsRow.prepend(UI.scenarioSelect(state));
+  UI.pagerRow(document.querySelector('.panel')).append(UI.pager(state,()=>Math.ceil(partition(state.get()).shown.length/pageSize)));
+  const popupPager=UI.pagerActions(state,s=>Math.ceil(donorDetail(s.selected,s).length/pageSize),{key:'popupPage',label:'donor page'});document.getElementById('popupControls').append(popupPager);
+  /* Segment colours are assigned across the whole key set at once, so the five
+     named donors and "Other cutting donors" are guaranteed distinguishable. A
+     per-key hash could not promise that: it previously gave the United Kingdom
+     and Other the same grey, and Germany and Canada the same teal. */
+  let palette=new Map();
+  const colour=code=>palette.get(String(code))||window.CGDSet.RESIDUAL;
+  /* The popup ranks every donor, not just the top five, so it uses each donor's
+     pinned colour rather than this chart's six-key assignment. */
+  const donorColour=code=>window.CGDSet.colourFor(code);
+  /* Precision follows magnitude across a four-decade axis: two decimals matter
+     at 0.03% of GNI and are noise at 40%. */
+  const pctOfGni=v=>M.percent(v,{decimals:Math.abs(v)>=.1?0:Math.abs(v)>=.01?1:2});
+  async function ensure(s){await payload.blobs(M.seriesBlobNames('donor_recipient',{scenario:s.scenario,measure:'gross'}));}
+  function donorLosses(s){return payload.axes.donor.map(code=>{let loss=0;for(const iso of payload.axes.recipient){const b=M.valueAt(payload,'donor_recipient',{...s,measure:'gross',year:2024},{donor:code,recipient:iso});const n=M.valueAt(payload,'donor_recipient',{...s,measure:'gross',year:2028},{donor:code,recipient:iso});loss+=Math.max(0,b-n);}return{code,loss};}).sort((a,b)=>b.loss-a.loss);}
+  function topDonors(s){return donorLosses(s).slice(0,5).map(d=>d.code);}
+  function rowsFor(s){const top=topDonors(s),rows=[];for(const iso of payload.axes.recipient){const d=M.denominator(payload,iso,'gni');if(!d.available)continue;const segments=Object.fromEntries([...top,OTHER].map(k=>[k,0]));for(const donor of payload.axes.donor){const b=M.valueAt(payload,'donor_recipient',{...s,measure:'gross',year:2024},{donor,recipient:iso});const n=M.valueAt(payload,'donor_recipient',{...s,measure:'gross',year:2028},{donor,recipient:iso});const cut=Math.max(0,b-n);segments[top.includes(donor)?donor:OTHER]+=cut/(d.value/1e6);}const total=Object.values(segments).reduce((a,b)=>a+b,0);if(total>0)rows.push({iso,name:payload.recipientName(iso),segments,total});}return rows.sort((a,b)=>b.total-a.total);}
+  /* The advanced control removes the handful of very small, very aid-dependent
+     economies whose cut exceeds half their GNI. They are excluded from the
+     axis domain as well as the rows, so the scale is recomputed for the set
+     actually shown rather than being held open by a row that is not there. */
+  function partition(s){const all=rowsFor(s),excluded=s.excludeOutliers?all.filter(r=>r.total>OUTLIER_THRESHOLD):[],shown=s.excludeOutliers?all.filter(r=>r.total<=OUTLIER_THRESHOLD):all;return{all,shown,excluded};}
+  function donorDetail(iso,s){if(!iso)return[];const d=M.denominator(payload,iso,'gni');if(!d.available)return[];return payload.axes.donor.map(code=>{const base=M.valueAt(payload,'donor_recipient',{...s,measure:'gross',year:2024},{donor:code,recipient:iso})/(d.value/1e6),now=M.valueAt(payload,'donor_recipient',{...s,measure:'gross',year:2028},{donor:code,recipient:iso})/(d.value/1e6);return{code,name:payload.donorName(code),base,now,change:now-base};}).filter(r=>r.base>0||r.now>0).sort((a,b)=>Math.abs(b.change)-Math.abs(a.change));}
+  const tooltip=document.getElementById('tooltip'),popup=document.getElementById('detailPopup');let closePopup=null;
+  function showTip(row,code,target){const label=code===OTHER?OTHER:payload.donorName(code),value=row.segments[code];tooltip.replaceChildren(element('strong',{text:row.name}),element('div',{text:label}),element('div',{text:`Cut: ${pctOfGni(value)} of GNI`}));tooltip.hidden=false;const b=target.getBoundingClientRect(),rb=root.getBoundingClientRect();tooltip.style.left=`${Math.min(rb.width-tooltip.offsetWidth-8,Math.max(8,b.left-rb.left+8))}px`;tooltip.style.top=`${b.bottom-rb.top+3}px`;}
+  function openDetail(iso,trigger){state.set({selected:iso,popupPage:0});const row=rowsFor(state.get()).find(r=>r.iso===iso);document.getElementById('popupTitle').textContent=row?.name||payload.recipientName(iso);popup.hidden=false;renderPopup();
+    /* The panel declares aria-modal, so focus has to actually go into it and stay
+       there until it closes; the trigger gets focus back on close. */
+    const release=UI.trapFocus(popup);
+    closePopup=UI.attachDismiss(popup,()=>{release();popup.hidden=true;state.set({selected:null,popupPage:0});},{returnFocusTo:trigger});}
+  document.getElementById('popupClose').addEventListener('click',()=>closePopup?.());
+  const advancedBtn=document.getElementById('advancedBtn'),advancedPanel=document.getElementById('advancedPanel'),outlierBox=document.getElementById('excludeOutliers');
+  advancedBtn.addEventListener('click',()=>{const open=advancedPanel.hidden;advancedPanel.hidden=!open;advancedBtn.setAttribute('aria-expanded',String(open));});
+  outlierBox.addEventListener('change',()=>state.set({excludeOutliers:outlierBox.checked}));
+  state.subscribe(s=>{outlierBox.checked=s.excludeOutliers;});
+  function renderPopup(){const s=state.get(),all=donorDetail(s.selected,s),page=Math.min(s.popupPage,Math.max(0,Math.ceil(all.length/pageSize)-1)),shown=all.slice(page*pageSize,(page+1)*pageSize),max=Math.max(.000001,...shown.flatMap(r=>[r.base,r.now]));document.getElementById('dotRows').replaceChildren();for(const r of shown){const row=element('div',{className:'dot-row'}),svg=svgEl('svg',{'aria-label':`${r.name}: ${pctOfGni(r.base)} in 2024, ${pctOfGni(r.now)} in 2028`}),x=v=>`${4+92*v/max}%`;svg.append(svgEl('line',{x1:x(r.base),x2:x(r.now),y1:15,y2:15,stroke:'#85A5AD','stroke-width':1.2}),svgEl('circle',{cx:x(r.base),cy:15,r:3,fill:'#BFDEE0'}),svgEl('circle',{cx:x(r.now),cy:15,r:3.5,fill:donorColour(r.code)}));row.append(element('span',{text:r.name}),svg,element('span',{className:'dot-value',text:pctOfGni(r.now)}));document.getElementById('dotRows').append(row);}popupPager.sync();}
+  function render(){const s=state.get(),parts=partition(s),all=parts.shown,top=topDonors(s),page=Math.min(s.page,Math.max(0,Math.ceil(all.length/pageSize)-1)),shown=all.slice(page*pageSize,(page+1)*pageSize),keys=[...top,OTHER];palette=window.CGDSet.assignColours(keys,{residual:[OTHER]});
+    /* Logarithmic. Attributed cuts span more than three orders of magnitude —
+       Marshall Islands at over 100% of GNI against recipients at hundredths of
+       a per cent — and on a linear axis every row below the top three was an
+       invisible sliver. A stacked bar on a log axis is read by segment
+       BOUNDARIES, not by segment width, so the tooltip and the total column
+       carry the values and the notes say so. */
+    const maxTotal=Math.max(...all.map(r=>r.total),1e-9),floor=1e-4,hi=maxTotal*1.12,lo=Math.min(floor,hi/1.0001),logX=v=>{const c=Math.max(lo,Math.min(hi,v));return (Math.log10(c)-Math.log10(lo))/(Math.log10(hi)-Math.log10(lo)||1)*100;};document.getElementById('rows').replaceChildren();for(const row of shown){const wrap=element('div',{className:'loss-row'}),name=element('button',{className:'loss-name',text:row.name,attributes:{type:'button',title:row.name}});name.addEventListener('click',()=>openDetail(row.iso,name));const bar=element('div',{className:'loss-bar'}),svg=svgEl('svg',{'aria-label':`${row.name}: cuts worth ${pctOfGni(row.total)} of GNI`});let acc=0,x=0;for(const code of keys){const value=row.segments[code];if(!(value>0))continue;const from=acc>0?logX(acc):0;acc+=value;const to=logX(acc),w=Math.max(to-from,0);x=from;const rect=svgEl('rect',{x:`${x}%`,width:`${w}%`,y:4,height:19,fill:colour(code),tabindex:'0',role:'img','aria-label':`${row.name}, ${code===OTHER?OTHER:payload.donorName(code)}: ${pctOfGni(value)} of GNI`});rect.addEventListener('pointerenter',()=>showTip(row,code,rect));rect.addEventListener('pointerleave',()=>tooltip.hidden=true);rect.addEventListener('focus',()=>showTip(row,code,rect));rect.addEventListener('blur',()=>tooltip.hidden=true);rect.addEventListener('click',e=>{e.stopPropagation();openDetail(row.iso,rect);});svg.append(rect);}bar.append(svg);wrap.append(name,bar,element('div',{className:'loss-total',text:pctOfGni(row.total)}));document.getElementById('rows').append(wrap);}
+    const axis=document.getElementById('axisSvg');axis.replaceChildren();const decades=[];for(let e=Math.floor(Math.log10(lo));e<=Math.ceil(Math.log10(hi));e+=1){const v=10**e;if(v>=lo&&v<=hi)decades.push(v);}if(!decades.length)decades.push(lo,hi);const ticks=C.thinTicks(decades,innerWidth<=520?3:5);ticks.forEach((v,i)=>{const pos=logX(v),first=i===0,last=i===ticks.length-1;const tx=svgEl('text',{x:`${pos}%`,y:16,dx:first?2:last?-2:0,'text-anchor':first?'start':last?'end':'middle',class:'axis'});tx.textContent=M.percent(v,{decimals:v<.01?2:v<.1?1:0});axis.append(tx);});const legend=document.getElementById('legend');legend.replaceChildren();for(const code of keys){const sw=element('span',{className:'legend-swatch'});sw.style.background=colour(code);legend.append(element('span',{className:'legend-key'},[sw,element('span',{text:code===OTHER?'Other cutting donors':payload.donorName(code)})]));}
+    document.getElementById('vizSub').textContent=`Gross bilateral ODA cuts between 2024 and 2028 under ${M.scenarioInfo(s.scenario).name.toLowerCase()}.`;document.getElementById('chartSummary').textContent=`Recipients ${page*pageSize+1}–${page*pageSize+shown.length} of ${all.length} with positive attributed cuts and available GNI.`+(parts.excluded.length?` Excluded outliers: ${parts.excluded.map(r=>r.name).sort().join(', ')}.`:'');renderNotes(parts);if(!popup.hidden)renderPopup();window.CGD_READY=true;
+  }
+  function renderNotes(parts){
+    /* The exclusion is reported on the count line above, not as a paragraph of its
+       own: the reader wants the names, and the fact that the axis is recomputed is
+       in the notes. */
+    document.getElementById('notes').replaceChildren(UI.notes({notes:[
+      'The axis is logarithmic, because attributed cuts span more than four orders of magnitude and a linear axis left every row below the largest three as an invisible sliver. Segment boundaries, not segment widths, carry the values: each donor share is in the tooltip and the row total is in the right-hand column.',
+      'The axis starts at 0.01% of GNI. A cut smaller than that is drawn at the axis floor rather than given its own decade, because at that size the attribution is rounding noise against the national accounts.',
+      `The advanced option excludes recipients losing more than ${M.percent(OUTLIER_THRESHOLD)} of GNI and recomputes the axis without them.`,'Cuts are donor-recipient reductions floored at zero before aggregation; increases from other donors do not offset the attribution shown.',
+      'Marshall Islands is an exceptional 2024 case: its baseline includes large US Compact payments, including a trust-fund contribution. Its cut relative to 2024 should not be read as a fall from a normal annual aid level.',
+      M.denominatorNote(payload,'gni'),
+      'Donor segment order is fixed globally for the selected allocation rule, and the five named donors are the largest cutters worldwide under that rule.',
+      UI.STANDARD_NOTES.prices,UI.STANDARD_NOTES.unallocable,UI.STANDARD_NOTES.baselineYear
+    ].filter(Boolean),source:`Source: CGD modelling, ${payload.release}.`}));
+  }
+  let seq=0;async function schedule(){const n=++seq;tooltip.hidden=true;try{await ensure(state.get());if(n!==seq)return;render();}catch(error){if(n===seq)P.renderFailState(chartArea,error); window.CGD_READY = true;}}
+  await ensure(state.get());render();document.getElementById('fullscreenBtn').addEventListener('click',()=>document.fullscreenElement?document.exitFullscreen():root.requestFullscreen?.());window.ODA_F6={state,rows:()=>rowsFor(state.get()),partition:()=>partition(state.get()),OUTLIER_THRESHOLD,detail:()=>donorDetail(state.get().selected,state.get())};
+})();
+</script><script src="shared/cgd-embed.js"></script></body></html>

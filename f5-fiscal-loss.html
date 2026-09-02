@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en" data-cgd-interactive-name="oda-f5-fiscal-loss">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What lost aid means for a recipient's economy</title>
+<link rel="stylesheet" href="shared/cgd-figure.css">
+<link rel="stylesheet" href="shared/cgd-responsive.css">
+<link rel="stylesheet" href="shared/oda-figure.css">
+<style>
+  .scatter-wrap { width: 100%; min-height: 300px; }
+  .short-control { flex: 0 1 210px; }
+  .advanced-toggle { border: 0; background: transparent; color: var(--cgd-light-teal);
+                     font: inherit; font-size: 11.6px; padding: 4px 2px; cursor: pointer;
+                     text-decoration: underline; }
+  .advanced-panel[hidden] { display: none; }
+  .advanced-panel { display: flex; align-items: center; gap: 6px; font-size: 11.6px;
+                    color: var(--cgd-dark-gray); }
+</style>
+</head>
+<body>
+<div id="vizRoot" class="viz-wrapper">
+
+  <div class="header-row">
+    <div class="title-block">
+      <h1 id="vizTitle">What lost aid means for a recipient's economy</h1>
+      <p class="viz-sub" id="vizSub"></p>
+    </div>
+    <button class="fullscreen-btn" id="fullscreenBtn" type="button"
+            aria-label="View fullscreen" title="View fullscreen">
+      <svg class="icon-expand" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg class="icon-compress" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+
+  <div class="controls" id="controls" aria-label="Chart controls">
+    <div class="control-group oda-advanced">
+      <button class="advanced-toggle" id="advancedBtn" type="button"
+              aria-expanded="false" aria-controls="advancedPanel">Advanced</button>
+      <div class="advanced-panel" id="advancedPanel" hidden>
+        <label for="excludeMicro"><input type="checkbox" id="excludeMicro">Exclude microstates (population under 1 million)</label>
+      </div>
+    </div>
+  </div>
+
+  <section class="panel">
+    <div class="panel-header">
+      <div class="legend" id="incomeLegend" aria-label="Income group legend"></div>
+    </div>
+    <div class="chart-area">
+      <div class="scatter-wrap">
+        <svg id="scatterSvg" role="img" aria-labelledby="vizTitle" aria-describedby="chartSummary"></svg>
+      </div>
+    </div>
+  </section>
+
+  <p id="chartSummary" class="notes"></p>
+  <div id="notes"></div>
+  <div class="tooltip" id="tooltip" hidden></div>
+</div>
+
+<script src="shared/dom.js"></script>
+<script src="shared/chart-core.js"></script>
+<script src="shared/set-config.js"></script>
+<script src="shared/oda-payload.js"></script>
+<script src="shared/oda-model.js"></script>
+<script src="shared/oda-ui.js"></script>
+<script>
+(async () => {
+  'use strict';
+  window.CGD_READY = false;
+  const { element, svgEl } = window.CGDDom;
+  const C = window.CGDCore, P = window.ODAPayload, M = window.ODAModel, UI = window.ODAUI;
+
+  /* ---------------------------------------------------------------- question
+     Which recipients lose an amount of aid that is large relative to the economy
+     that has to absorb it? x is the volume lost, y is that loss measured against
+     GNI or government revenue. Default: 2028, even proportional cuts (S1), GNI. */
+
+  const root = document.getElementById('vizRoot');
+  let payload;
+  try {
+    payload = await P.load();
+  } catch (error) {
+    P.renderFailState(root.querySelector('.chart-area'), error); window.CGD_READY = true;
+    document.getElementById('controls').hidden = true;
+    return;
+  }
+
+  const DENOM = {
+    gni: { key: 'gni', label: 'GNI', axis: 'ODA lost as % of GNI' },
+    revenue: { key: 'revenue', label: 'government revenue',
+               axis: 'ODA lost as % of government revenue' }
+  };
+
+  const state = UI.createState(
+    { scenario: 'S1', measure: 'gross', year: 2028, denom: 'gni',
+      excludeMicro: false, unit: 'usd' },
+    { onChange: () => scheduleRender() }
+  );
+
+  /* ---------------------------------------------------------------- controls
+     Projection years only. This figure measures loss *against* 2024, which is
+     zero at 2024 by construction, so offering 2024 would offer an empty chart. */
+  const years = payload.axes.year.slice();
+  const controls = document.getElementById('controls');
+
+  const denomSelect = element('select', { className: 'plain-select' });
+  for (const [value, spec] of Object.entries(DENOM)) {
+    /* The control label already says "Measured against", so the option repeats
+       only the denominator — short enough not to truncate at 320px. */
+    denomSelect.append(element('option', { text: spec.label === 'GNI' ? 'GNI'
+      : 'Government revenue', attributes: { value } }));
+  }
+  denomSelect.value = state.get().denom;
+  denomSelect.addEventListener('change', () => state.set({ denom: denomSelect.value }));
+
+  controls.append(
+    UI.scenarioSelect(state),
+    UI.yearControl(state, years),
+    UI.measureToggle(state, () => 'usd'),
+    UI.controlGroup('Measured against', denomSelect, { id: 'denomSelect',
+                                                       extraClass: 'short-control' })
+  );
+
+  /* Appended last so it sits at the end of the row rather than in front of the
+     controls the figure is actually driven by. */
+  controls.append(controls.querySelector('.oda-advanced'));
+
+  const advancedBtn = document.getElementById('advancedBtn');
+  const advancedPanel = document.getElementById('advancedPanel');
+  advancedBtn.addEventListener('click', () => {
+    const open = advancedPanel.hidden;
+    advancedPanel.hidden = !open;
+    advancedBtn.setAttribute('aria-expanded', String(open));
+  });
+  const microBox = document.getElementById('excludeMicro');
+  microBox.addEventListener('change', () => state.set({ excludeMicro: microBox.checked }));
+
+  /* ---------------------------------------------------------------- data ---- */
+
+  async function ensureBlobs(s) {
+    await payload.blobs(M.seriesBlobNames('recipient', s));
+  }
+
+  /* Rows are built fresh from state on every render: no derived data is cached
+     across a control change, so a stale selection cannot survive one. */
+  function buildRows(s) {
+    const denom = DENOM[s.denom];
+    const rows = [], gained = [], noDenominator = [], microExcluded = [];
+
+    for (const iso of payload.axes.recipient) {
+      const base = M.valueAt(payload, 'recipient',
+        { ...s, year: M.BASELINE_YEAR }, { recipient: iso });
+      const now = M.valueAt(payload, 'recipient', s, { recipient: iso });
+      const lost = base - now;
+      const meta = payload.recipientMeta[iso] || {};
+      const d = M.denominator(payload, iso, denom.key);
+      const pop = M.denominator(payload, iso, 'population');
+
+      const row = { iso, name: payload.recipientName(iso), lost, base,
+                    income: M.incomeGroup(payload, iso),
+                    population: pop.available ? pop.value : null };
+
+      if (s.excludeMicro && pop.available && pop.value < 1e6) { microExcluded.push(row); continue; }
+      if (!d.available) { noDenominator.push(row); continue; }
+      /* A recipient projected to receive MORE cannot sit on a log axis. It is not
+         missing data, so it is counted and named rather than dropped. */
+      if (lost <= 0) { gained.push(row); continue; }
+
+      row.share = lost / (d.value / 1e6);   /* both sides in US$ millions */
+      rows.push(row);
+    }
+    return { rows, gained, noDenominator, microExcluded, denom };
+  }
+
+  /* ---------------------------------------------------------------- render -- */
+
+  const svg = document.getElementById('scatterSvg');
+  const tooltip = document.getElementById('tooltip');
+  let pinned = null;
+
+  /* Widen a log domain slightly so marks never sit on the plot boundary. */
+  function padLog(min, max) {
+    const lo = Math.log10(min), hi = Math.log10(max);
+    const pad = Math.max(0.06, (hi - lo) * 0.04);
+    return [Math.pow(10, lo - pad), Math.pow(10, hi + pad)];
+  }
+
+  function logScale(min, max, from, to) {
+    const lo = Math.log10(min), hi = Math.log10(max);
+    return v => from + (Math.log10(v) - lo) / (hi - lo) * (to - from);
+  }
+
+  /* The share scale is a fraction (0.05 = 5%), so ticks are formatted on display
+     rather than stored as percentages — the house rule for proportions. */
+  function formatShareTick(fraction) {
+    const pct = fraction * 100;
+    if (pct >= 1) return `${Math.round(pct)}%`;
+    /* Enough significant digits that a decade tick never rounds to 0.00%. */
+    const decimals = Math.min(6, Math.max(1, Math.ceil(-Math.log10(pct))));
+    return `${pct.toFixed(decimals)}%`;
+  }
+
+  function niceLogTicks(min, max) {
+    const ticks = [];
+    for (let e = Math.floor(Math.log10(min)); e <= Math.ceil(Math.log10(max)); e += 1) {
+      const v = Math.pow(10, e);
+      if (v >= min * 0.9 && v <= max * 1.1) ticks.push(v);
+    }
+    return ticks;
+  }
+
+  function render(width) {
+    const s = state.get();
+    const model = buildRows(s);
+    const { rows, denom } = model;
+
+    const layout = C.getLayout(width);
+    const margin = { ...layout.margin, left: Math.max(layout.margin.left, 46) };
+    const height = Math.max(280, Math.min(460, Math.round(width * 0.62)));
+    const plotW = Math.max(40, width - margin.left - margin.right);
+    const plotH = Math.max(40, height - margin.top - margin.bottom);
+
+    svg.replaceChildren();
+    svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    svg.setAttribute('width', '100%');
+    svg.setAttribute('height', String(height));
+
+    if (!rows.length) {
+      svg.append(svgEl('text', { x: width / 2, y: height / 2, 'text-anchor': 'middle',
+        class: 'axis' }));
+      svg.lastChild.textContent = 'No recipients to show under these settings.';
+      updateNotes(model, s);
+      window.CGD_READY = true;
+      return;
+    }
+
+    /* The domain must cover the actual extremes. Clamping it to a floor pushes
+       any point below that floor outside the plot area, where it collides with
+       the axis title — a defect the machine audits cannot see, because the mark
+       is still inside the SVG viewBox. */
+    const xs = rows.map(r => r.lost), ys = rows.map(r => r.share);
+    const [xMin, xMax] = padLog(Math.min(...xs), Math.max(...xs));
+    const [yMin, yMax] = padLog(Math.min(...ys), Math.max(...ys));
+    const x = logScale(xMin, xMax, margin.left, margin.left + plotW);
+    const y = logScale(yMin, yMax, margin.top + plotH, margin.top);
+
+    /* gridlines + ticks, thinned to the house target for the width */
+    const xTicks = C.thinTicks(niceLogTicks(xMin, xMax), layout.name === 'compact' ? 3 : 5);
+    const yTicks = C.thinTicks(niceLogTicks(yMin, yMax), layout.name === 'compact' ? 3 : 5);
+
+    for (const t of yTicks) {
+      svg.append(svgEl('line', { class: 'grid-line', x1: margin.left, x2: margin.left + plotW,
+                                 y1: y(t), y2: y(t) }));
+      const label = svgEl('text', { class: 'axis', x: margin.left - 6, y: y(t) + 3,
+                                    'text-anchor': 'end' });
+      label.textContent = formatShareTick(t);
+      svg.append(label);
+    }
+    for (const t of xTicks) {
+      const label = svgEl('text', { class: 'axis', x: x(t), y: margin.top + plotH + 15,
+                                    'text-anchor': 'middle' });
+      label.textContent = t >= 1000 ? `${t / 1000}bn` : `${t}m`;
+      svg.append(label);
+    }
+
+    const xTitle = svgEl('text', { class: 'axis-title', x: margin.left + plotW / 2,
+                                   y: height - 6, 'text-anchor': 'middle' });
+    xTitle.textContent = 'Bilateral ODA lost vs 2024, US$ (log scale)';
+    svg.append(xTitle);
+
+    const yTitle = svgEl('text', { class: 'axis-title', x: 10, y: margin.top - 6 });
+    yTitle.textContent = `${denom.axis} (log)`;
+    svg.append(yTitle);
+
+    /* marks. Colour is set via style, never the fill attribute, so a CSS .point
+       rule cannot silently win (skill §C-15). */
+    const radius = layout.name === 'compact' ? 3.4 : 4.2;
+    for (const row of rows.slice().sort((a, b) => b.lost - a.lost)) {
+      const dot = svgEl('circle', {
+        class: 'point', cx: x(row.lost), cy: y(row.share), r: radius,
+        tabindex: '0', role: 'img',
+        'aria-label': `${row.name}: ${M.usd(row.lost)} lost, ` +
+                      `${M.percent(row.share, { decimals: 1 })} of ${denom.label}`
+      });
+      dot.style.fill = window.CGDSet.colourFor(row.income);
+      dot.style.fillOpacity = '0.85';
+      dot.addEventListener('pointerenter', () => showTooltip(row, denom));
+      dot.addEventListener('pointerleave', () => { if (!pinned) hideTooltip(); });
+      dot.addEventListener('focus', () => showTooltip(row, denom));
+      dot.addEventListener('blur', () => { if (!pinned) hideTooltip(); });
+      dot.addEventListener('click', event => {
+        event.stopPropagation();
+        pinned = row;
+        showTooltip(row, denom);
+        UI.attachDismiss(tooltip, () => { pinned = null; hideTooltip(); }, { returnFocusTo: dot });
+      });
+      svg.append(dot);
+    }
+
+    renderLegend(rows);
+    updateNotes(model, s);
+    window.CGD_READY = true;
+  }
+
+  function renderLegend(rows) {
+    const legend = document.getElementById('incomeLegend');
+    legend.replaceChildren();
+    const present = M.INCOME_GROUPS.filter(g => rows.some(r => r.income === g));
+    for (const group of present) {
+      const swatch = element('span', { className: 'swatch' });
+      swatch.style.background = window.CGDSet.colourFor(group);
+      legend.append(element('span', { className: 'legend-item' },
+        [swatch, element('span', { text: group })]));
+    }
+  }
+
+  function showTooltip(row, denom) {
+    tooltip.replaceChildren(
+      element('strong', { text: row.name }),
+      element('div', { text: `${M.usd(row.lost)} lost vs 2024` }),
+      element('div', { text: `${M.percent(row.share, { decimals: 1 })} of ${denom.label}` }),
+      element('div', { text: `2024 ${M.MEASURE_LABEL[state.get().measure].toLowerCase()} ` +
+        `bilateral ODA: ${M.usd(row.base)}` }),
+      element('div', { text: `Income group: ${row.income}` })
+    );
+    tooltip.hidden = false;
+    const box = svg.getBoundingClientRect();
+    const wrapBox = document.getElementById('vizRoot').getBoundingClientRect();
+    const left = Math.min(Math.max(8, box.left - wrapBox.left + 12),
+                          wrapBox.width - tooltip.offsetWidth - 8);
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${box.top - wrapBox.top + 10}px`;
+  }
+  function hideTooltip() { tooltip.hidden = true; }
+
+  function updateNotes(model, s) {
+    const { rows, gained, noDenominator, microExcluded, denom } = model;
+    const total = payload.axes.recipient.length;
+
+    document.getElementById('vizSub').textContent =
+      `${M.MEASURE_LABEL[s.measure]} bilateral ODA lost between 2024 and ${s.year} under ` +
+      `${M.scenarioInfo(s.scenario).name.toLowerCase()}, against the size of each ` +
+      `recipient's ${denom.label}.`;
+
+    const excluded = [];
+    if (noDenominator.length) excluded.push(`${noDenominator.length} have no ${denom.label}`);
+    if (gained.length) excluded.push(`${gained.length} have no loss to plot`);
+    if (microExcluded.length) excluded.push(`${microExcluded.length} excluded as microstates`);
+    document.getElementById('chartSummary').textContent =
+      `${rows.length} of ${total} recipients shown` +
+      (excluded.length ? ` (${excluded.join('; ')} \u2014 see notes).` : '.');
+
+    /* The counts are in the summary line above; the recipient lists that explain
+       them are long enough to push the chart off a phone screen, so they live
+       inside the Notes disclosure. */
+    const listed = [];
+    if (noDenominator.length) {
+      listed.push(`${noDenominator.length} recipients have no ${denom.label} in the ` +
+        `model inputs and cannot be placed: ` +
+        `${noDenominator.map(r => r.name).sort().join(', ')}.`);
+    }
+    if (gained.length) {
+      listed.push(`${gained.length} recipients are projected to receive more in ` +
+        `${s.year} than in 2024, so they have no loss to plot: ` +
+        `${gained.map(r => r.name).sort().join(', ')}.`);
+    }
+    if (microExcluded.length) {
+      listed.push(`${microExcluded.length} microstates are excluded by the advanced ` +
+        `option: ${microExcluded.map(r => r.name).sort().join(', ')}.`);
+    }
+    if (rows.some(row => row.iso === 'MHL')) {
+      listed.push('Marshall Islands is an exceptional 2024 case: its baseline includes ' +
+        'large US Compact payments, including a trust-fund contribution. Its loss relative ' +
+        'to 2024 should not be read as a fall from a normal annual ODA level.');
+    }
+
+    const notes = document.getElementById('notes');
+    notes.replaceChildren();
+    notes.append(UI.notes({
+      notes: [
+        ...listed,
+        'Both axes are logarithmic. Losses span more than four orders of magnitude, ' +
+        'and a linear axis would compress almost every recipient against the origin.',
+        'Several small states with high aid per person lose an amount worth a very ' +
+        'large share of GNI; the advanced option removes those with populations ' +
+        'under 1 million.',
+        M.incomeGroupNote(payload),
+        UI.STANDARD_NOTES.projectionYears,
+        UI.STANDARD_NOTES.prices,
+        UI.STANDARD_NOTES.unallocable,
+        UI.STANDARD_NOTES.baselineYear
+      ].filter(Boolean),
+      source: `Source: CGD modelling, ${payload.release}.`
+    }));
+  }
+
+  /* ---------------------------------------------------------------- driver -- */
+
+  let frame = null, lastWidth = 0, renderSequence = 0;
+  const chartArea = root.querySelector('.chart-area');
+
+  function showDataFailure(error) {
+    renderSequence += 1;
+    P.renderFailState(chartArea, error); window.CGD_READY = true;
+  }
+
+  function scheduleRender() {
+    if (frame) cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(async () => {
+      frame = null;
+      const sequence = ++renderSequence;
+      pinned = null; hideTooltip();
+      try {
+        await ensureBlobs(state.get());
+        if (sequence !== renderSequence) return;
+        render(lastWidth || document.querySelector('.scatter-wrap').clientWidth || 640);
+      } catch (error) {
+        if (sequence === renderSequence) showDataFailure(error);
+      }
+    });
+  }
+
+  try {
+    await ensureBlobs(state.get());
+  } catch (error) {
+    showDataFailure(error);
+    return;
+  }
+  C.observeInlineSize(document.querySelector('.scatter-wrap'), width => {
+    lastWidth = width;
+    render(width);
+  });
+
+  document.getElementById('fullscreenBtn').addEventListener('click', () => {
+    const el = document.getElementById('vizRoot');
+    if (document.fullscreenElement) document.exitFullscreen();
+    else if (el.requestFullscreen) el.requestFullscreen();
+  });
+
+  window.ODA_F5 = { state, buildRows: () => buildRows(state.get()) };
+})();
+</script>
+<script src="shared/cgd-embed.js"></script>
+</body>
+</html>

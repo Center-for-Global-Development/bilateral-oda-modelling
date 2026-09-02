@@ -1,0 +1,59 @@
+<!doctype html><html lang="en" data-cgd-interactive-name="oda-f14-priority-flows"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Which allocation rules protect countries facing the greatest constraints?</title><link rel="stylesheet" href="shared/cgd-figure.css"><link rel="stylesheet" href="shared/cgd-responsive.css"><link rel="stylesheet" href="shared/oda-figure.css"><style>.plot-wrap{width:100%;min-height:330px}.plot-wrap svg{display:block;width:100%}.legend{display:flex;gap:8px 15px;flex-wrap:wrap}</style></head><body><main id="vizRoot" class="viz-wrapper"><div class="header-row"><div class="title-block"><h1>Which allocation rules protect countries facing the greatest constraints?</h1><p class="viz-sub" id="sub"></p></div><button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="View fullscreen" title="View fullscreen"><svg class="icon-expand" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5" stroke="currentColor" stroke-width="1.8"/></svg><svg class="icon-compress" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5" stroke="currentColor" stroke-width="1.8"/></svg></button></div><div class="controls" id="controls"></div><div class="legend"><span class="legend-item"><span class="swatch" style="background:#0B4C5B"></span>Donor-portfolio rules</span><span class="legend-item"><span class="swatch" style="background:#FFB52C"></span>Recipient-need rules</span></div><section class="panel"><div class="plot-wrap"><svg id="chart" role="img" aria-label="Ten scenario dots compared with the 2024 value"></svg></div></section><p class="notes" id="summary"></p><div id="notes"></div></main>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js" integrity="sha384-CjloA8y00+1SDAUkjs099PVfnY2KmDC2BZnws9kh8D/lX1s46w6EPhpXdqMfjK6i" crossorigin="anonymous" referrerpolicy="no-referrer"></script><script src="shared/dom.js"></script><script src="shared/chart-core.js"></script><script src="shared/set-config.js"></script><script src="shared/oda-payload.js"></script><script src="shared/oda-model.js"></script><script src="shared/oda-ui.js"></script><script>
+(async()=>{'use strict';window.CGD_READY=false;const{element}=CGDDom,C=CGDCore,P=ODAPayload,M=ODAModel,UI=ODAUI,scenarios=Object.keys(M.SCENARIOS);let payload;try{payload=await P.load();if(!d3)throw Error('The pinned chart dependency did not load.');await payload.blob('tool/need_poverty')}catch(e){P.renderFailState(document.querySelector('.panel'),e);window.CGD_READY=true;return}const metrics={ldc:'Least developed countries',lic:'Low-income countries',revenue:'Revenue below 15% of GNI',rich:'Upper-middle and high income',poverty:'US$ per person in poverty'},metricAxis={ldc:'Share to least developed countries',lic:'Share to low-income countries',revenue:'Share to countries with revenue below 15% of GNI',rich:'Share to upper-middle- and high-income countries',poverty:'US$ per person in extreme poverty'},state=UI.createState({metric:'ldc',year:2028,measure:'gross'},{onChange:()=>schedule()}),select=(items,key,wide)=>{const s=element('select',{className:wide?'plain-select oda-select-wide':'plain-select'});items.forEach(x=>s.append(new Option(x[1],x[0])));s.value=state.get()[key];s.onchange=()=>state.set({[key]:key==='year'?+s.value:s.value});state.subscribe(v=>s.value=v[key]);return s},metric=select(Object.entries(metrics),'metric',true),year=select(payload.axes.year.map(y=>[y,String(y)]),'year');document.getElementById('controls').append(UI.controlGroup('Metric',metric,{id:'metricSelect'}),UI.controlGroup('Year',year,{id:'yearSelect'}),UI.measureToggle(state,()=>state.get().metric==='poverty'?'usd':'pct'));let width=700,seq=0,rows=[],baseline=0;
+async function ensure(s){await payload.blobs([`static/baseline_${s.measure}__recipient`,...scenarios.map(k=>`scenarios/${k}/recipient_year__${s.measure}`)])}function qualifies(iso,key){const m=payload.recipientMeta[iso]||{},inc=M.incomeGroup(payload,iso);return key==='ldc'?m.ldc===1:key==='lic'?inc==='Low income':key==='rich'?['Upper middle income','High income'].includes(inc):key==='revenue'?Number(m.gov_revenue_usd)>0&&Number(m.gni_usd)>0&&m.gov_revenue_usd/m.gni_usd<.15:true}function calc(s,scenario,year){const vals=payload.axes.recipient.map(iso=>({iso,v:M.valueAt(payload,'recipient',{...s,scenario,year},{recipient:iso})||0}));if(s.metric==='poverty'){const need=d3.sum(payload.axes.recipient,iso=>{const v=payload.at('tool/need_poverty',{recipient:iso});return Number.isFinite(v)?v:0});return need>0?d3.sum(vals,d=>d.v)*1e6/need:NaN}const total=d3.sum(vals,d=>d.v),part=d3.sum(vals.filter(d=>qualifies(d.iso,s.metric)),d=>d.v);return total>0?part/total:NaN}function build(s){baseline=calc(s,'S1',2024);return scenarios.map(k=>({scenario:k,value:calc(s,k,s.year),family:M.scenarioInfo(k).family}))}/* Brand tokens: the two scenario families, not ad-hoc hex. */
+function colour(k){return M.scenarioInfo(k).family==='donor'?'#0B4C5B':'#FFB52C'}function fmt(v,s){return s.metric==='poverty'?`US$${d3.format(',.0f')(v)}`:M.percent(v,{decimals:1})}
+function draw(s,w){
+  const narrow=w<520,L=narrow?42:(w<700?190:268),R=narrow?46:62,TOP=24,ROW=narrow?24:26,BOTTOM=44;
+  const better=v=>s.metric==='rich'?v<baseline:v>baseline;
+  /* Most protective first, whichever direction that is for this metric. */
+  rows.sort((a,b)=>s.metric==='rich'?a.value-b.value:b.value-a.value);
+  const vals=[baseline,...rows.map(r=>r.value)].filter(v=>Number.isFinite(v)),ext=d3.extent(vals),
+    pad=(ext[1]-ext[0]||Math.abs(ext[0])*.05||1)*.12,
+    x=d3.scaleLinear([ext[0]-pad,ext[1]+pad],[L,w-R]),
+    h=TOP+rows.length*ROW+BOTTOM,svg=d3.select('#chart');
+  svg.attr('viewBox',`0 0 ${w} ${h}`).attr('height',h).selectAll('*').remove();
+  const rowY=i=>TOP+i*ROW+ROW/2;
+  svg.append('g').attr('transform',`translate(0,${TOP+rows.length*ROW+4})`)
+    .call(d3.axisBottom(x).ticks(narrow?3:6).tickFormat(v=>s.metric==='poverty'?`$${d3.format(',.0f')(v)}`:M.trimZeros(d3.format('.1%')(v))).tickSizeOuter(0))
+    .selectAll('text').attr('font-size',11);
+  svg.append('line').attr('x1',x(baseline)).attr('x2',x(baseline)).attr('y1',TOP-6).attr('y2',TOP+rows.length*ROW+4)
+    .attr('stroke','#394649').attr('stroke-width',1.2);
+  svg.append('text').attr('x',Math.min(w-R,Math.max(L,x(baseline))))
+    .attr('y',TOP-10).attr('text-anchor','middle').attr('font-size',11).attr('fill','#394649')
+    .text(`2024: ${fmt(baseline,s)}`);
+  /* SVG has no ellipsis, so the label is cut to the room the margin gives it and
+     the full name goes on the row's title. */
+  const room=L-10,budget=Math.floor(room/5.9);
+  rows.forEach((r,i)=>{const y=rowY(i),info=M.scenarioInfo(r.scenario),full=`${info.label} \u2014 ${info.name}`,
+      label=narrow?info.label:(full.length>budget?full.slice(0,Math.max(3,budget-1))+'\u2026':full),
+      g=svg.append('g');
+    if(i%2===0)g.append('rect').attr('x',0).attr('y',TOP+i*ROW).attr('width',w).attr('height',ROW).attr('fill','#F7FAFB');
+    /* A <title> on a <g> is not a reliable hover target for its children, and the
+       row had no filled area to hover in any case. A transparent full-width rect
+       gives the whole row the tooltip and a keyboard stop. */
+    g.append('rect').attr('x',0).attr('y',TOP+i*ROW).attr('width',w).attr('height',ROW)
+      .attr('fill','transparent').attr('tabindex',0).attr('role','img')
+      .attr('aria-label',`${full}: ${fmt(r.value,s)}`)
+      .append('title').text(`${full}: ${fmt(r.value,s)}`);
+    g.append('text').attr('x',L-8).attr('y',y+4).attr('text-anchor','end').attr('font-size',narrow?11:11.5)
+      .attr('font-weight',narrow?700:500).attr('fill','#22383C').text(label);
+    if(!Number.isFinite(r.value))return;
+    const good=better(r.value);
+    g.append('line').attr('x1',x(baseline)).attr('x2',x(r.value)).attr('y1',y).attr('y2',y)
+      .attr('stroke',good?'#00896C':'#D15553').attr('stroke-width',2.2).attr('stroke-opacity',.75);
+    g.append('circle').attr('cx',x(r.value)).attr('cy',y).attr('r',narrow?5:6)
+      .attr('fill',colour(r.scenario)).attr('stroke','#fff').attr('stroke-width',1.2)
+      .append('title').text(`${full}: ${fmt(r.value,s)}`);
+    g.append('text').attr('x',w-R+6).attr('y',y+4).attr('font-size',11)
+      .attr('fill','#22383C').attr('font-variant-numeric','tabular-nums').text(fmt(r.value,s));
+  });
+  svg.append('text').attr('class','axis-title').attr('x',L+(w-R-L)/2).attr('y',h-6)
+    .attr('text-anchor','middle').text(metricAxis[s.metric]);
+  document.getElementById('sub').textContent=`${s.year}, across all ten allocation rules.`;
+  document.getElementById('summary').textContent=
+    `The horizontal axis is zoomed to the observed range and does not start at zero. `+
+    `The 2024 value is ${fmt(baseline,s)}; rules are ordered from the most to the least protective.`;
+  window.CGD_READY=true;}
+async function schedule(){window.CGD_READY=false;const n=++seq,s={...state.get()};try{await ensure(s);if(n!==seq)return;rows=build(s);draw(s,width)}catch(e){if(n===seq){P.renderFailState(document.querySelector('.panel'),e);window.CGD_READY=true}}}document.getElementById('notes').append(UI.notes({notes:['The bar for each rule runs from the 2024 value to the 2028 value. It is green where the rule moves the metric in the protected direction and red where it moves the other way; for the upper-middle/high-income metric the protected direction is downwards.',M.incomeGroupNote(payload),UI.STANDARD_NOTES.unallocable,UI.STANDARD_NOTES.prices,UI.STANDARD_NOTES.baselineYear].filter(Boolean),source:`Source: CGD modelling, ${payload.release}.`}));C.observeInlineSize(document.querySelector('.plot-wrap'),w=>{width=w;schedule()});document.getElementById('fullscreenBtn').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.getElementById('vizRoot').requestFullscreen?.();window.ODA_F14={state,rows:()=>rows,baseline:()=>baseline};})();
+</script><script src="shared/cgd-embed.js"></script></body></html>

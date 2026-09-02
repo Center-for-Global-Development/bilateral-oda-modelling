@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en" data-cgd-interactive-name="oda-f17-recipient-scenarios-table">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How recipients fare across allocation rules</title>
+<link rel="stylesheet" href="shared/cgd-figure.css">
+<link rel="stylesheet" href="shared/cgd-responsive.css">
+<link rel="stylesheet" href="shared/oda-figure.css">
+<style>
+  .table-shell { position: relative; border: 1px solid var(--cgd-border); background: #fff; }
+  .table-scroll { overflow-x: auto; overscroll-behavior-inline: contain; }
+  .matrix { width: 100%; min-width: 880px; border-collapse: separate; border-spacing: 0;
+            font-size: 12px; font-variant-numeric: tabular-nums; }
+  .matrix th, .matrix td { padding: 7px 8px; border-bottom: 1px solid var(--cgd-light-gray);
+                           text-align: right; white-space: nowrap; }
+  .matrix thead th { position: sticky; top: 0; z-index: 3; background: var(--cgd-cream);
+                     color: var(--cgd-teal-black); vertical-align: bottom; }
+  .matrix .recipient { position: sticky; left: 0; z-index: 2; min-width: 180px; max-width: 210px;
+                       text-align: left; background: #fff; box-shadow: 5px 0 7px -7px #394649; }
+  .matrix thead .recipient { z-index: 5; background: var(--cgd-cream); }
+  .matrix .summary-start { border-left: 2px solid var(--cgd-teal-gray); }
+  .matrix .range { border-left: 2px solid var(--cgd-gold); }
+  .matrix .scen-start { border-left: 2px solid var(--cgd-teal-gray); }
+  /* The sort control fills its header cell, so the target is the cell the
+     reader is aiming at rather than the text baseline inside it. */
+  .matrix button.sort { border: 0; padding: 0; color: inherit; background: transparent;
+                        font: inherit; font-weight: 600; cursor: pointer; text-decoration: underline;
+                        display: block; width: 100%; min-height: 26px; text-align: inherit; }
+  .matrix thead th:not(.recipient) button.sort { text-align: right; }
+  .group-row th { height: 44px; padding: 0 !important; background: var(--cgd-teal) !important;
+                  color: #fff !important; text-align: left !important; }
+  .group-toggle { width: 100%; min-height: 44px; padding: 8px 10px; border: 0; color: inherit;
+                  background: transparent; text-align: left; font: inherit; font-weight: 700;
+                  cursor: pointer; }
+  .summary-row th, .summary-row td { font-weight: 600; background: var(--cgd-panel); }
+  .cell { color: var(--cgd-teal-black); }
+  .cell.na { color: var(--cgd-dark-gray); background: #fff !important; }
+  .mobile-controls, .mobile-table { display: none; }
+  .advanced-toggle { border: 0; background: transparent; color: var(--cgd-light-teal);
+                     font: inherit; font-size: 11.6px; padding: 4px 2px; cursor: pointer;
+                     text-decoration: underline; }
+  .advanced-line[hidden] { display: none; }
+  .advanced-line { display: flex; align-items: center; gap: 8px; min-height: 32px;
+                   color: var(--cgd-dark-gray); font-size: 12px; }
+  .advanced-line label { cursor: pointer; }
+  .metric-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+  .metric-row .control-group { flex: 0 1 auto; }
+  .tagline { margin: 7px 0 10px; color: var(--cgd-dark-gray); font-size: 12px; }
+  .scroll-hint { display: none; }
+  .recipient-name { overflow: hidden; text-overflow: ellipsis; display: block; }
+  /* Tap-to-expand needs a real target; filling the cell costs about a pixel a
+     row and keeps the dense row height the brief asks for. */
+  button.recipient-name { width: 100%; padding: 0; border: 0; background: transparent;
+                          color: inherit; font: inherit; text-align: left; white-space: nowrap;
+                          display: flex; align-items: center; min-height: 24px; cursor: pointer; }
+  @media (max-width: 699px) {
+    .desktop-controls, .desktop-table, .desktop-only { display: none !important; }
+    .mobile-controls, .mobile-table { display: block; }
+    .mobile-controls .control-group { min-width: 0; }
+    /* Stacked, not side by side: "Prioritisation ratio — poverty" cannot share a
+       95px column with the year stepper and stay readable. */
+    .mobile-control-row { display: grid; grid-template-columns: 1fr; gap: 6px;
+                          align-items: end; }
+    .mobile-year { display: grid; grid-template-columns: 34px 52px 34px; align-items: center; }
+    /* The year stepper is narrow and the measure toggle is two short words, so the
+       two share a line rather than taking one each. */
+    .mobile-pair { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px;
+                   align-items: end; }
+    .mobile-year button { min-height: 34px; border: 1px solid var(--cgd-border); background: #fff;
+                          color: var(--cgd-teal); font: inherit; }
+    .mobile-year output { text-align: center; font-weight: 700; }
+    .matrix { min-width: 940px; font-size: 11px; }
+    .matrix th, .matrix td { padding: 6px 5px; }
+    .matrix .recipient { min-width: 122px; width: 122px; max-width: 122px; }
+    .recipient-name.expanded { white-space: normal; overflow: visible; }
+    .table-shell::after { content: ''; pointer-events: none; position: absolute; right: 0; top: 0;
+                          bottom: 0; width: 25px; background: linear-gradient(90deg, transparent, rgba(11,76,91,.14)); }
+    .scroll-hint { display: block; margin: 5px 7px; color: var(--cgd-dark-gray); font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+<main id="vizRoot" class="viz-wrapper">
+  <div class="header-row">
+    <div class="title-block">
+      <h1 id="vizTitle">How recipients fare across allocation rules</h1>
+      <p class="viz-sub" id="vizSub"></p>
+    </div>
+    <button class="fullscreen-btn desktop-only" id="fullscreenBtn" type="button"
+            aria-label="View fullscreen" title="View fullscreen">
+      <svg class="icon-expand" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg class="icon-compress" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+
+  <section class="desktop-controls" aria-label="Table controls">
+    <div class="controls" id="desktopPrimary"><div class="metric-row" id="desktopMetric"></div></div>
+  </section>
+
+  <section class="mobile-controls controls" aria-label="Table controls">
+    <div class="mobile-control-row oda-span-row">
+      <div class="control-group"><label class="control-label" for="mobileShow">Show</label>
+        <select class="plain-select oda-select-wide" id="mobileShow"></select></div>
+    </div>
+    <div class="mobile-pair oda-span-row">
+      <div class="control-group"><span class="control-label">Year</span>
+        <div class="mobile-year" id="mobileYear"></div></div>
+      <div id="mobileMeasure"></div>
+    </div>
+  </section>
+
+  <div class="control-group oda-advanced oda-span-row" id="advancedGroup">
+    <button class="advanced-toggle desktop-only" id="advancedBtn" type="button"
+            aria-expanded="false" aria-controls="advancedPanel">Advanced</button>
+    <div class="advanced-line" id="advancedPanel">
+      <label for="needThreshold"><input type="checkbox" id="needThreshold">Require at least 100,000 people in extreme poverty</label>
+    </div>
+  </div>
+  <p class="tagline" id="tagline"></p>
+  <section id="tableArea" aria-live="polite"></section>
+  <p id="chartSummary" class="notes"></p>
+  <div id="notes"></div>
+</main>
+
+<script src="shared/dom.js"></script>
+<script src="shared/chart-core.js"></script>
+<script src="shared/set-config.js"></script>
+<script src="shared/oda-payload.js"></script>
+<script src="shared/oda-model.js"></script>
+<script src="shared/oda-ui.js"></script>
+<script>
+(async () => {
+  'use strict';
+  window.CGD_READY = false;
+  const { element } = window.CGDDom;
+  const P = window.ODAPayload, M = window.ODAModel, UI = window.ODAUI;
+  const root = document.getElementById('vizRoot');
+  const tableArea = document.getElementById('tableArea');
+  let payload;
+  try { payload = await P.load(); }
+  catch (error) { P.renderFailState(tableArea, error); window.CGD_READY = true; return; }
+
+  const scenarios = Object.keys(M.SCENARIOS);
+  const objectives = ['poverty', 'humanitarian', 'fiscal'];
+  const metricOptions = [
+    ['ratio_poverty', 'Prioritisation ratio — poverty'],
+    ['ratio_humanitarian', 'Prioritisation ratio — humanitarian'],
+    ['ratio_fiscal', 'Prioritisation ratio — fiscal'],
+    ['oda', 'US$ ODA'], ['oda_pc', 'US$ ODA per person in extreme poverty'],
+    ['cut', 'US$ ODA cut vs 2024'], ['cut_pct', '% ODA cut vs 2024']
+  ];
+  const state = UI.createState({ year: 2028, measure: 'gross', layer: 'ratio',
+    objective: 'poverty', odaMetric: 'oda', threshold: false, sort: 'average',
+    direction: 'desc' }, { onChange: scheduleRender });
+  const openGroups = new Set(['significant']);
+  let renderVersion = 0;
+
+  function currentMetric(s) { return s.layer === 'ratio' ? `ratio_${s.objective}` : s.odaMetric; }
+  function metricLabel(metric) { return metricOptions.find(x => x[0] === metric)?.[1] || metric; }
+  function objectiveLabel(v) { return v[0].toUpperCase() + v.slice(1); }
+
+  function segmented(key, values, labels, aria) {
+    const box = element('div', { className: 'segmented', attributes: { role: 'group', 'aria-label': aria } });
+    const buttons = values.map((value, i) => {
+      const b = element('button', { text: labels[i], attributes: { type: 'button', 'data-value': value, 'data-key': key } });
+      b.addEventListener('click', () => state.set({ [key]: value })); box.append(b); return b;
+    });
+    box.sync = () => buttons.forEach((b, i) => b.setAttribute('aria-pressed', String(state.get()[key] === values[i])));
+    state.subscribe(box.sync); box.sync(); return box;
+  }
+
+  const desktopPrimary = document.getElementById('desktopPrimary');
+  desktopPrimary.append(UI.yearControl(state, payload.axes.year),
+    UI.measureToggle(state, s => (currentMetric(s) === 'oda' || currentMetric(s) === 'oda_pc' ||
+                                  currentMetric(s) === 'cut') ? 'usd' : 'pct'));
+  const layerControl = segmented('layer', ['ratio', 'oda'], ['Prioritisation ratio', 'ODA'], 'Metric family');
+  desktopPrimary.append(UI.controlGroup('Show', layerControl));
+  const objectiveControl = UI.controlGroup('Allocation weighting',
+    segmented('objective', objectives, objectives.map(objectiveLabel), 'Allocation weighting objective'));
+  const odaMetricControl = UI.controlGroup('ODA metric', segmented('odaMetric',
+    ['oda', 'oda_pc', 'cut', 'cut_pct'], ['US$ ODA', 'US$ per person', 'US$ cut', '% cut'], 'ODA metric'));
+  document.getElementById('desktopMetric').append(objectiveControl, odaMetricControl);
+
+  const mobileShow = document.getElementById('mobileShow');
+  metricOptions.forEach(([value, label]) => mobileShow.append(element('option', { text: label, attributes: { value } })));
+  mobileShow.addEventListener('change', () => {
+    const value = mobileShow.value;
+    if (value.startsWith('ratio_')) state.set({ layer: 'ratio', objective: value.slice(6) });
+    else state.set({ layer: 'oda', odaMetric: value });
+  });
+  const mobileYear = document.getElementById('mobileYear');
+  const prev = element('button', { text: '‹', attributes: { type: 'button', 'aria-label': 'Previous year' } });
+  const yearOut = element('output', { text: '2028' });
+  const next = element('button', { text: '›', attributes: { type: 'button', 'aria-label': 'Next year' } });
+  mobileYear.append(prev, yearOut, next);
+  function moveYear(delta) { const ys = payload.axes.year, i = ys.indexOf(state.get().year);
+    state.set({ year: ys[Math.max(0, Math.min(ys.length - 1, i + delta))] }); }
+  prev.addEventListener('click', () => moveYear(-1)); next.addEventListener('click', () => moveYear(1));
+  document.getElementById('mobileMeasure').append(UI.controlGroup('Measure',
+    segmented('measure', ['gross','ge'], ['Gross','GE'], 'ODA measure')));
+  /* Desktop hides the filter behind Advanced, per the brief; the mobile layout
+     keeps it visible beneath the Show dropdown, where a popup would cost more
+     than it saves. One checkbox, one state key, two presentations. */
+  /* The desktop bank is display:none on phones and the mobile bank on desktop, so
+     the one Advanced group is moved into whichever is showing. */
+  const advancedGroup = document.getElementById('advancedGroup');
+  const phone = window.matchMedia('(max-width: 760px)');
+  const placeAdvanced = () => (phone.matches
+    ? document.querySelector('.mobile-controls')
+    : document.getElementById('desktopPrimary')).append(advancedGroup);
+  phone.addEventListener('change', placeAdvanced);
+  placeAdvanced();
+
+  const advancedBtn = document.getElementById('advancedBtn');
+  const advancedPanel = document.getElementById('advancedPanel');
+  const isPhone = () => window.matchMedia('(max-width: 699px)').matches;
+  function syncAdvanced() {
+    if (isPhone()) { advancedPanel.hidden = false; return; }
+    advancedPanel.hidden = advancedBtn.getAttribute('aria-expanded') !== 'true';
+  }
+  advancedBtn.addEventListener('click', () => {
+    advancedBtn.setAttribute('aria-expanded',
+      String(advancedBtn.getAttribute('aria-expanded') !== 'true'));
+    syncAdvanced();
+  });
+  window.matchMedia('(max-width: 699px)').addEventListener('change', syncAdvanced);
+  syncAdvanced();
+  const threshold = document.getElementById('needThreshold');
+  threshold.addEventListener('change', () => state.set({ threshold: threshold.checked }));
+
+  state.subscribe(s => {
+    objectiveControl.hidden = s.layer !== 'ratio'; odaMetricControl.hidden = s.layer !== 'oda';
+    mobileShow.value = currentMetric(s); threshold.checked = s.threshold;
+    yearOut.textContent = s.year; const i = payload.axes.year.indexOf(s.year);
+    prev.disabled = i === 0; next.disabled = i === payload.axes.year.length - 1;
+  });
+
+  function blobNames(s) {
+    return [`static/baseline_${s.measure}__recipient`,
+      ...scenarios.map(sc => `scenarios/${sc}/recipient_year__${s.measure}`),
+      ...objectives.map(o => `tool/need_${o}`)];
+  }
+
+  function need(iso, objective) { const v = payload.at(`tool/need_${objective}`, { recipient: iso });
+    return Number.isFinite(v) && v > 0 ? v : null; }
+  function oda(iso, scenario, year, measure) {
+    return payload.at(`scenarios/${scenario}/recipient_year__${measure}`, { recipient: iso, year });
+  }
+  function baseline(iso, measure) { return payload.at(`static/baseline_${measure}__recipient`, { recipient: iso }); }
+
+  function ratioValues(year, measure, objective) {
+    const map = new Map(), nmap = new Map();
+    for (const iso of payload.axes.recipient) nmap.set(iso, need(iso, objective));
+    for (const sc of scenarios) {
+      let totalOda = 0, totalNeed = 0;
+      for (const iso of payload.axes.recipient) { const n=nmap.get(iso); if(n==null)continue;
+        totalOda += oda(iso,sc,year,measure); totalNeed += n; }
+      const mean = totalNeed > 0 ? totalOda / totalNeed : null;
+      for (const iso of payload.axes.recipient) { const n=nmap.get(iso);
+        map.set(`${sc}|${iso}`,n&&mean?(oda(iso,sc,year,measure)/n)/mean:null); }
+    }
+    return map;
+  }
+
+  /* Korea, Dem. People's Rep. receives no modelled bilateral allocations at all, so
+     every cell in its row is 0% and the row carries no information. It is dropped
+     from the DISPLAYED population only: ratioValues above still sums need and ODA
+     over the full recipient axis, because that sum is the denominator every other
+     recipient's prioritisation ratio is measured against, and dropping a country
+     from it would silently change every published number in the table. */
+  const RECIPIENTS = payload.axes.recipient.filter(iso => iso !== 'PRK');
+
+  function buildRows(s) {
+    const metric = currentMetric(s), groupingRatios = ratioValues(s.year, s.measure, s.objective);
+    const displayRatios = metric.startsWith('ratio_') ? ratioValues(s.year, s.measure, metric.slice(6)) : null;
+    const rows = [];
+    for (const iso of RECIPIENTS) {
+      const poverty = need(iso, 'poverty');
+      if (s.threshold && !(poverty >= 100000)) continue;
+      const values = scenarios.map(sc => {
+        const value = oda(iso, sc, s.year, s.measure), base = baseline(iso, s.measure);
+        if (metric === 'oda') return value;
+        if (metric === 'oda_pc') return poverty ? value * 1e6 / poverty : null;
+        if (metric === 'cut') return base - value;
+        if (metric === 'cut_pct') return base > 0 ? (base - value) / base : null;
+        return displayRatios.get(`${sc}|${iso}`);
+      });
+      const valid = values.filter(Number.isFinite);
+      const groupRatios = scenarios.map(sc => groupingRatios.get(`${sc}|${iso}`)).filter(Number.isFinite);
+      const groupAverage = groupRatios.length ? groupRatios.reduce((a,b) => a+b, 0) / groupRatios.length : null;
+      const average = valid.length ? valid.reduce((a,b) => a+b, 0) / valid.length : null;
+      const range = valid.length ? Math.max(...valid) - Math.min(...valid) : null;
+      let group = 'unclassified';
+      if (Number.isFinite(groupAverage)) group = groupAverage < .5 ? 'significant' : groupAverage < 1 ? 'under' : 'over';
+      rows.push({ iso, name: payload.recipientName(iso), values, average, range, group, groupAverage });
+    }
+    return { rows, metric };
+  }
+
+  function allDomain(s, metric) {
+    let values = [], ranges = [];
+    for (const year of payload.axes.year) {
+      const model = buildRows({ ...s, year });
+      model.rows.forEach(r => { values.push(...r.values.filter(Number.isFinite));
+        if (Number.isFinite(r.average)) values.push(r.average); if (Number.isFinite(r.range)) ranges.push(r.range); });
+    }
+    if (metric.startsWith('ratio_')) return { min: 0, max: 4, rangeMax: Math.max(...ranges, 1) };
+    if (metric === 'oda_pc') return { min: 0, max: 1000, rangeMax: Math.min(1000, Math.max(...ranges, 1)) };
+    if (metric === 'cut' || metric === 'cut_pct') { const max = Math.max(...values.map(Math.abs), 1e-9);
+      return { min: -max, max, rangeMax: Math.max(...ranges, 1e-9) }; }
+    return { min: 0, max: Math.max(...values, 1), rangeMax: Math.max(...ranges, 1) };
+  }
+
+  function mix(a, b, t) { const pa = a.match(/\w\w/g).map(x => parseInt(x,16)), pb = b.match(/\w\w/g).map(x => parseInt(x,16));
+    return '#' + pa.map((v,i) => Math.round(v + (pb[i]-v)*Math.max(0,Math.min(1,t))).toString(16).padStart(2,'0')).join(''); }
+  function colour(value, metric, domain, isRange) {
+    if (!Number.isFinite(value)) return '#ffffff';
+    if (isRange) return mix('#F3F6F7', '#0B4C5B', value / domain.rangeMax);
+    if (metric.startsWith('ratio_')) return value < 1 ? mix('#FEE8BF','#D15553',1-Math.max(0,value)) : mix('#F3F6F7','#006970',(Math.min(4,value)-1)/3);
+    if (metric === 'cut' || metric === 'cut_pct') return value < 0 ? mix('#F3F6F7','#006970',Math.abs(value/domain.min)) : mix('#F3F6F7','#D15553',value/domain.max);
+    return mix('#F3F6F7','#006970',(value-domain.min)/(domain.max-domain.min || 1));
+  }
+  function fmt(value, metric, isRange=false) {
+    if (!Number.isFinite(value)) return 'N/A';
+    /* A range is the highest minus the lowest of a set of percentages, so it is a
+       difference of percentages: percentage points, not a percentage. */
+    const pct = metric.startsWith('ratio_') || metric === 'cut_pct';
+    if (isRange && pct) return `${Math.round(Math.abs(value)*100)} pp`;
+    if (metric.startsWith('ratio_')) return `${Math.round(value*100)}%`;
+    if (metric === 'cut_pct') return `${value < 0 ? '−' : ''}${Math.abs(value*100).toFixed(0)}%`;
+    if (metric === 'oda_pc') return `US$${Math.round(value).toLocaleString('en-GB')}`;
+    return M.usd(value);
+  }
+
+  const groupSpec = [
+    ['significant','Significantly underprioritised (<50%)'],
+    ['under','Underprioritised (50–100%)'], ['over','Overprioritised (>100%)'],
+    ['unclassified','Not classified']
+  ];
+  function sorted(rows, s) { const index = scenarios.indexOf(s.sort); const key = r => s.sort === 'average' ? r.average : s.sort === 'range' ? r.range : r.values[index];
+    return rows.slice().sort((a,b) => { const av=key(a), bv=key(b); if(!Number.isFinite(av)) return 1; if(!Number.isFinite(bv)) return -1;
+      return (s.direction === 'asc' ? av-bv : bv-av) || a.name.localeCompare(b.name); }); }
+
+  function makeHeader(order, s) {
+    const tr = element('tr');
+    for (const col of order) {
+      const label = col === 'recipient' ? 'Recipient' : col === 'average' ? 'Average' : col === 'range' ? 'Range' : M.scenarioInfo(col).label;
+      const th = element('th', { className: col === 'recipient' ? 'recipient' : col === 'average' ? 'summary-start' : col === 'range' ? 'range' : col === scenarios[0] ? 'scen-start' : '' });
+      if (col === 'recipient') th.textContent = label;
+      else { const b = element('button', { className:'sort', text: label, attributes:{ type:'button', title: col.startsWith('S') ? M.scenarioInfo(col).name : label } });
+        b.addEventListener('click', () => state.set({ sort: col, direction: s.sort === col && s.direction === 'desc' ? 'asc' : 'desc' })); th.append(b); }
+      tr.append(th);
+    }
+    return tr;
+  }
+  function medianRows(rows) { return scenarios.map((_,i) => { const v=rows.map(r=>r.values[i]).filter(Number.isFinite).sort((a,b)=>a-b);
+    if(!v.length)return null; const m=Math.floor(v.length/2); return v.length%2?v[m]:(v[m-1]+v[m])/2; }); }
+  function makeValueCell(value, metric, domain, cls='', isRange=false) { const td=element('td',{className:`cell ${cls}${Number.isFinite(value)?'':' na'}`,text:fmt(value,metric,isRange)});
+    const bg=colour(value,metric,domain,isRange); td.style.background=bg;
+    if(Number.isFinite(value)){ const rgb=bg.match(/\w\w/g).map(x=>parseInt(x,16)/255), lum=.2126*rgb[0]+.7152*rgb[1]+.0722*rgb[2];
+      if(lum<.42)td.style.color='#fff'; } return td; }
+
+  function renderTable(model, s, mobile, domain) {
+    const order = ['recipient','average','range',...scenarios];
+    const shell=element('div',{className:`table-shell ${mobile?'mobile-table':'desktop-table'}`});
+    if(mobile) shell.append(element('p',{className:'scroll-hint',text:'Swipe sideways to compare all allocation rules →'}));
+    const scroll=element('div',{className:'table-scroll'}), table=element('table',{className:'matrix'}), thead=element('thead'), tbody=element('tbody');
+    thead.append(makeHeader(order,s)); table.append(thead,tbody); scroll.append(table); shell.append(scroll);
+    for(const [gid,glabel] of groupSpec){ const rows=model.rows.filter(r=>r.group===gid); if(!rows.length) continue;
+      const expanded=openGroups.has(gid); const gh=element('tr',{className:'group-row'}), cell=element('th',{attributes:{colspan:String(order.length)}});
+      const toggle=element('button',{className:'group-toggle',text:`${expanded?'▾':'▸'} ${glabel} — ${rows.length}`,attributes:{type:'button','aria-expanded':String(expanded)}});
+      toggle.addEventListener('click',()=>{ expanded?openGroups.delete(gid):openGroups.add(gid); renderCurrent(); }); cell.append(toggle); gh.append(cell); tbody.append(gh);
+      const bodyRows=expanded?sorted(rows,s):[{name:`${glabel} median`,values:medianRows(rows),average:null,range:null,summary:true}];
+      for(const row of bodyRows){ if(row.summary){ const v=row.values.filter(Number.isFinite); row.average=v.length?v.reduce((a,b)=>a+b,0)/v.length:null; row.range=v.length?Math.max(...v)-Math.min(...v):null; }
+        const tr=element('tr',{className:row.summary?'summary-row':''});
+        if(row.iso)tr.dataset.iso=row.iso;
+        for(const col of order){ if(col==='recipient'){ const th=element('th',{className:'recipient'}), name=element(mobile?'button':'span',{className:'recipient-name',text:row.name,attributes:{title:row.name,...(mobile?{type:'button'}:{})}});
+            if(mobile) name.addEventListener('click',()=>name.classList.toggle('expanded')); th.append(name); tr.append(th); }
+          else if(col==='average') tr.append(makeValueCell(row.average,model.metric,domain,'summary-start'));
+          else if(col==='range') tr.append(makeValueCell(row.range,model.metric,domain,'range',true));
+          else tr.append(makeValueCell(row.values[scenarios.indexOf(col)],model.metric,domain,col===scenarios[0]?'scen-start':'')); }
+        tbody.append(tr); }
+    }
+    return shell;
+  }
+
+  let lastModel=null,lastDomain=null;
+  /* Recipients move between prioritisation groups as the year changes. The
+     brief asks for that move to be animated, so the change is visible rather
+     than the table silently reshuffling under the reader. Respects
+     prefers-reduced-motion. */
+  function renderCurrent(){
+    if(!lastModel)return;
+    const before=new Map([...tableArea.querySelectorAll('tr[data-iso]')].map(tr=>[tr.dataset.iso,tr.getBoundingClientRect().top]));
+    tableArea.replaceChildren(renderTable(lastModel,state.get(),false,lastDomain),renderTable(lastModel,state.get(),true,lastDomain));
+    if(!before.size||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    for(const tr of tableArea.querySelectorAll('tr[data-iso]')){
+      const previous=before.get(tr.dataset.iso);
+      if(previous===undefined)continue;
+      const delta=previous-tr.getBoundingClientRect().top;
+      if(!delta||Math.abs(delta)<2||Math.abs(delta)>600)continue;
+      tr.animate([{transform:`translateY(${delta}px)`},{transform:'none'}],
+                 {duration:320,easing:'cubic-bezier(.2,.7,.3,1)'});
+    }
+  }
+  async function runRender(version) {
+    const s=state.get(); try { await payload.blobs(blobNames(s)); if(version!==renderVersion)return;
+      const model=buildRows(s), domain=allDomain(s,model.metric); lastModel=model;lastDomain=domain; renderCurrent();
+      const grouping=`grouped by ${s.objective} prioritisation`;
+      document.getElementById('vizSub').textContent=`${metricLabel(model.metric)} in ${s.year}, across ten allocation rules.`;
+      document.getElementById('tagline').textContent=`${M.MEASURE_LABEL[s.measure]} measure; ${grouping}.`;
+      document.getElementById('chartSummary').textContent=`${model.rows.length} of ${RECIPIENTS.length} recipients shown.`;
+      document.getElementById('notes').replaceChildren(UI.notes({notes:[
+        'The prioritisation ratio compares each recipient’s bilateral ODA per unit of need with the global mean for the same year and objective; 100% means the global mean.',
+        'For poverty, the global benchmark is about US$118 per person in extreme poverty in 2024 and US$91 in 2028. A constant ratio therefore means a constant share of the benchmark, not constant funding.',
+        'Average is the mean across the ten allocation rules. Range is the highest minus the lowest value. Collapsed group rows show medians by allocation rule; Range uses its own sequential colour scale.',
+        'Colour domains are fixed across all four projection years. Prioritisation ratios are clipped above 400%, and ODA per person above US$1,000, so outliers do not wash out the scale.',
+        'The need threshold uses the modelled population in extreme poverty. Recipients without the selected need mass are explicitly not classified.',
+        UI.STANDARD_NOTES.projectionYears, UI.STANDARD_NOTES.unallocable,
+        UI.STANDARD_NOTES.prices, UI.STANDARD_NOTES.baselineYear
+      ],source:`Source: CGD modelling, ${payload.release}.`}));
+      window.CGD_READY = true;
+    } catch(error){ if(version===renderVersion)P.renderFailState(tableArea,error); window.CGD_READY = true; }
+  }
+  let frame=null; function scheduleRender(){ if(frame)cancelAnimationFrame(frame); frame=requestAnimationFrame(()=>{frame=null;runRender(++renderVersion);}); }
+  state.set({}); scheduleRender();
+
+  document.getElementById('fullscreenBtn').addEventListener('click',()=>{ if(document.fullscreenElement)document.exitFullscreen(); else root.requestFullscreen?.(); });
+  window.ODA_F17={state,buildRows:()=>buildRows(state.get())};
+})();
+</script>
+<script src="shared/cgd-embed.js"></script>
+</body>
+</html>

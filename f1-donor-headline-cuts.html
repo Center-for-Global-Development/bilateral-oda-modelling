@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en" data-cgd-interactive-name="oda-f1-donor-headline-cuts">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How donor ODA changes by 2028</title>
+<link rel="stylesheet" href="shared/cgd-figure.css"><link rel="stylesheet" href="shared/cgd-responsive.css"><link rel="stylesheet" href="shared/oda-figure.css">
+<style>
+  .rank-head,.donor-row{display:grid;grid-template-columns:minmax(112px,190px) minmax(140px,1fr) 62px;gap:8px;align-items:center}
+  .rank-head{font-size:12px;font-weight:600;color:var(--cgd-dark-gray);padding:4px 5px;border-bottom:1px solid var(--cgd-border)}
+  .rank-head button{border:0;padding:6px 0;background:transparent;color:inherit;font:inherit;font-size:11px;line-height:1.1;text-decoration:underline;cursor:pointer;text-align:right;white-space:nowrap}
+  .donor-row{min-height:40px;padding:2px 5px;border-bottom:1px solid var(--cgd-light-gray)}
+  .donor-name{font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .donor-plot svg{display:block;width:100%;height:36px}.ratio{text-align:right;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+  .axis-wrap{display:grid;grid-template-columns:minmax(112px,190px) minmax(140px,1fr) 62px;gap:8px;padding:0 5px}.axis-wrap svg{width:100%;height:32px;display:block}
+  .year-legend{display:flex;gap:6px 9px;flex-wrap:wrap;font-size:11.5px;justify-content:flex-end}.year-key{display:inline-flex;align-items:center;gap:4px}.year-dot{width:14px;height:8px;border-radius:1px}
+  .donor-filter button{font-size:11.5px;padding:4px 9px}
+  @media(max-width:620px){.panel-header{grid-template-columns:minmax(0,1fr)}.year-legend{justify-content:flex-start}}
+  .tooltip{position:absolute;z-index:20;max-width:260px}.flat-note{font-size:11px;color:var(--cgd-dark-gray)}
+  @media(max-width:520px){.rank-head,.donor-row,.axis-wrap{grid-template-columns:80px minmax(94px,1fr) 50px;gap:3px}.donor-name,.ratio{font-size:11px}.rank-head{font-size:11px}.donor-row{padding-inline:2px}}
+</style>
+</head>
+<body><main id="vizRoot" class="viz-wrapper">
+  <div class="header-row"><div class="title-block"><h1 id="vizTitle">How donor ODA changes by 2028</h1><p class="viz-sub">Total ODA grant-equivalent, one bar per year, 2024–2028</p></div>
+    <button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="View fullscreen" title="View fullscreen"><svg class="icon-expand" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5" stroke="currentColor" stroke-width="1.8"/></svg><svg class="icon-compress" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5" stroke="currentColor" stroke-width="1.8"/></svg></button>
+  </div>
+  <div class="controls" id="controls"></div>
+  <section class="panel"><div class="panel-header"><div class="segmented donor-filter" id="donorFilter" role="group" aria-label="Donor group"></div><div class="year-legend" id="yearLegend" aria-label="Year colour legend"></div></div>
+    <div class="chart-area" id="chartArea"><div class="rank-head"><span>Donor</span><span id="axisHeading">ODA, US$ billion</span><button id="ratioSort" type="button" aria-label="Sort by 2028 ODA as a percentage of 2024 ODA">2028/2024</button></div><div id="rows"></div><div class="axis-wrap"><span></span><svg id="axisSvg" aria-hidden="true"></svg><span></span></div></div>
+  </section>
+  <p id="chartSummary" class="notes"></p><div id="notes"></div><div class="tooltip" id="tooltip" hidden></div>
+</main>
+<script src="shared/dom.js"></script><script src="shared/chart-core.js"></script><script src="shared/set-config.js"></script><script src="shared/oda-payload.js"></script><script src="shared/oda-model.js"></script><script src="shared/oda-ui.js"></script>
+<script>
+(async()=>{'use strict';
+  window.CGD_READY = false;
+  const {element,svgEl}=window.CGDDom,C=window.CGDCore,P=window.ODAPayload,M=window.ODAModel,UI=window.ODAUI;
+  const root=document.getElementById('vizRoot'),chartArea=document.getElementById('chartArea');let payload;
+  try{payload=await P.load();await payload.blobs(['static/total_oda_ge__donor_year']);}catch(error){P.renderFailState(chartArea,error); window.CGD_READY = true;return;}
+  const years=payload.axes.total_oda_year.map(Number),pageSize=20;
+  /* 2024 is observed, not projected, so it takes its own hue instead of the pale
+     end of a ramp: at the light end of a single-hue sequence the first dot was a
+     near-white fill behind a white stroke, which is to say invisible. 2025-2028
+     stay a light-to-dark teal sequence, as the brief asks. */
+  const colours=['#FFB52C','#7CC3D3','#2D99B5','#116075','#08252F'];
+  /* The axis previously ticked at fractions of the data maximum, so it read
+     US$16.2bn, US$32.4bn. Ticks now land on 1/2/2.5/5 multiples. */
+  function niceTicks(span,target){if(!(span>0))return[0];const raw=span/target,mag=Math.pow(10,Math.floor(Math.log10(raw))),n=raw/mag,
+    step=(n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10)*mag,out=[];
+    for(let g=0;g*step<=span*1.00001&&g<40;g++)out.push(g*step);return out;}
+  const state=UI.createState({sort:'difference',direction:'desc',page:0,group:'all',scale:'usd'},{dependents:{sort:['page'],direction:['page'],group:['page']},onChange:render});
+  const sort=UI.sortSelect(state,[{value:'difference',label:'Largest absolute change'},{value:'ratio',label:'2028 as % of 2024'}]);
+  /* A shared linear axis in US$ answers "how big". It cannot answer "how much did
+     it change" for a donor spending a fraction of a percent of the largest donor's
+     total, because that fraction is a few pixels wide whatever the mark shape or
+     the screen width -- which is why thinner bars would not have helped either.
+     The indexed scale rebases every donor to its own 2024 = 100%. It is still one
+     shared comparable axis, but one on which every donor's change is the same
+     size on screen. */
+  const scaleBox=element('div',{className:'segmented',attributes:{role:'group','aria-label':'Horizontal scale'}});
+  for(const[v,l]of[['usd','US$'],['index','2024 = 100']]){const b=element('button',{text:l,attributes:{type:'button','data-scale':v}});b.addEventListener('click',()=>state.set({scale:v}));scaleBox.append(b);}
+  state.subscribe(st=>scaleBox.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.scale===st.scale))));
+  document.getElementById('controls').append(sort,UI.controlGroup('Scale',scaleBox,{id:'scaleToggle'}));
+  /* Sits beside the year legend rather than in the control bank, where it would
+     have pushed the bank onto a second row on phones. */
+  const filterBox=document.getElementById('donorFilter');
+  for(const[v,l,t]of[['all','All','Every provider in the model'],['dac','DAC','Members of the OECD Development Assistance Committee'],['other','Non-DAC','Providers outside the DAC, including EU Institutions']]){const b=element('button',{text:l,attributes:{type:'button','data-group':v,title:t}});b.addEventListener('click',()=>state.set({group:v}));filterBox.append(b);}
+  state.subscribe(st=>filterBox.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.group===st.group))));
+  UI.pagerRow(document.querySelector('.panel')).append(UI.pager(state,()=>Math.ceil(ordered().length/pageSize)));
+  document.getElementById('ratioSort').addEventListener('click',()=>{const s=state.get();state.set({sort:'ratio',direction:s.sort==='ratio'&&s.direction==='asc'?'desc':'asc'});});
+  document.getElementById('yearLegend').append(...years.map((y,i)=>{const dot=element('span',{className:'year-dot'});dot.style.background=colours[i];return element('span',{className:'year-key'},[dot,element('span',{text:String(y)})]);}));
+  const isDac=code=>Number(payload.donorMeta[code]&&payload.donorMeta[code].dac_member)===1;
+  function allRows(){return payload.axes.donor.map(code=>{const vals=years.map(year=>payload.at('static/total_oda_ge__donor_year',{donor:code,total_oda_year:year}));const change=vals[4]-vals[0],ratio=vals[0]>0?vals[4]/vals[0]:null;return{code,name:payload.donorName(code),vals,change,ratio};});}
+  function ordered(){const s=state.get(),rows=allRows().filter(r=>s.group==='all'||(s.group==='dac')===isDac(r.code));rows.sort((a,b)=>{const av=s.sort==='ratio'?a.ratio:Math.abs(a.change),bv=s.sort==='ratio'?b.ratio:Math.abs(b.change);return(s.direction==='asc'?av-bv:bv-av)||a.name.localeCompare(b.name);});return rows;}
+  const tooltip=document.getElementById('tooltip');let pinned=null;
+  function showTip(row,i,target){tooltip.replaceChildren(element('strong',{text:row.name}),element('div',{text:`${years[i]}: ${M.usd(row.vals[i])}`}),element('div',{text:`2028 is ${M.percent(row.ratio,{decimals:1})} of 2024`}));tooltip.hidden=false;const b=target.getBoundingClientRect(),rb=root.getBoundingClientRect();tooltip.style.left=`${Math.min(rb.width-tooltip.offsetWidth-8,Math.max(8,b.left-rb.left+12))}px`;tooltip.style.top=`${b.bottom-rb.top+4}px`;}
+  function hideTip(){tooltip.hidden=true;}
+  function render(){const s=state.get(),orderedRows=ordered();
+    if(!orderedRows.length){document.getElementById('rows').replaceChildren(element('p',{className:'notes',text:'No donors in this group.'}));document.getElementById('axisSvg').replaceChildren();document.getElementById('chartSummary').textContent='No donors in this group.';window.CGD_READY=true;return;}
+    const indexed=s.scale==='index',pages=Math.ceil(orderedRows.length/pageSize),page=Math.min(s.page,pages-1),shown=orderedRows.slice(page*pageSize,(page+1)*pageSize);
+    const valueOf=(row,i)=>indexed?(row.vals[0]>0?row.vals[i]/row.vals[0]:null):row.vals[i];
+    const span=Math.max(...orderedRows.flatMap(r=>r.vals.map((v,i)=>valueOf(r,i))).filter(v=>Number.isFinite(v)));
+    const x=v=>4+(v/span)*92,narrow=innerWidth<=520,rad=narrow?3.4:4.2,ticks=niceTicks(span,narrow?2:4);
+    document.getElementById('axisHeading').textContent=indexed?'ODA relative to 2024':'ODA, US$ billion';
+    document.getElementById('rows').replaceChildren();
+    /* One thin bar per year rather than five dots on a line. Dots at a usable
+       radius occlude each other whenever two years sit within about eight pixels,
+       which on a shared axis is most donors: the reader saw a smudge and could not
+       count five marks, let alone order them. Bars occupy their own horizontal
+       band, so all five are always separately visible, they share a common
+       baseline, and a small year-on-year change reads as a staircase. Same row
+       space as the dot strip. */
+    const BAR=narrow?4.4:5.2,GAP=narrow?1.4:1.4,TOP=(36-(5*BAR+4*GAP))/2;
+    for(const row of shown){const wrap=element('div',{className:'donor-row'}),name=element('div',{className:'donor-name',text:row.name,attributes:{title:row.name}}),plot=element('div',{className:'donor-plot'}),svg=svgEl('svg',{'aria-label':row.name+', total ODA 2024 to 2028'});
+      /* Gridlines dropped from the axis into every row, so a bar end can be read
+         against a value without tracking it down to the bottom of the table. */
+      ticks.forEach(t=>{if(t>0)svg.append(svgEl('line',{x1:x(t)+'%',x2:x(t)+'%',y1:1,y2:35,stroke:'#E7EEF0','stroke-width':1}));});
+      if(indexed)svg.append(svgEl('line',{x1:x(1)+'%',x2:x(1)+'%',y1:1,y2:35,stroke:'#85A5AD','stroke-width':1,'stroke-dasharray':'2 2'}));
+      row.vals.forEach((v,i)=>{const value=valueOf(row,i);if(!Number.isFinite(value))return;
+        const y=TOP+i*(BAR+GAP),w=Math.max(0.35,x(value)-4);
+        const bar=svgEl('rect',{class:'bar',x:'4%',y:y,width:w+'%',height:BAR,
+          tabindex:'0',role:'img','aria-label':years[i]+' '+M.usd(row.vals[i])});
+        /* The house .bar rule reads --bar-fill, and any CSS rule beats a fill
+           presentation attribute, so the year colour has to go through the token. */
+        bar.style.setProperty('--bar-fill',colours[i]);
+        bar.addEventListener('pointerenter',()=>showTip(row,i,bar));
+        bar.addEventListener('pointerleave',()=>{if(!pinned)hideTip();});
+        bar.addEventListener('focus',()=>showTip(row,i,bar));
+        bar.addEventListener('blur',()=>{if(!pinned)hideTip();});
+        bar.addEventListener('click',e=>{e.stopPropagation();pinned=bar;showTip(row,i,bar);UI.attachDismiss(tooltip,()=>{pinned=null;hideTip();},{returnFocusTo:bar});});
+        svg.append(bar);});
+      /* The axis baseline the bars grow from. */
+      svg.append(svgEl('line',{x1:'4%',x2:'4%',y1:TOP-1,y2:TOP+5*BAR+4*GAP+1,stroke:'#85A5AD','stroke-width':1}));
+      plot.append(svg);wrap.append(name,plot,element('div',{className:'ratio',text:M.percent(row.ratio,{decimals:0})}));document.getElementById('rows').append(wrap);}
+    const axis=document.getElementById('axisSvg');axis.replaceChildren();axis.removeAttribute('viewBox');
+    const last=ticks[ticks.length-1];
+    ticks.forEach(t=>{const xx=x(t);axis.append(svgEl('line',{x1:xx+'%',x2:xx+'%',y1:0,y2:5,stroke:'#85A5AD'}));const tx=svgEl('text',{x:xx+'%',y:17,'text-anchor':t===0?'start':t===last?'end':'middle',class:'axis'});tx.textContent=indexed?Math.round(t*100)+'%':String(Math.round(t/1000));axis.append(tx);});
+    document.getElementById('chartSummary').textContent='Donors '+(page*pageSize+1)+'\u2013'+(page*pageSize+shown.length)+' of '+orderedRows.length+(s.group==='all'?'':s.group==='dac'?' DAC members':' non-DAC providers')+'.';window.CGD_READY=true;
+  }
+  document.getElementById('notes').append(UI.notes({notes:['Seventeen donors are held static—ARE, AZE, BGR, CYP, HRV, ISR, KAZ, KWT, LIE, MCO, MLT, QAT, ROU, SAU, THA, TUR and TWN—and their collective ODA rises 15.5% because their 2024 ODA/GNI ratio is held.','Values are grant-equivalent only; no valid forward gross total-ODA series is available.','DAC membership follows the model release, which classifies EU Institutions outside the DAC; they therefore appear under non-DAC providers.','Bars share a common baseline and each year has its own band, so all five years stay separately visible however close their values are.','The 2024 = 100 scale rebases each donor to its own 2024 total. It makes every donor\u2019s change equally visible and says nothing about how much ODA a donor gives.',UI.STANDARD_NOTES.prices,UI.STANDARD_NOTES.unallocable],source:`Source: CGD modelling, ${payload.release}.`}));
+  document.getElementById('fullscreenBtn').addEventListener('click',()=>document.fullscreenElement?document.exitFullscreen():root.requestFullscreen?.());render();window.ODA_F1={state,rows:allRows};
+})();
+</script><script src="shared/cgd-embed.js"></script></body></html>

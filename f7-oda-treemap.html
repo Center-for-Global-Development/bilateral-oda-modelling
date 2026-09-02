@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en" data-cgd-interactive-name="oda-f7-oda-treemap">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How aid portfolios are changing</title>
+<link rel="stylesheet" href="shared/cgd-figure.css"><link rel="stylesheet" href="shared/cgd-responsive.css"><link rel="stylesheet" href="shared/oda-figure.css">
+<style>
+  .treemap-wrap{width:100%;min-height:390px}.treemap-wrap svg{display:block;width:100%}.map-legend{display:flex;gap:8px 12px;flex-wrap:wrap;font-size:11.5px}.legend-key{display:inline-flex;gap:4px;align-items:center}.legend-swatch{width:12px;height:10px}.cell-label{pointer-events:none;font-size:10.5px;font-weight:500;fill:#22383C}.cell-value{pointer-events:none;font-size:10px;font-weight:600;fill:#22383C}.group-label{pointer-events:none;font-size:11px;font-weight:700;fill:#0B4C5B;letter-spacing:.01em}.group-heading{pointer-events:none}.tooltip{position:absolute;z-index:20;max-width:300px}.focus-select{min-width:0}.partner-control[hidden],.nest-control[hidden]{display:none}
+  @media(max-width:520px){.treemap-wrap{min-height:330px}.cell-label,.cell-value,.group-label{font-size:10px}}
+</style></head>
+<body><main id="vizRoot" class="viz-wrapper"><div class="header-row"><div class="title-block"><h1>How aid portfolios are changing</h1></div><button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="View fullscreen" title="View fullscreen"><svg class="icon-expand" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5" stroke="currentColor" stroke-width="1.8"/></svg><svg class="icon-compress" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5" stroke="currentColor" stroke-width="1.8"/></svg></button></div>
+  <div class="controls" id="controls"></div><section class="panel"><div class="panel-header"><div class="map-legend" id="legend"></div></div><div class="chart-area" id="chartArea"><div class="treemap-wrap"><svg id="treemapSvg" role="img" aria-labelledby="chartSummary"></svg></div></div></section><p id="chartSummary" class="notes"></p><div id="notes"></div><div class="tooltip" id="tooltip" hidden></div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js" integrity="sha384-CjloA8y00+1SDAUkjs099PVfnY2KmDC2BZnws9kh8D/lX1s46w6EPhpXdqMfjK6i" crossorigin="anonymous" referrerpolicy="no-referrer"></script><script src="shared/dom.js"></script><script src="shared/chart-core.js"></script><script src="shared/set-config.js"></script><script src="shared/oda-payload.js"></script><script src="shared/oda-model.js"></script><script src="shared/oda-ui.js"></script>
+<script>
+(async()=>{'use strict';
+  window.CGD_READY = false;const{element}=window.CGDDom,C=window.CGDCore,P=window.ODAPayload,M=window.ODAModel,UI=window.ODAUI;const root=document.getElementById('vizRoot'),chartArea=document.getElementById('chartArea');let payload;
+  try{payload=await P.load();if(!window.d3)throw new Error('The pinned chart dependency did not load.');}catch(error){P.renderFailState(chartArea,error); window.CGD_READY = true;return;}
+  const defaultRecipient=payload.axes.recipient.includes('UKR')?'UKR':payload.axes.recipient[0];
+  const state=UI.createState({scenario:'S1',measure:'gross',year:2028,focusType:'recipient',focus:defaultRecipient,partner:'ALL',nest:'partner-sector',unit:'usd',colourBy:'composition'},{dependents:{focusType:['partner'],focus:['partner']},onChange:()=>{syncControls();schedule();}});
+  const typeBox=element('div',{className:'segmented',attributes:{role:'group','aria-label':'Focus type'}});for(const[v,l]of[['donor','Donor'],['recipient','Recipient']]){const b=element('button',{text:l,attributes:{type:'button','data-focus-type':v}});b.addEventListener('click',()=>{const focus=v==='recipient'?(payload.axes.recipient.includes(state.get().focus)?state.get().focus:defaultRecipient):(payload.axes.donor.includes(state.get().focus)?state.get().focus:payload.axes.donor[0]);state.set({focusType:v,focus,partner:'ALL'});});typeBox.append(b);}
+  const focusSelect=element('select',{className:'plain-select oda-select-wide focus-select'});focusSelect.addEventListener('change',()=>state.set({focus:focusSelect.value,partner:'ALL'}));const partnerSelect=element('select',{className:'plain-select'});partnerSelect.addEventListener('change',()=>state.set({partner:partnerSelect.value}));
+  const nestSelect=element('select',{className:'plain-select'});for(const[v,l]of[['partner-sector','Partner → sector'],['sector-partner','Sector → partner']])nestSelect.append(element('option',{text:l,attributes:{value:v}}));nestSelect.addEventListener('change',()=>state.set({nest:nestSelect.value}));
+  const focusGroup=UI.controlGroup('Focus',focusSelect,{id:'focusSelect'}),partnerGroup=UI.controlGroup('Partner',partnerSelect,{id:'partnerSelect',extraClass:'partner-control'}),nestGroup=UI.controlGroup('Nesting order',nestSelect,{id:'nestSelect',extraClass:'nest-control'});
+  /* Size already carries the level, so colour is free to carry either the
+     composition or the change. Composition is the default because it is what a
+     treemap is for: one cell here is 63% of the canvas, and spending the
+     strongest visual channel on a change value that is near zero for most cells
+     left the figure reading as a large blank rectangle. Change stays one click
+     away, and the tooltip carries 2024, the selected year and the percentage
+     change for every cell either way. */
+  const colourBox=element('div',{className:'segmented',attributes:{role:'group','aria-label':'Colour cells by'}});
+  for(const [v,l] of [['composition','Composition'],['change','Change vs 2024']]){
+    const b=element('button',{text:l,attributes:{type:'button','data-colour':v}});
+    b.addEventListener('click',()=>state.set({colourBy:v}));colourBox.append(b);
+  }
+  const colourGroup=UI.controlGroup('Colour',colourBox,{id:'colourBy',extraClass:'oda-span-row'});
+  /* Cells are always coloured by composition. Change over time is what the year
+     control is for — the reader watches cells grow and shrink — and the toggle
+     cost a whole control row on the busiest bank in the set. The change scale is
+     left in place, unreferenced, so restoring the toggle is a one-line change. */
+  colourGroup.hidden=true;
+  document.getElementById('controls').append(UI.scenarioSelect(state),UI.yearControl(state,M.displayYears(payload)),UI.measureToggle(state,()=> 'usd'));
+  document.getElementById('controls').append(UI.controlGroup('Focus on',typeBox,{id:'focusType'}),focusGroup,partnerGroup,nestGroup,colourGroup);
+  function fillSelect(select,items,value){select.replaceChildren();for(const[x,l]of items)select.append(element('option',{text:l,attributes:{value:x}}));select.value=value;}
+  function syncControls(){const s=state.get();typeBox.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.focusType===s.focusType)));colourBox.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.colour===s.colourBy)));const focusItems=(s.focusType==='recipient'?payload.axes.recipient:payload.axes.donor).map(x=>[x,s.focusType==='recipient'?payload.recipientName(x):payload.donorName(x)]).sort((a,b)=>a[1].localeCompare(b[1]));if(!focusItems.some(i=>i[0]===s.focus)){s.focus=focusItems[0][0];}fillSelect(focusSelect,focusItems,s.focus);const partnerType=s.focusType==='recipient'?'donor':'recipient',partnerItems=[['ALL','All '+(partnerType==='donor'?'donors':'recipients')],...(partnerType==='donor'?payload.axes.donor:payload.axes.recipient).map(x=>[x,partnerType==='donor'?payload.donorName(x):payload.recipientName(x)]).sort((a,b)=>a[1].localeCompare(b[1]))];fillSelect(partnerSelect,partnerItems,s.partner);partnerGroup.querySelector('.control-label').textContent=partnerType==='donor'?'Donor partner':'Recipient partner';nestSelect.options[0].textContent=partnerType==='donor'?'Donor first':'Recipient first';nestSelect.options[1].textContent='Sector first';nestSelect.value=s.nest;nestGroup.hidden=s.partner!=='ALL';}
+  syncControls();
+  async function cellsFor(s,year){const filter={scenario:s.scenario,measure:s.measure,year};if(s.focusType==='recipient')filter.recipient=s.focus;else filter.donor=s.focus;if(s.partner!=='ALL')filter[s.focusType==='recipient'?'donor':'recipient']=s.partner;return M.cubeCells(payload,filter);}
+  function key(r){return`${r.donor}|${r.recipient}|${r.sector}`;}function partnerOf(r,s){return s.focusType==='recipient'?r.donor:r.recipient;}function partnerName(code,s){return s.focusType==='recipient'?payload.donorName(code):payload.recipientName(code);}
+  async function buildData(s){const[base,now]=await Promise.all([cellsFor(s,2024),cellsFor(s,s.year)]),byBase=new Map(base.map(r=>[key(r),r.value])),byNow=new Map(now.map(r=>[key(r),r.value])),proto=new Map([...base,...now].map(r=>[key(r),r])),rows=[];for(const[k,r]of proto){const baseline=byBase.get(k)||0,value=byNow.get(k)||0;if(value<=0)continue;rows.push({...r,baseline,value,change:baseline>0?(value-baseline)/baseline:null,partner:partnerOf(r,s)});}return rows;}
+  /* A recipient like Ukraine has 389 funded donor-sector cells and a donor like the
+   United States has 1,190. Drawing every one of them in a 700x450 box gives an
+   average cell under 1,000 square pixels: unreadable, unlabellable, and with
+   slice-dice tiling it came out as a mush of one-pixel slivers.
+
+   So the tail is aggregated rather than drawn. Groups are capped, children within
+   each group are capped, and the remainder becomes one honest "Other" cell that
+   carries its own aggregate value and change and says how many cells it covers.
+   Nothing is dropped: every cell is either drawn or inside an Other. */
+const MAX_GROUPS=12,MAX_CHILDREN=8;
+function aggregate(list,label){const value=list.reduce((z,r)=>z+r.value,0),baseline=list.reduce((z,r)=>z+r.baseline,0);
+  return{value,baseline,change:baseline>0?(value-baseline)/baseline:null,cells:list.length,label,aggregate:true};}
+function capped(list,limit,label){
+  const sorted=list.slice().sort((a,b)=>b.value-a.value);
+  if(sorted.length<=limit)return{kept:sorted,rest:null};
+  const kept=sorted.slice(0,limit-1),rest=sorted.slice(limit-1);
+  return{kept,rest:rest.length?aggregate(rest,label):null};
+}
+function hierarchy(rows,s){
+  const first=s.partner!=='ALL'?'sector':s.nest==='partner-sector'?'partner':'sector',
+        second=first==='partner'?'sector':'partner',groups=new Map();
+  for(const r of rows){const a=first==='partner'?r.partner:String(r.sector);
+    if(!groups.has(a))groups.set(a,[]);groups.get(a).push(r);}
+  const asGroup=([key,list])=>({key,name:first==='partner'?partnerName(key,s):payload.sectorName(key),
+    kind:first,value:list.reduce((z,r)=>z+r.value,0),baseline:list.reduce((z,r)=>z+r.baseline,0),rows:list});
+  const all=[...groups].map(asGroup);
+  const {kept,rest}=capped(all,MAX_GROUPS,'Other');
+  const children=kept.map(g=>{
+    const leaves=g.rows.map(r=>({name:second==='partner'?partnerName(r.partner,s):payload.sectorName(r.sector),
+      /* The leaf dimension is what composition colouring keys on, so the same
+         sector (or the same donor) carries one colour across every group. */
+      kind:second,leafKey:second==='partner'?String(r.partner):String(r.sector),
+      baseline:r.baseline,value:r.value,row:r}));
+    const inner=capped(leaves,MAX_CHILDREN,'Other');
+    const kids=inner.kept.slice();
+    if(inner.rest)kids.push({name:`Other (${inner.rest.cells})`,kind:second,leafKey:null,baseline:inner.rest.baseline,
+      value:inner.rest.value,row:{...inner.rest,label:`${g.name} — all other ${second==='partner'?(s.focusType==='recipient'?'donors':'recipients'):'sectors'}`}});
+    return{name:g.name,kind:first,baseline:g.baseline,children:kids};
+  });
+  if(rest){
+    const label=first==='partner'?(s.focusType==='recipient'?'donors':'recipients'):'sectors';
+    children.push({name:`Other (${rest.cells} cells)`,kind:first,baseline:rest.baseline,
+      children:[{name:`Other (${rest.cells})`,kind:second,leafKey:null,baseline:rest.baseline,value:rest.value,
+        row:{...rest,label:`All other ${label}, ${rest.cells} cells`}}]});
+  }
+  return{name:'root',children};
+}
+  const svg=d3.select('#treemapSvg'),tooltip=document.getElementById('tooltip');let lastWidth=700,seq=0,pinned=null;
+  function colourScale(rows){const eligible=rows.filter(r=>r.baseline>=.1&&Number.isFinite(r.change)),abs=eligible.map(r=>Math.abs(r.change)).sort((a,b)=>a-b),cap=Math.max(.01,d3.quantile(abs,.95)||1);return{cap,colour:r=>{if(r.baseline<.1||!Number.isFinite(r.change))return'#DFE0E2';const z=Math.sign(r.change)*Math.log1p(Math.min(cap,Math.abs(r.change))*4)/Math.log1p(cap*4);return z<0?d3.interpolateRgb('#F3F6F7','#D15553')(-z):d3.interpolateRgb('#F3F6F7','#006970')(z);}};}
+  /* Set by draw(); showTip needs it and `rows` is a draw() parameter, not a
+     module-level binding. */
+  let focusTotal=0;
+  function showTip(r,target){const s0=state.get(),
+    focusName=s0.focusType==='recipient'?payload.recipientName(s0.focus):payload.donorName(s0.focus),
+    total=focusTotal,
+    lines=[element('strong',{text:r.label?r.label:`${partnerName(r.partner,s0)} — ${payload.sectorName(r.sector)}`}),
+      element('div',{text:`${s0.focusType==='recipient'?'Recipient':'Donor'}: ${focusName}`})];
+  lines.push(element('div',{text:`${s0.year}: ${M.usd(r.value)}`}),
+    element('div',{text:`2024: ${M.usd(r.baseline)}`}),
+    element('div',{text:`Change: ${r.baseline>=.1?M.percent(r.change,{decimals:1}):'not comparable (2024 baseline under US$0.1m)'}`}),
+    element('div',{text:`Share of ${focusName} total: ${total>0?M.percent(r.value/total,{decimals:1}):M.MISSING_TEXT}`}));
+  if(r.aggregate)lines.push(element('div',{text:`Pooled from ${r.cells} smaller cells`}));
+  tooltip.replaceChildren(...lines);tooltip.hidden=false;const b=target.getBoundingClientRect(),rb=root.getBoundingClientRect();tooltip.style.left=`${Math.min(rb.width-tooltip.offsetWidth-8,Math.max(8,b.left-rb.left+8))}px`;tooltip.style.top=`${Math.min(rb.height-tooltip.offsetHeight-8,b.bottom-rb.top+3)}px`;}
+  function renderLegend(s,leafOrder,leafPalette,leafName,scale,width){
+    const host=document.getElementById('legend');host.replaceChildren();
+    const key=(label,bg,dashed)=>{const sw=element('span',{className:'legend-swatch'});
+      sw.style.background=bg;if(dashed)sw.style.border='1px solid var(--cgd-border)';
+      return element('span',{className:'legend-key'},[sw,element('span',{text:label})]);};
+    if(s.colourBy==='change'){
+      host.append(key('Loss','#D15553'),key('Little change','#F3F6F7',true),key('Gain','#006970'),
+                  key('No comparable 2024 baseline','#DFE0E2'));
+      return;
+    }
+    /* Only what is on screen, and only as many as a legend can carry without
+       pushing the chart itself off a phone: twelve entries stacked eight rows
+       deep at 390px. */
+    const shown=leafOrder.slice(0,width<560?5:10);
+    for(const k of shown)host.append(key(leafName(k),leafPalette.get(String(k))));
+    if(leafOrder.length>shown.length)host.append(key(`+${leafOrder.length-shown.length} more`,'#DFE0E2'));
+    host.append(key('Pooled cells','#DFE0E2'));
+  }
+
+  function draw(rows,s,width){focusTotal=rows.reduce((z,x)=>z+(x.value||0),0);lastWidth=width;const height=Math.max(width<560?430:360,Math.min(560,Math.round(width*(width<560?1.05:.62)))),data=hierarchy(rows,s),rootNode=d3.hierarchy(data).sum(d=>d.row?d.row.value:0).sort((a,b)=>(b.data.baseline||0)-(a.data.baseline||0)||a.data.name.localeCompare(b.data.name));d3.treemap().tile(d3.treemapSquarify.ratio(1.4)).size([width,height]).paddingOuter(1).paddingTop(d=>d.depth===1?15:0).paddingInner(1).round(true)(rootNode);svg.attr('viewBox',`0 0 ${width} ${height}`).attr('height',height).selectAll('*').remove();const scale=colourScale(rows),short=n=>n.length>24?n.slice(0,22)+'…':n;
+    /* Composition colours are assigned across the leaf keys actually on screen,
+       ranked by value, so they are guaranteed distinguishable from one another. */
+    const leafTotals=new Map();
+    for(const leaf of rootNode.leaves()){const k=leaf.data.leafKey;if(k==null)continue;
+      leafTotals.set(k,(leafTotals.get(k)||0)+(leaf.data.value||0));}
+    const leafOrder=[...leafTotals].sort((a,b)=>b[1]-a[1]).map(x=>x[0]);
+    const leafPalette=window.CGDSet.assignColours(leafOrder);
+    const leafName=k=>{const s2=state.get(),second=s2.partner!=='ALL'?'partner':(s2.nest==='partner-sector'?'sector':'partner');
+      return second==='sector'?payload.sectorName(k):partnerName(k,s2);};
+    const fillFor=d=>s.colourBy==='change'?scale.colour(d.data.row)
+      :(d.data.leafKey==null?window.CGDSet.RESIDUAL:leafPalette.get(String(d.data.leafKey)));
+    renderLegend(s,leafOrder,leafPalette,leafName,scale,width);const groups=svg.selectAll('g.group').data(rootNode.children||[]).join('g').attr('class','group');groups.append('rect').attr('x',d=>d.x0).attr('y',d=>d.y0).attr('width',d=>Math.max(0,d.x1-d.x0)).attr('height',d=>Math.max(0,d.y1-d.y0)).attr('fill','none').attr('stroke','#85A5AD');const leaves=svg.selectAll('g.leaf').data(rootNode.leaves()).join('g').attr('class','leaf');leaves.append('rect').attr('x',d=>d.x0).attr('y',d=>d.y0).attr('width',d=>Math.max(0,d.x1-d.x0)).attr('height',d=>Math.max(0,d.y1-d.y0)).attr('fill',d=>fillFor(d)).attr('tabindex',0).attr('role','img').attr('aria-label',d=>`${d.data.row.label||d.data.name}, ${M.usd(d.data.row.value)}, change ${M.percent(d.data.row.change,{decimals:1})}`).on('pointerenter',function(e,d){showTip(d.data.row,this);}).on('pointerleave',()=>{if(!pinned)tooltip.hidden=true;}).on('focus',function(e,d){showTip(d.data.row,this);}).on('blur',()=>{if(!pinned)tooltip.hidden=true;}).on('click',function(e,d){e.stopPropagation();pinned=d.data.row;showTip(d.data.row,this);UI.attachDismiss(tooltip,()=>{pinned=null;tooltip.hidden=true;},{returnFocusTo:this});});/* A cell label has to survive whatever fill it lands on: 'Other multisector'
+       was dark ink on a dark teal gain cell. */
+    const DARK_INK='#22383C',LIGHT_INK='#FFFFFF';
+    const relLum=hex=>{const c=String(hex).replace('#','');if(c.length<6)return null;
+      const ch=[0,2,4].map(i=>{const v=parseInt(c.slice(i,i+2),16)/255;
+        return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4);});
+      return .2126*ch[0]+.7152*ch[1]+.0722*ch[2];};
+    const ratio=(a,b)=>{const hi=Math.max(a,b),lo=Math.min(a,b);return (hi+.05)/(lo+.05);};
+    /* Whichever of the two inks is actually more legible on this fill, by WCAG
+       relative luminance, rather than whichever side of an arbitrary threshold
+       the fill happens to fall on. */
+    const inkFor=hex=>{const L=relLum(hex);if(L==null)return DARK_INK;
+      return ratio(L,relLum(LIGHT_INK))>ratio(L,relLum(DARK_INK))?LIGHT_INK:DARK_INK;};
+    /* Two lines where there is room, the volume alone where there is not. The
+       volume is the line that survives a squeeze: a reader looking at a cell wants
+       to know how much money it is, and the sector is recoverable from the legend
+       colour and the tooltip in a way that a number is not.
+
+       Fit is MEASURED, not estimated. A characters-times-constant guess has to use
+       the widest plausible character or it overflows, so at 10.5px it was rejecting
+       labels with 15% of the cell still empty. getComputedTextLength is exact, and
+       exact fitting is what puts a number in a third more cells. The name may be
+       truncated; the volume never is, because half a number is a wrong number. */
+    const fitsIn=(node,room)=>node.getComputedTextLength()<=room;
+    const putValue=(g,text,x,y,ink,room)=>{
+      const sel=g.append('text').attr('class','cell-value').attr('x',x).attr('y',y).style('fill',ink).text(text);
+      if(fitsIn(sel.node(),room))return true;
+      sel.remove();return false;
+    };
+    const putName=(g,text,x,y,ink,room)=>{
+      const sel=g.append('text').attr('class','cell-label').attr('x',x).attr('y',y).style('fill',ink).text(text);
+      if(fitsIn(sel.node(),room))return true;
+      let t=text;
+      while(t.length>1){
+        t=t.slice(0,-1);
+        sel.text(t+'\u2026');
+        if(fitsIn(sel.node(),room))break;
+      }
+      /* Below about seven characters a truncation carries less than the ellipsis
+         costs, so nothing is better than "Gov\u2026". */
+      if(t.length<7){sel.remove();return false;}
+      return true;
+    };
+    leaves.each(function(d){
+      const w=d.x1-d.x0,h=d.y1-d.y0,room=w-6;
+      if(d.y0<=1||room<16||h<15)return;
+      const ink=inkFor(fillFor(d)),g=d3.select(this),x=d.x0+3;
+      const value=d.data.row.value;
+      /* A cell whose volume rounds to zero would print "0m", which is noise. */
+      const valueText=Number.isFinite(value)&&Math.abs(value)>=0.5?M.usd(value).replace('US$','$'):'';
+      const name=short(d.data.name);
+      /* 15px between baselines, not 12: an SVG text bbox is the em box, so two
+         10.5px lines 12px apart overlap by a fraction of a pixel and the render
+         gate reads that as two labels on top of each other. */
+      if(h>=34&&valueText){
+        if(putValue(g,valueText,x,d.y0+27,ink,room)){
+          if(!putName(g,name,x,d.y0+12,ink,room)){
+            g.selectAll('text.cell-value').attr('y',d.y0+13);
+          }
+          return;
+        }
+      }
+      if(valueText&&putValue(g,valueText,x,d.y0+13,ink,room))return;
+      putName(g,name,x,d.y0+13,ink,room);
+    });
+    /* Group headings go on LAST, so they sit above every cell, and they are drawn
+       in the header band the treemap reserves for them. */
+    const fitLabel=d=>{const room=Math.max(0,d.x1-d.x0-8),name=short(d.data.name);if(room<18)return'';const budget=Math.floor(room/6.2);return budget>=name.length?name:name.slice(0,Math.max(1,budget-1))+'\u2026';};
+    svg.selectAll('g.group-heading').data((rootNode.children||[]).filter(d=>d.y1-d.y0>24)).join('g').attr('class','group-heading').call(g=>{g.append('rect').attr('x',d=>d.x0).attr('y',d=>d.y0).attr('width',d=>Math.max(0,d.x1-d.x0)).attr('height',14).attr('fill','#F2F7F8');g.append('text').attr('class','group-label').attr('x',d=>d.x0+4).attr('y',d=>d.y0+11).text(fitLabel).append('title').text(d=>d.data.name);});const drawn=rootNode.leaves().filter(d=>!d.data.row.aggregate).length,pooled=rows.length-drawn;document.getElementById('chartSummary').textContent=`All values in constant 2024 US$. ${rows.length} funded donor–recipient–sector cells`+(pooled>0?`; the largest ${drawn} are drawn individually and the remaining ${pooled} are pooled into the Other cells`:' shown individually')+`.`+(s.colourBy==='change'?` Colour is capped at the 95th percentile of absolute change (${M.percent(scale.cap,{decimals:0})}).`:'');window.CGD_READY=true;}
+  async function schedule(){const n=++seq, s={...state.get()};tooltip.hidden=true;try{const rows=await buildData(s);if(n!==seq)return;draw(rows,s,lastWidth);}catch(error){if(n===seq)P.renderFailState(chartArea,error); window.CGD_READY = true;}}
+  document.getElementById('notes').append(UI.notes({notes:['The treemap hierarchy is ordered by 2024 baseline amounts, so its ordering does not reshuffle between years. Rectangle size follows the selected year’s ODA level.','Colour shows composition by default: every cell of the same sector, or the same partner, carries one colour across all groups. Switch it to change against 2024 to read the direction of movement instead. Either way the tooltip gives the 2024 value, the selected year and the percentage change.',`At most ${MAX_GROUPS} groups and ${MAX_CHILDREN} cells within each are drawn individually; everything smaller is pooled into an Other cell that carries its own total and change, and names how many cells it covers. A recipient can have several hundred funded donor-sector cells, and drawing all of them leaves none of them readable.`,'Cells with no 2024 baseline, or a 2024 baseline below US$0.1m, are left grey rather than coloured: a change ratio against a near-zero or absent baseline is rounding noise, not a finding.','Other colour changes are winsorised; other colour changes are winsorised at the 95th percentile of absolute change to prevent tiny or exceptional ratios dominating.',UI.STANDARD_NOTES.prices,UI.STANDARD_NOTES.unallocable,UI.STANDARD_NOTES.baselineYear],source:`Source: CGD modelling, ${payload.release}.`}));C.observeInlineSize(document.querySelector('.treemap-wrap'),w=>{lastWidth=w;schedule();});document.getElementById('fullscreenBtn').addEventListener('click',()=>document.fullscreenElement?document.exitFullscreen():root.requestFullscreen?.());window.ODA_F7={state,buildData:()=>buildData(state.get())};
+})();
+</script><script src="shared/cgd-embed.js"></script></body></html>
