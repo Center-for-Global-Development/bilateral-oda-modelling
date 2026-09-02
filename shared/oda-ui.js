@@ -743,12 +743,17 @@
   function orphanDrilldown({ payload, host, title, pairs, scenario, year, returnFocusTo }) {
     const P = window.ODAPayload;
     const dialog = modal(title, { host, returnFocusTo });
+    /* No trackAxis in either layer. The sentence above already says what the
+       dot's position and size mean, so "0% of 2024 remains … 100%" was a second
+       caption for a scale the reader had just been told about, costing two lines
+       at the top of every drill-down. trackAxis() is kept in the shared module
+       for F11, which uses the track without that sentence. */
     dialog.card.append(element('p', {
       className: 'notes',
       text: 'Each dot sits at the share of the recipient-sector’s 2024 bilateral ODA still ' +
             `projected in ${year}; its size shows the amount lost, on a log scale. ` +
             'Select one to see which donors moved.'
-    }), trackAxis());
+    }));
 
     /* One domain across the whole list, so dot sizes are comparable between
        rows and between pages. Scaling each page to its own range would make the

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Which donors account for the largest aid losses?</title>
-<link rel="stylesheet" href="shared/cgd-figure.css"><link rel="stylesheet" href="shared/cgd-responsive.css"><link rel="stylesheet" href="shared/oda-figure.css">
+<link rel="stylesheet" href="shared/cgd-figure.css?v=20260902b"><link rel="stylesheet" href="shared/cgd-responsive.css?v=20260902b"><link rel="stylesheet" href="shared/oda-figure.css?v=20260902b">
 <style>
   .loss-head,.loss-row{display:grid;grid-template-columns:minmax(118px,190px) minmax(150px,1fr) 70px;gap:8px;align-items:center}
   .loss-head{padding:5px;border-bottom:1px solid var(--cgd-border);font-size:12px;font-weight:600;color:var(--cgd-dark-gray)}
@@ -40,7 +40,7 @@
   <p id="chartSummary" class="notes"></p><div id="notes"></div><div class="tooltip" id="tooltip" hidden></div>
   <section class="detail-popup" id="detailPopup" role="dialog" aria-modal="true" hidden><div class="popup-head"><div><h2 id="popupTitle"></h2><p class="viz-sub">Gross bilateral ODA as a share of recipient GNI</p></div><button class="popup-close" id="popupClose" type="button" aria-label="Close">×</button></div><div class="dot-head"><span>Donor</span><span>2024 to 2028</span><span>2028</span></div><div id="dotRows"></div><div id="popupControls"></div></section>
 </main>
-<script src="shared/dom.js"></script><script src="shared/chart-core.js"></script><script src="shared/set-config.js"></script><script src="shared/oda-payload.js"></script><script src="shared/oda-model.js"></script><script src="shared/oda-ui.js"></script>
+<script src="shared/dom.js?v=20260902b"></script><script src="shared/chart-core.js?v=20260902b"></script><script src="shared/set-config.js?v=20260902b"></script><script src="shared/oda-payload.js?v=20260902b"></script><script src="shared/oda-model.js?v=20260902b"></script><script src="shared/oda-ui.js?v=20260902b"></script>
 <script>
 (async()=>{'use strict';
   window.CGD_READY = false;
@@ -116,4 +116,4 @@
   let seq=0;async function schedule(){const n=++seq;tooltip.hidden=true;try{await ensure(state.get());if(n!==seq)return;render();}catch(error){if(n===seq)P.renderFailState(chartArea,error); window.CGD_READY = true;}}
   await ensure(state.get());render();document.getElementById('fullscreenBtn').addEventListener('click',()=>document.fullscreenElement?document.exitFullscreen():root.requestFullscreen?.());window.ODA_F6={state,rows:()=>rowsFor(state.get()),partition:()=>partition(state.get()),OUTLIER_THRESHOLD,detail:()=>donorDetail(state.get().selected,state.get())};
 })();
-</script><script src="shared/cgd-embed.js"></script></body></html>
+</script><script src="shared/cgd-embed.js?v=20260902b"></script></body></html>

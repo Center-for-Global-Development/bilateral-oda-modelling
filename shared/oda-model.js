@@ -406,6 +406,23 @@
     return `${trimZeros(percentFormatter(decimals).format(fraction * 100))}%`;
   }
 
+  /**
+   * "1 sector has", "3 sectors have" — count, noun and verb agreeing.
+   * Built because two F16 caveats read "1 sector have no 2024 peer funding … and
+   * are not plotted". Anywhere a count introduces a clause, the verb has to agree
+   * with it, and doing that inline is where it gets forgotten.
+   * @param {number} n
+   * @param {string} noun      singular form; 's' is appended when n !== 1
+   * @param {string} [verbs]   'has/have' — singular and plural, slash-separated
+   */
+  function countPhrase(n, noun, verbs) {
+    const plural = n !== 1;
+    const word = `${count(n)} ${noun}${plural ? 's' : ''}`;
+    if (!verbs) return word;
+    const [one, many] = String(verbs).split('/');
+    return `${word} ${plural ? many : one}`;
+  }
+
   function count(value) {
     if (value == null || !Number.isFinite(value)) return MISSING_TEXT;
     return nf.integer.format(value);
@@ -477,7 +494,7 @@
     denominatorNote,
     INCOME_GROUPS, NOT_CLASSIFIED, incomeGroup, recipientsWithoutIncomeGroup, incomeGroupNote,
     isDacMember, dacLabel, sectorsAlphabetical, sectorShortName,
-    usd, percent, count, trimZeros, MISSING_TEXT,
+    usd, percent, count, countPhrase, trimZeros, MISSING_TEXT,
     SCENARIOS, SCENARIO_ORDER, scenarioInfo, scenarioRank, measureApplies, MEASURE_LABEL, MEASURE_LABEL_SHORT
   };
 })();

@@ -75,6 +75,11 @@ running paragraph. See *Notes* in `README.md`.
 - [ ] No `title` attribute or SVG `<title>` carries information a reader needs:
       it is delayed, invisible on touch, and limited to one line. Use the
       figure's own tooltip panel or `ODAUI.hoverTip`.
+- [ ] A count that introduces a clause agrees with its verb. Use
+      `ODAModel.countPhrase`, not an inline plural.
+- [ ] Every reference into `shared/` carries a `?v=` stamp, and the stamp is
+      bumped in the same change as any edit to `shared/`. A stale stamp serves
+      readers a mixture of old and new behaviour.
 
 ### 0.5 Responsive and accessible
 

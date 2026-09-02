@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>How could a donor allocate its bilateral ODA differently?</title>
-  <link rel="stylesheet" href="shared/cgd-figure.css">
-  <link rel="stylesheet" href="shared/cgd-responsive.css">
-  <link rel="stylesheet" href="shared/oda-figure.css">
+  <link rel="stylesheet" href="shared/cgd-figure.css?v=20260902b">
+  <link rel="stylesheet" href="shared/cgd-responsive.css?v=20260902b">
+  <link rel="stylesheet" href="shared/oda-figure.css?v=20260902b">
   <style>
     .disclaimer{margin:0 0 8px;color:var(--cgd-dark-gray);font-size:11.5px;line-height:1.35}
     .visible-note{margin:7px 0;color:var(--cgd-dark-gray);font-size:11.5px;line-height:1.35}
@@ -110,6 +110,12 @@
         </div>
       </div>
       <div class="panel-actions">
+        <!-- Between the key and the Change-shown toggle, as a way of FINDING a
+             recipient among 130 unlabelled bubbles. It highlights; it does not
+             filter, so the selected recipient is read in the context of the rest
+             of the portfolio rather than on its own. -->
+        <div class="control-group"><div class="control-label">Find recipient</div>
+          <select class="plain-select oda-select-wide" id="findRecipient" aria-label="Highlight a recipient"></select></div>
         <div class="control-group"><div class="control-label">Change shown</div><div class="segmented" id="viewToggle" role="group" aria-label="Change shown"></div></div>
         <button class="pin-button" id="pinButton" type="button">Pin this allocation</button>
       </div>
@@ -125,12 +131,12 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js" integrity="sha384-CjloA8y00+1SDAUkjs099PVfnY2KmDC2BZnws9kh8D/lX1s46w6EPhpXdqMfjK6i" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="shared/dom.js"></script>
-<script src="shared/chart-core.js"></script>
-<script src="shared/set-config.js"></script>
-<script src="shared/oda-payload.js"></script>
-<script src="shared/oda-model.js"></script>
-<script src="shared/oda-ui.js"></script>
+<script src="shared/dom.js?v=20260902b"></script>
+<script src="shared/chart-core.js?v=20260902b"></script>
+<script src="shared/set-config.js?v=20260902b"></script>
+<script src="shared/oda-payload.js?v=20260902b"></script>
+<script src="shared/oda-model.js?v=20260902b"></script>
+<script src="shared/oda-ui.js?v=20260902b"></script>
 <script>
 (async()=>{
   'use strict';
@@ -140,6 +146,10 @@
   const OBJECTIVES={poverty:'Poverty',humanitarian:'Humanitarian risk',fiscal:'Fiscal vulnerability'};
   const LAMBDA=2.3, EPS=1e-7;
   let payload, width=700, scenarioLoaded=null, rows=[], comparison=null, requestSeq=0, advancedOpen=false;
+  /* The highlighted recipient, or null. Deliberately NOT in the state store:
+     it changes nothing about the allocation, so it must not reset a page or
+     re-run the solver the way a state key would. */
+  let highlighted=null;
 
   try{
     payload=await P.load();
@@ -182,6 +192,34 @@
      caveat on the method, not something the reader needs in front of the chart, so
      it lives inside Notes. It stays a live region and keeps its id: the content is
      state-dependent, and the notes list itself is built once. */
+  /* Populated from the donor's own supported recipients on every render, because
+     which recipients exist depends on the donor. The highlight is figure state,
+     so it survives a scenario or year change like any other selection. */
+  const findSelect = document.getElementById('findRecipient');
+  findSelect.addEventListener('change', () => {
+    highlighted = findSelect.value || null;
+    /* Through render(), the same path every other control uses, rather than
+       renderChart with a cached snapshot of the derived rows: that snapshot is
+       one more thing to keep in step and it was null the first time this fired.
+       The highlight changes nothing about the allocation, so re-deriving is
+       wasted work but never wrong. */
+    render(state.get());
+  });
+  function syncFind(rows) {
+    const names = rows.filter(r => !r.held)
+      .map(r => [r.recipient, r.name])
+      .sort((a, b) => a[1].localeCompare(b[1]));
+    const wanted = ['', ...names.map(n => n[0])].join('|');
+    if (findSelect.dataset.keys !== wanted) {
+      findSelect.replaceChildren(new Option('No highlight', ''),
+        ...names.map(([iso, name]) => new Option(name, iso)));
+      findSelect.dataset.keys = wanted;
+    }
+    /* A donor change can drop the highlighted recipient from the portfolio. */
+    if (highlighted && !names.some(([iso]) => iso === highlighted)) highlighted = null;
+    findSelect.value = highlighted || '';
+  }
+
   const noPriorityNode = document.getElementById('noPriorityNote');
   document.getElementById('notes').append(UI.notes({
     notes:[
@@ -416,7 +454,36 @@
        already carries exactly. */
     const geName=`scenarios/${s.scenario}/donor_recipient_year__ge`;
     solution.recommended.forEach((_v,r)=>projected.set(r,payload.at(geName,{donor:s.donor,recipient:r,year:s.year})||0));
-    const viewRows=[...solution.recommended].map(([recipient,recommended])=>{const before=projected.get(recipient)||0,ratio=before>EPS?recommended/before:(recommended>EPS?Infinity:1),change=recommended-before;return{recipient,name:payload.recipientName(recipient),income:M.incomeGroup(payload,recipient),projected:before,recommended,ratio,change,gap:cov.gap(recipient),score:cov.score(recipient),held:solution.pins.has(recipient),closed:solution.closed.has(recipient)}});
+    /* `anchored` marks a recipient whose displayed change is dominated by the
+       BASELINE MISMATCH rather than by the objective.
+
+       The solver allocates over the donor's observed 2024 portfolio; the change
+       shown is measured against the audited projection for the selected year.
+       Where a scenario's projection reshapes a recipient's funding sharply --
+       an exceptional 2024, a planned exit, a Ukraine surge -- those two
+       baselines differ by an order of magnitude, and the resulting percentage
+       is about the difference between them, not about the allocation.
+
+       The clearest case: the US gave Marshall Islands US$647m in 2024, almost
+       all of it one-off Compact payments, and the projection puts 2028 at
+       US$66m. Anchored on 2024 and rescaled to the envelope, the tool lands at
+       roughly US$266m -- so the mark reads "+305%" under every objective, which
+       looks like a recommendation to quadruple funding to an upper-middle-income
+       country and is really the 2024 spike showing through.
+
+       Flagged rather than silently corrected: which baseline the tool should
+       anchor on is a methodology question, and anchoring on the projection
+       instead would make the objective do nothing at all, because the
+       projection already sums exactly to the envelope. */
+    const ANCHOR_FLAG=3;
+    const viewRows=[...solution.recommended].map(([recipient,recommended])=>{const before=projected.get(recipient)||0,ratio=before>EPS?recommended/before:(recommended>EPS?Infinity:1),change=recommended-before;
+      const anchorValue=payload.at('tool/baseline_recipient_ge',{donor:s.donor,recipient})||0,
+        anchorShare=solution.anchorTotal>EPS?anchorValue/solution.anchorTotal:0,
+        projShare=solution.envelope>EPS?before/solution.envelope:0,
+        shapeShift=projShare>0&&anchorShare>0?anchorShare/projShare:null,
+        anchored=!solution.pins.has(recipient)&&Number.isFinite(shapeShift)
+          &&(shapeShift>ANCHOR_FLAG||shapeShift<1/ANCHOR_FLAG);
+      return{recipient,name:payload.recipientName(recipient),income:M.incomeGroup(payload,recipient),projected:before,recommended,ratio,change,gap:cov.gap(recipient),score:cov.score(recipient),held:solution.pins.has(recipient),closed:solution.closed.has(recipient),anchorValue,shapeShift,anchored}});
     return{rows:viewRows,solution,cov};
   }
 
@@ -552,10 +619,31 @@
       .attr('tabindex', 0).attr('role', 'img')
       .attr('aria-label', d => `${d.name}: peers ${M.percent(d.peerChange,{decimals:1})}, ` +
         `${M.percent(d.share,{decimals:1})} of ${donorName}\u2019s 2024 spend, ${M.usd(d.own)}`)
-      .append('title').text(d =>
-        `${d.name}\n${donorName} 2024: ${M.usd(d.own)} (${M.percent(d.share,{decimals:1})} of its ` +
-        `${recipientName} spending)\nOther donors 2024: ${M.usd(d.peer2024)}\n` +
-        `Other donors ${s.year}: ${M.usd(d.peerNow)}\nPeer change: ${M.percent(d.peerChange,{decimals:1})}`);
+      /* The diagnostic's dots carried a multi-line <title>, so the drill-down's
+         only numbers waited a second and never appeared on touch at all. */
+      .on('pointermove', (event, d) => showDiagTip(d, event))
+      .on('pointerleave', () => hideTooltip())
+      .on('focus', function (event, d) { showDiagTip(d, null, this); })
+      .on('blur', () => hideTooltip());
+
+    function showDiagTip(d, event, node) {
+      const tip = document.getElementById('tooltip');
+      tip.replaceChildren(element('strong', { text: d.name }),
+        element('div', { className: 'tooltip-grid' }, [
+          element('span', { text: `${donorName} 2024` }),
+          element('b', { text: `${fmtUsd(d.own)} (${M.percent(d.share, { decimals: 1 })})` }),
+          element('span', { text: 'Other donors 2024' }), element('b', { text: fmtUsd(d.peer2024) }),
+          element('span', { text: `Other donors ${s.year}` }), element('b', { text: fmtUsd(d.peerNow) }),
+          element('span', { text: 'Peer change' }),
+          element('b', { text: M.percent(d.peerChange, { decimals: 1 }) })
+        ]));
+      tip.hidden = false;
+      if (event) positionTooltip(event);
+      else {
+        const b = node.getBoundingClientRect();
+        positionTooltip({ clientX: b.left + b.width / 2, clientY: b.top });
+      }
+    }
 
     /* Only the four largest are labelled; the rest are in the tooltip. */
     svg.append('g').selectAll('text.dot-label').data(scored.slice(0, 4)).join('text')
@@ -565,12 +653,16 @@
       .text(d => d.name.length > 22 ? d.name.slice(0, 21) + '\u2026' : d.name);
 
     const caveats = [`Peer figures are gross ODA, as peer coverage is throughout this tool.`];
-    if (capped.length) caveats.unshift(`${capped.length} sector${capped.length === 1 ? '' : 's'} ` +
-      `sit at the right-hand edge because peer funding more than trebled from a small 2024 base: ` +
-      `${capped.map(r => r.name).sort().join(', ')}.`);
-    if (noPeers.length) caveats.unshift(`${noPeers.length} sector${noPeers.length === 1 ? '' : 's'} ` +
-      `have no 2024 peer funding to compare and are not plotted: ` +
-      `${noPeers.map(r => r.name).sort().join(', ')}.`);
+    /* Through ODAModel.countPhrase, so the verb agrees with the count. These read
+       "1 sector have no 2024 peer funding ... and are not plotted". */
+    if (capped.length) caveats.unshift(
+      `${M.countPhrase(capped.length, 'sector', 'sits/sit')} at the right-hand edge because peer `
+      + `funding more than trebled from a small 2024 base: `
+      + `${capped.map(r => r.name).sort().join(', ')}.`);
+    if (noPeers.length) caveats.unshift(
+      `${M.countPhrase(noPeers.length, 'sector', 'has/have')} no 2024 peer funding to compare and `
+      + `${noPeers.length === 1 ? 'is' : 'are'} not plotted: `
+      + `${noPeers.map(r => r.name).sort().join(', ')}.`);
     for (const line of caveats) body.append(element('p', { className: 'foot', text: line }));
   }
 
@@ -597,6 +689,7 @@
   }
 
   function renderChart(s,current){
+    syncFind(current.rows);
     const area=document.getElementById('chartArea');
     if(!document.getElementById('chart')){const fresh=document.createElementNS('http://www.w3.org/2000/svg','svg');fresh.id='chart';fresh.setAttribute('role','img');fresh.setAttribute('aria-labelledby','panelTitle');area.replaceChildren(fresh)}
     const data=current.rows,w=Math.max(280,Math.floor(area.clientWidth||width)),h=w<430?430:490,m={top:48,right:18,bottom:58,left:w<430?64:76},plotW=w-m.left-m.right,plotH=h-m.top-m.bottom,maxX=Math.max(10,d3.max(data,d=>Math.max(d.projected,d.recommended))||10),xFloor=.03,x=d3.scaleLog([xFloor,maxX*1.15],[m.left,w-m.right]).clamp(true),view=s.view;
@@ -673,7 +766,19 @@
         .on('pointerleave',()=>hideTooltip())
         .on('focus',(event,d)=>showPinTooltip(event,pinned(d)))
         .on('blur',()=>hideTooltip())}
-    const marks=svg.append('g').selectAll('circle.current').data(data).join('circle').attr('class','current point').attr('cx',d=>x(Math.max(xFloor,d.projected))).attr('cy',d=>d.held?zeroY:pointY(d,view,y)).attr('r',d=>r(d.gap)).attr('fill',d=>d.held?'#fff':d.change>=0?'var(--cgd-light-teal)':'var(--cgd-gold)').attr('stroke',d=>d.held?'var(--cgd-dark-gray)':'#fff').attr('stroke-dasharray',d=>d.held?'3 2':null).attr('stroke-width',d=>d.held?1.5:1).attr('tabindex',0).attr('aria-label',d=>tooltipText(d)).on('pointerenter',(event,d)=>showTooltip(event,d)).on('pointermove',event=>positionTooltip(event)).on('pointerleave',()=>hideTooltip()).on('focus',(event,d)=>showTooltip(event,d)).on('blur',()=>hideTooltip()).on('click',function(event,d){event.stopPropagation();hideTooltip();openSectorDiagnostic(d.recipient,this)}).on('keydown',function(event,d){if(event.key==='Enter'||event.key===' '){event.preventDefault();hideTooltip();openSectorDiagnostic(d.recipient,this)}});
+    /* A dashed outline on the flagged marks, so the caveat is visible before the
+       reader hovers anything. Policy-held marks already use a dash, and they are
+       excluded from the flag, so the two cannot be confused. */
+    svg.classed('oda-has-highlight',Boolean(highlighted)&&data.some(d=>d.recipient===highlighted));
+    const marks=svg.append('g').selectAll('circle.current').data(data).join('circle')
+      /* The chart carries a class while a highlight is active, so the CSS can dim
+         everything else. A 2.4px ring on a 4px bubble among 130 bubbles is not
+         findable on its own, which defeats the point of a Find control. */
+      .attr('class',d=>[
+        'current point',
+        d.anchored&&!d.held?'oda-anchored':'',
+        d.recipient===highlighted?'oda-highlighted':''
+      ].filter(Boolean).join(' ')).attr('cx',d=>x(Math.max(xFloor,d.projected))).attr('cy',d=>d.held?zeroY:pointY(d,view,y)).attr('r',d=>r(d.gap)).attr('fill',d=>d.held?'#fff':d.change>=0?'var(--cgd-light-teal)':'var(--cgd-gold)').attr('stroke',d=>d.held?'var(--cgd-dark-gray)':'#fff').attr('stroke-dasharray',d=>d.held?'3 2':null).attr('stroke-width',d=>d.held?1.5:1).attr('tabindex',0).attr('aria-label',d=>tooltipText(d)).on('pointerenter',(event,d)=>showTooltip(event,d)).on('pointermove',event=>positionTooltip(event)).on('pointerleave',()=>hideTooltip()).on('focus',(event,d)=>showTooltip(event,d)).on('blur',()=>hideTooltip()).on('click',function(event,d){event.stopPropagation();hideTooltip();openSectorDiagnostic(d.recipient,this)}).on('keydown',function(event,d){if(event.key==='Enter'||event.key===' '){event.preventDefault();hideTooltip();openSectorDiagnostic(d.recipient,this)}});
     /* Selecting a mark opens the sector diagnostic rather than pinning the
        tooltip; the dialog carries its own Escape and outside-click dismissal
        through UI.modal, so there is no pinned state here to manage. */
@@ -717,10 +822,14 @@
   function logRatio(ratio){if(ratio===Infinity)return Math.log(10);return Math.log(Math.max(.1,Math.min(10,ratio||.1)))}
   /* A decimal place inside +/-10%, because a tight domain produces ticks like
      1.02 and 1.05, and whole percentages rendered several of them identically. */
+  /* NOT through trimZeros. On a tight domain the ticks are 1%, 1.4%, 2.1%, and
+     trimming the trailing zero turned "+1.0%" into "+1%" -- so two adjacent
+     ticks both read "+1%" and the axis appeared to repeat itself. Inside 10% the
+     decimal place is the information, so it stays even when it is a zero. */
   function ratioLabel(v){const pct=(v-1)*100;
     if(Math.abs(pct)<0.05)return'0%';
-    const dp=Math.abs(pct)<10?1:0;
-    return`${pct>0?'+':''}${M.trimZeros(pct.toFixed(dp))}%`}
+    if(Math.abs(pct)<10)return`${pct>0?'+':''}${pct.toFixed(1)}%`;
+    return`${pct>0?'+':''}${Math.round(pct)}%`}
   function fmtSigned(v){if(Math.abs(v)<EPS)return'0';return`${v>0?'+':''}${d3.format(v<10?'.1f':'.0f')(v)}`}
   /* Defers to the set-wide formatter so the tool agrees with every other figure;
      only sub-US$10m values need the extra precision this tool works at. */
@@ -747,7 +856,16 @@
       element('div',{className:'notes',text:pinContextText()}));
     tip.hidden=false;positionTooltip(event)}
   function tooltipText(d){return`${d.name}. Projected allocation ${fmtUsd(d.projected)}. Change ${pctChange(d)}. Recommended allocation ${fmtUsd(d.recommended)}. Peer funding gap ${fmtUsd(d.gap)}. Income group ${d.income}.`}
-  function showTooltip(event,d){const tip=document.getElementById('tooltip');tip.replaceChildren(element('strong',{text:d.name}),element('div',{className:'tooltip-grid'},[element('span',{text:'Projected allocation'}),element('b',{text:fmtUsd(d.projected)}),element('span',{text:'Change implied'}),element('b',{text:d.held?'0% (policy-held)':pctChange(d)}),element('span',{text:'Recommended allocation'}),element('b',{text:fmtUsd(d.recommended)}),element('span',{text:'Peer funding gap'}),element('b',{text:fmtUsd(d.gap)}),element('span',{text:'Income group'}),element('b',{text:d.income})]));tip.hidden=false;positionTooltip(event)}
+  function showTooltip(event,d){const tip=document.getElementById('tooltip');tip.replaceChildren(element('strong',{text:d.name}),element('div',{className:'tooltip-grid'},[element('span',{text:'Projected allocation'}),element('b',{text:fmtUsd(d.projected)}),element('span',{text:'Change implied'}),element('b',{text:d.held?'0% (policy-held)':pctChange(d)}),element('span',{text:'Recommended allocation'}),element('b',{text:fmtUsd(d.recommended)}),element('span',{text:'Peer funding gap'}),element('b',{text:fmtUsd(d.gap)}),element('span',{text:'Income group'}),element('b',{text:d.income})]));
+    /* A mark whose change is an artefact of the baseline mismatch says so, on
+       the mark itself. Without this the reader is shown a large percentage with
+       no way to tell that it is about 2024 rather than about the objective. */
+    if(d.anchored){const st=state.get();tip.append(element('div',{className:'notes',
+      text:`This figure is dominated by the baseline, not the objective: `
+        +`${payload.donorName(st.donor)}\u2019s 2024 spending in ${d.name} was ${fmtUsd(d.anchorValue)}, `
+        +`and the ${st.year} projection is ${fmtUsd(d.projected)}. The tool allocates from the 2024 `
+        +`portfolio, so the change shown mostly reflects that gap.`}));}
+    tip.hidden=false;positionTooltip(event)}
   function positionTooltip(event){const tip=document.getElementById('tooltip'),pad=10,box=tip.getBoundingClientRect(),cx=event.clientX??innerWidth/2,cy=event.clientY??innerHeight/2;tip.style.left=`${Math.max(pad,Math.min(innerWidth-box.width-pad,cx+12))}px`;tip.style.top=`${Math.max(pad,Math.min(innerHeight-box.height-pad,cy+12))}px`}
   function hideTooltip(){document.getElementById('tooltip').hidden=true}
 
@@ -766,6 +884,6 @@
   window.ODA_F16={state,rows:()=>rows,comparison:()=>comparison,derive,solve,coverage,missingIssue,setWeights};
 })();
 </script>
-<script src="shared/cgd-embed.js"></script>
+<script src="shared/cgd-embed.js?v=20260902b"></script>
 </body>
 </html>

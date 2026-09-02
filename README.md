@@ -325,6 +325,22 @@ passes a source of its own; `ODAUI.SOURCE` is the only place it is written.
 `attribution` is the one escape hatch, for a credit that is not the source and
 cannot be dropped. F3's map geometry is the only case.
 
+### Versioning the shared assets
+
+Every `<script>` and `<link>` pointing into `shared/` carries a `?v=` stamp, and
+**it must be bumped whenever a file in `shared/` changes.**
+
+This is not housekeeping. A shared-layer change went live while browsers kept
+running the cached old copy, and because the figures had already been updated
+the result was a set that was half old and half new: some figures showed the new
+source line, some showed the old one, some showed none at all, depending on what
+each browser had cached and when. The figures' own URLs were versioned in
+`preview.html`; the shared layer they all load was not.
+
+There is no build step to do this automatically, so it is a manual step in the
+release checklist. `qa/verify.py` will not catch a stale stamp — the gate serves
+files fresh.
+
 ## No native tooltips
 
 **Nothing in this set uses a `title` attribute or an SVG `<title>` to carry
@@ -483,6 +499,51 @@ soon as the domain changed; it now clamps to `y.domain()`. And the ticks were a
 fixed list, then a count-based thin, both of which put labels on top of each
 other on a tight domain — they are now thinned by **pixel** distance, walking
 outward from 1 so the no-change line is never the tick that gets dropped.
+
+## The F16 baseline mismatch
+
+**This is a known limitation, flagged on the figure rather than fixed, because
+fixing it is a methodology decision.**
+
+F16 solves over the donor's **observed 2024 portfolio** — that is the documented
+method — but the "change implied" it displays is measured against the **audited
+projection** for the selected year. Where a scenario's projection reshapes a
+recipient's funding sharply, those two baselines diverge and the displayed
+percentage is about the divergence, not about the objective.
+
+The clearest case, and the one that prompted this note: the United States gave
+Marshall Islands US$647.3m in 2024, almost all of it one-off Compact payments,
+and the S1 projection puts 2028 at US$65.8m. Anchored on 2024 and rescaled to
+the envelope (×0.412), the tool lands at roughly US$266m — so the mark reads
+about +305%, identically under every objective. Read plainly that says "increase
+funding to an upper-middle-income country fourfold", and what it actually says
+is "the 2024 spike is still in the anchor".
+
+It is not a small set. At a 3× divergence threshold, 13 of 50 donors have at
+least one affected recipient; for Canada it is 120 of 135, because the
+projection moves that portfolio a long way from its 2024 shape.
+
+**Why it is not simply corrected.** Anchoring the solver on the projection
+instead is the obvious fix and it does not work: the audited projection sums
+*exactly* to `tool/envelope_ge`, so `target − sum(anchor)` would be zero, and
+`allocateDesired` distributes only that difference — the objective would have
+nothing to redistribute and every recommendation would equal the projection.
+The 2024 anchor is what gives the objective something to move. Which baseline
+the tool should use, and whether exceptional 2024 values should be normalised
+before anchoring, is a question for the methodology and not for the front end.
+
+**What the figure does instead.** `derive()` computes a `shapeShift` per
+recipient — its share of the 2024 anchor over its share of the projected
+envelope — and flags any recipient beyond 3× in either direction as `anchored`.
+Flagged marks take a dotted outline (`.oda-anchored`; policy-held marks are
+dashed and are excluded from the flag, so the two cannot be confused) and their
+tooltip states both figures and says the change shown mostly reflects the gap
+between them. Nothing is recomputed and no published number changes.
+
+Two things that are **not** wrong, having been checked: the y axis is not
+inverted (`scaleLog([1/k, k], [bottom, top])` maps higher ratios upward), and
+Marshall Islands is not a policy-held pin — EU Institutions has exactly one such
+pin, Ukraine, and the US none.
 
 ## The F16 pin
 

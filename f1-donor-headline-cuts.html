@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>How donor ODA changes by 2028</title>
-<link rel="stylesheet" href="shared/cgd-figure.css"><link rel="stylesheet" href="shared/cgd-responsive.css"><link rel="stylesheet" href="shared/oda-figure.css">
+<link rel="stylesheet" href="shared/cgd-figure.css?v=20260902b"><link rel="stylesheet" href="shared/cgd-responsive.css?v=20260902b"><link rel="stylesheet" href="shared/oda-figure.css?v=20260902b">
 <style>
   .rank-head,.donor-row{display:grid;grid-template-columns:minmax(112px,190px) minmax(140px,1fr) 62px;gap:8px;align-items:center}
   .rank-head{font-size:12px;font-weight:600;color:var(--cgd-dark-gray);padding:4px 5px;border-bottom:1px solid var(--cgd-border)}
@@ -28,7 +28,7 @@
   </section>
   <p id="chartSummary" class="notes"></p><div id="notes"></div><div class="tooltip" id="tooltip" hidden></div>
 </main>
-<script src="shared/dom.js"></script><script src="shared/chart-core.js"></script><script src="shared/set-config.js"></script><script src="shared/oda-payload.js"></script><script src="shared/oda-model.js"></script><script src="shared/oda-ui.js"></script>
+<script src="shared/dom.js?v=20260902b"></script><script src="shared/chart-core.js?v=20260902b"></script><script src="shared/set-config.js?v=20260902b"></script><script src="shared/oda-payload.js?v=20260902b"></script><script src="shared/oda-model.js?v=20260902b"></script><script src="shared/oda-ui.js?v=20260902b"></script>
 <script>
 (async()=>{'use strict';
   window.CGD_READY = false;
@@ -139,4 +139,4 @@
   document.getElementById('notes').append(UI.notes({notes:[UI.STANDARD_NOTES.prices]}));
   document.getElementById('fullscreenBtn').addEventListener('click',()=>document.fullscreenElement?document.exitFullscreen():root.requestFullscreen?.());render();window.ODA_F1={state,rows:allRows};
 })();
-</script><script src="shared/cgd-embed.js"></script></body></html>
+</script><script src="shared/cgd-embed.js?v=20260902b"></script></body></html>
