@@ -545,6 +545,39 @@ inverted (`scaleLog([1/k, k], [bottom, top])` maps higher ratios upward), and
 Marshall Islands is not a policy-held pin — EU Institutions has exactly one such
 pin, Ukraine, and the US none.
 
+### The Poland hang
+
+**Selecting Poland and stepping the year used to kill the tab.** Worth recording,
+because the shape of it will recur.
+
+Poland's Ukraine corridor is pinned at US$170.45m and its projected envelope is
+US$170.5m, so `envelope - pinnedTotal` came out as a floating-point residue --
+US$0.0000046m -- rather than zero. Meanwhile the viability-floor pass had closed
+every free recipient. `projectBox` then bisected for a `mu` that would make the
+open indices sum to that sliver, and there were no open indices, so the sum was
+zero for every `mu`, `hi` doubled forever and the renderer process died. No
+error and no fail state: a frozen tab, which is the one failure mode the
+fail-closed payload client cannot help with.
+
+Three changes, in order of how much they matter:
+
+* `projectBox` returns the best available allocation when the target cannot be
+  reached, and **both** of its searches are bounded. An unbounded `while` in a
+  browser is a latent hang whatever the input.
+* A discretionary budget below US$1,000 is snapped to zero. It is a difference
+  of two numbers around US$170m; its residue is not a budget.
+* Recipients with neither projected nor recommended funding are no longer
+  plotted. Poland had 45 of them, drawn at the x-axis floor on the 0% line --
+  `ratio` is defined as 1 when both sides are zero, which reads as "no change",
+  so the objective appeared to have considered them and left them alone. They
+  are counted in the notes instead.
+
+Poland is not unusual in kind, only in degree: any donor whose policy-held
+corridors consume its whole envelope lands here. It is also worth knowing that
+Poland has **five** pins, not one -- Ukraine at value, and Belarus, Ethiopia,
+Georgia and Senegal pinned at zero -- and that in the 2028 projection Ukraine is
+the only Polish recipient with a non-zero value at all.
+
 ## The F16 pin
 
 A pin is a frozen snapshot, so **every** part of a pinned mark reads from the

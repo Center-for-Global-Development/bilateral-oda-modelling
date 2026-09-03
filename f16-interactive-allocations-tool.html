@@ -414,18 +414,41 @@
     return result.map(v=>v<EPS?0:v);
   }
 
+  /* A bisection over mu, and it must cope with a target it cannot reach.
+     Selecting Poland and stepping to 2026 used to hang the browser outright:
+     Poland's Ukraine corridor (US$170.45m) consumes essentially its whole
+     projected envelope (US$170.5m), so `target` came out as a floating-point
+     sliver -- US$0.0000046m -- while the viability-floor pass had already closed
+     EVERY free recipient. With nothing open, alloc(mu) is all zeros for any mu,
+     so `sum < target` stayed true, `hi` doubled forever, and the renderer
+     process died. No error, no fail state: a hung tab.
+
+     Two defences. Infeasible cases return the best allocation available instead
+     of searching for one that does not exist, and both searches are bounded, so
+     no future input can spin here either. */
   function projectBox(desired,target,closed){
     const n=desired.length,scaleFloor=Math.max(target/Math.max(n,1)*1e-4,1e-8),scale=desired.map(v=>Math.max(v,scaleFloor));
     const alloc=mu=>desired.map((v,i)=>closed.has(i)?0:Math.max(0,v+mu*scale[i]));
+    const anyOpen=desired.some((_v,i)=>!closed.has(i));
+    /* Nothing open, or nothing to give out: the only allocation is zeros. */
+    if(!anyOpen||!(target>0))return desired.map(()=>0);
     let lo=0,hi=0,at0=d3.sum(alloc(0));
-    if(at0>target){lo=-1;while(d3.sum(alloc(lo))>target)lo*=2}
-    else{hi=1;while(d3.sum(alloc(hi))<target)hi*=2}
+    if(at0>target){lo=-1;let guard=0;while(d3.sum(alloc(lo))>target&&guard++<200)lo*=2}
+    else{hi=1;let guard=0;while(d3.sum(alloc(hi))<target&&guard++<200)hi*=2;
+      /* Still short after 200 doublings: the target is unreachable through the
+         open indices, so hand back the most they can absorb. */
+      if(d3.sum(alloc(hi))<target)return alloc(hi)}
     for(let i=0;i<200;i++){const mid=(lo+hi)/2;if(d3.sum(alloc(mid))<target)lo=mid;else hi=mid;if(hi-lo<=1e-15*Math.max(1,Math.abs(hi)))break}
     return alloc((lo+hi)/2);
   }
 
   function solve(s,weights,cov){
-    const pins=pinMap(s),support=supportRecipients(s.donor),free=support.filter(r=>!pins.has(r)),envelope=payload.at('tool/envelope_ge',{scenario:payload.scenarios.indexOf(s.scenario),donor:s.donor,year:s.year}),pinnedTotal=d3.sum(pins.values()),target=Math.max(0,envelope-pinnedTotal);
+    const pins=pinMap(s),support=supportRecipients(s.donor),free=support.filter(r=>!pins.has(r)),envelope=payload.at('tool/envelope_ge',{scenario:payload.scenarios.indexOf(s.scenario),donor:s.donor,year:s.year}),pinnedTotal=d3.sum(pins.values()),
+      /* Snapped to zero below US$1,000. envelope-pinnedTotal is a difference of
+         two numbers around US$170m, so its floating-point residue can be a few
+         millionths of a million dollars -- a "budget" that is nothing but which
+         the solver would still try to allocate. */
+      rawTarget=envelope-pinnedTotal,target=rawTarget>1e-3?rawTarget:0;
     const anchor=free.map(r=>payload.at('tool/baseline_recipient_ge',{donor:s.donor,recipient:r})),scores=free.map(r=>cov.score(r)),desired=allocateDesired(anchor,scores,target),grossTotal=d3.sum(cov.focal.values()),ratio=envelope>EPS?grossTotal/envelope:1;
     const closed=new Set();let allocation=desired.slice();
     for(let iteration=0;iteration<=free.length;iteration++){
@@ -672,6 +695,11 @@
        rather than standing as two more lines under the chart. */
     const fixedNote=`Note that the focus donor’s projected ODA envelope is fixed, and peers’ allocation behaviour is fixed by announced commitments and scenario projections.`;
     const committedNote=`${fmtUsd(current.solution.pinnedTotal)} of ${payload.donorName(s.donor)}’s ${fmtUsd(current.solution.envelope)} projected envelope is already committed and cannot move.`;
+    /* Recipients with nothing either way are not on the chart, so the count has
+       to be here: otherwise "130 recipients" in the notes and 89 marks on the
+       plot disagree with no explanation. */
+    const emptyNote=(()=>{const n=current.rows.filter(d=>!(d.projected>EPS||d.recommended>EPS)).length;
+      return n?` ${M.countPhrase(n,'recipient','has/have')} neither projected nor recommended funding in ${s.year} and ${n===1?'is':'are'} not plotted.`:'';})();
     /* Without this, a donor-year whose envelope happens to land on its 2024
        portfolio reads as a dead control: the reader drags the objective triangle,
        watches almost every recommended allocation stay put, and concludes the tool
@@ -685,14 +713,22 @@
         ?` This objective redistributes the difference between the discretionary envelope (${fmtUsd(current.solution.discretionary)}) and the 2024 portfolio it starts from (${fmtUsd(anchorTotal)}). Those are within ${M.percent(headroomShare)} of each other here, so there is little to move and most recipients stay near their 2024 level whatever the weights.`
         :'';
     const up=current.rows.filter(r=>r.change>EPS),down=current.rows.filter(r=>r.change<-EPS),toward=d3.sum(up,r=>r.change),away=-d3.sum(down,r=>r.change),moved=(toward+away)/2,share=current.solution.discretionary>EPS?moved/current.solution.discretionary:0;
-    document.getElementById('summary').textContent=(current.solution.discretionary<=EPS?`No allocation can move for ${payload.donorName(s.donor)} in ${s.year} under ${s.scenario}.`:`${weightPhrase(currentWeights())}, this objective moves about ${fmtUsd(moved)} — ${M.percent(share)} of this donor’s discretionary envelope — toward ${up.length} recipients and away from ${down.length}.`)+` ${fixedNote} ${committedNote}${headroomNote}`;
+    document.getElementById('summary').textContent=(current.solution.discretionary<=EPS?`No allocation can move for ${payload.donorName(s.donor)} in ${s.year} under ${s.scenario}.`:`${weightPhrase(currentWeights())}, this objective moves about ${fmtUsd(moved)} — ${M.percent(share)} of this donor’s discretionary envelope — toward ${up.length} recipients and away from ${down.length}.`)+` ${fixedNote} ${committedNote}${emptyNote}${headroomNote}`;
   }
 
   function renderChart(s,current){
     syncFind(current.rows);
     const area=document.getElementById('chartArea');
     if(!document.getElementById('chart')){const fresh=document.createElementNS('http://www.w3.org/2000/svg','svg');fresh.id='chart';fresh.setAttribute('role','img');fresh.setAttribute('aria-labelledby','panelTitle');area.replaceChildren(fresh)}
-    const data=current.rows,w=Math.max(280,Math.floor(area.clientWidth||width)),h=w<430?430:490,m={top:48,right:18,bottom:58,left:w<430?64:76},plotW=w-m.left-m.right,plotH=h-m.top-m.bottom,maxX=Math.max(10,d3.max(data,d=>Math.max(d.projected,d.recommended))||10),xFloor=.03,x=d3.scaleLog([xFloor,maxX*1.15],[m.left,w-m.right]).clamp(true),view=s.view;
+    /* A recipient with no projected funding AND no recommended funding has
+       nothing to show on either axis. It is not a data point: `ratio` for that
+       case is defined as 1, which reads as "no change", so it was drawn on the
+       0% line at the x-axis floor as though the objective had considered it and
+       left it alone. Dropped from the plot and counted in the summary instead --
+       the same rule F8 applies to a zero-height band. */
+    const plottable=current.rows.filter(d=>d.projected>EPS||d.recommended>EPS),
+      emptyRows=current.rows.length-plottable.length,
+      data=plottable,w=Math.max(280,Math.floor(area.clientWidth||width)),h=w<430?430:490,m={top:48,right:18,bottom:58,left:w<430?64:76},plotW=w-m.left-m.right,plotH=h-m.top-m.bottom,maxX=Math.max(10,d3.max(data,d=>Math.max(d.projected,d.recommended))||10),xFloor=.03,x=d3.scaleLog([xFloor,maxX*1.15],[m.left,w-m.right]).clamp(true),view=s.view;
     /* The percentage-change axis was hard-coded to a ratio domain of [0.1, 10] --
        a fixed window from "10% of projected" to "ten times projected" -- for every
        donor and every allocation rule. Almost no donor spans anything like that,
@@ -769,6 +805,20 @@
     /* A dashed outline on the flagged marks, so the caveat is visible before the
        reader hovers anything. Policy-held marks already use a dash, and they are
        excluded from the flag, so the two cannot be confused. */
+    /* With nothing plottable there is no domain to build and no marks to draw,
+       so the panel says what happened instead of rendering an empty grid. */
+    if(!data.length){
+      svg.selectAll('*').remove();
+      svg.attr('viewBox',`0 0 ${w} 150`).attr('height',150);
+      const note=svg.append('text').attr('x',w/2).attr('y',72).attr('text-anchor','middle')
+        .attr('class','axis-title');
+      note.text(`No recipient of ${payload.donorName(s.donor)} has projected or recommended funding in ${s.year}.`);
+      const sub=svg.append('text').attr('x',w/2).attr('y',94).attr('text-anchor','middle').attr('class','axis');
+      sub.text(current.solution.discretionary<=EPS
+        ? 'Its projected envelope is fully committed to policy-held corridors, so nothing can be reallocated.'
+        : 'Nothing to plot under this selection.');
+      return;
+    }
     svg.classed('oda-has-highlight',Boolean(highlighted)&&data.some(d=>d.recipient===highlighted));
     const marks=svg.append('g').selectAll('circle.current').data(data).join('circle')
       /* The chart carries a class while a highlight is active, so the CSS can dim
