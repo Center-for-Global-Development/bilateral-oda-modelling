@@ -341,6 +341,44 @@ There is no build step to do this automatically, so it is a manual step in the
 release checklist. `qa/verify.py` will not catch a stale stamp — the gate serves
 files fresh.
 
+## One notes block per figure
+
+**A figure has exactly one block of prose under it, and it is built by
+`UI.renderNotes(host, {visible, notes})`.**
+
+Every figure used to have two: a live caption element under the chart
+(`#chartSummary` or `#summary`) and a standing notes block under that. Nothing
+kept them apart, so the same sentence appeared in both -- "All values in
+constant 2024 US$" beside "All values are in constant 2024 US dollars" -- and
+captions ended up saying "see notes" about explanations that had since been
+deleted from the notes. `UI.notes()` had taken a `visible` array for live lines
+since it was written; only F3 ever used it.
+
+* `visible` is what changes with the controls: counts, the selected year's
+  value, what is excluded from this view.
+* `notes` is what is true whatever the reader selects.
+* A line belongs in exactly one of them. If it is in `visible` it must not also
+  be in `notes`, and vice versa.
+* **Never write "see notes".** There is one block; a caption citing its own
+  paragraph tells the reader nothing. If an explanation is needed, put it in.
+
+`renderNotes` uses `replaceChildren`, not `append`. F5 appended on every render,
+so its notes grew by three sentences each time the allocation rule changed.
+
+Two figures keep their own element deliberately: F16's summary sits inside the
+chart panel because it is the chart's own reading, and it is deduplicated
+against the notes by hand.
+
+## Explaining a label: UI.helpBadge
+
+A small `?` next to a label, carrying an explanation on hover, focus or tap.
+Use it where a heading is too short to explain itself -- F17's ten scenario
+columns read `S1`, `S2A`, `S3B`, and the table is nothing but those columns.
+
+It is a real `<button>`, so it is tabbable and works on touch, and it routes
+through `UI.hoverTip`, so it gets the same bubble as every other hint in the
+set. It replaced the last native `title` attributes in the figures.
+
 ## No native tooltips
 
 **Nothing in this set uses a `title` attribute or an SVG `<title>` to carry

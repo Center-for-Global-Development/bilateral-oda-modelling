@@ -37,7 +37,7 @@
   <section class="panel"><div class="panel-header"><div class="donor-legend" id="legend"></div></div><div class="chart-area" id="chartArea">
     <div class="loss-head"><span>Recipient</span><span>Gross bilateral ODA cuts as % of GNI (log scale)</span><span>Total</span></div><div id="rows"></div><div class="axis-wrap"><span></span><svg id="axisSvg" aria-hidden="true"></svg><span></span></div>
   </div></section>
-  <p id="chartSummary" class="notes"></p><div id="notes"></div><div class="tooltip" id="tooltip" hidden></div>
+  <div id="notes"></div><div class="tooltip" id="tooltip" hidden></div>
   <section class="detail-popup" id="detailPopup" role="dialog" aria-modal="true" hidden><div class="popup-head"><div><h2 id="popupTitle"></h2><p class="viz-sub">Gross bilateral ODA as a share of recipient GNI</p></div><button class="popup-close" id="popupClose" type="button" aria-label="Close">×</button></div><div class="dot-head"><span>Donor</span><span>2024 to 2028</span><span>2028</span></div><div id="dotRows"></div><div id="popupControls"></div></section>
 </main>
 <script src="shared/dom.js?v=20260902b"></script><script src="shared/chart-core.js?v=20260902b"></script><script src="shared/set-config.js?v=20260902b"></script><script src="shared/oda-payload.js?v=20260902b"></script><script src="shared/oda-model.js?v=20260902b"></script><script src="shared/oda-ui.js?v=20260902b"></script>
@@ -51,10 +51,17 @@
   const OUTLIER_THRESHOLD=.5;
   const state=UI.createState({scenario:'S1',page:0,popupPage:0,selected:null,excludeOutliers:false},{dependents:{scenario:['page','popupPage'],excludeOutliers:['page']},onChange:()=>schedule()});
   await ensure(state.get());
+  /* Whether the blobs the current scenario needs are actually in memory. The
+     pager callbacks run on the state change, ahead of the load. */
+  function scenarioReady(s){
+    return M.seriesBlobNames('donor_recipient',{scenario:s.scenario,measure:'gross'})
+      .every(n=>payload._blobs.has(n));
+  }
+  let lastPages=1,lastPopupPages=1;
   const controlsRow=document.getElementById('controls');
   controlsRow.prepend(UI.scenarioSelect(state));
-  UI.pagerRow(document.querySelector('.panel')).append(UI.pager(state,()=>Math.ceil(partition(state.get()).shown.length/pageSize)));
-  const popupPager=UI.pagerActions(state,s=>Math.ceil(donorDetail(s.selected,s).length/pageSize),{key:'popupPage',label:'donor page'});document.getElementById('popupControls').append(popupPager);
+  const mainPager=UI.pager(state,s2=>{if(!scenarioReady(s2))return lastPages;return lastPages=Math.ceil(partition(s2).shown.length/pageSize);});UI.pagerRow(document.querySelector('.panel')).append(mainPager);
+  const popupPager=UI.pagerActions(state,s=>{if(!scenarioReady(s))return lastPopupPages;return lastPopupPages=Math.ceil(donorDetail(s.selected,s).length/pageSize);},{key:'popupPage',label:'donor page'});document.getElementById('popupControls').append(popupPager);
   /* Segment colours are assigned across the whole key set at once, so the five
      named donors and "Other cutting donors" are guaranteed distinguishable. A
      per-key hash could not promise that: it previously gave the United Kingdom
@@ -89,7 +96,18 @@
   advancedBtn.addEventListener('click',()=>{const open=advancedPanel.hidden;advancedPanel.hidden=!open;advancedBtn.setAttribute('aria-expanded',String(open));});
   outlierBox.addEventListener('change',()=>state.set({excludeOutliers:outlierBox.checked}));
   state.subscribe(s=>{outlierBox.checked=s.excludeOutliers;});
-  function renderPopup(){const s=state.get(),all=donorDetail(s.selected,s),page=Math.min(s.popupPage,Math.max(0,Math.ceil(all.length/pageSize)-1)),shown=all.slice(page*pageSize,(page+1)*pageSize),max=Math.max(.000001,...shown.flatMap(r=>[r.base,r.now]));document.getElementById('dotRows').replaceChildren();for(const r of shown){const row=element('div',{className:'dot-row'}),svg=svgEl('svg',{'aria-label':`${r.name}: ${pctOfGni(r.base)} in 2024, ${pctOfGni(r.now)} in 2028`}),x=v=>`${4+92*v/max}%`;svg.append(svgEl('line',{x1:x(r.base),x2:x(r.now),y1:15,y2:15,stroke:'#85A5AD','stroke-width':1.2}),svgEl('circle',{cx:x(r.base),cy:15,r:3,fill:'#BFDEE0'}),svgEl('circle',{cx:x(r.now),cy:15,r:3.5,fill:donorColour(r.code)}));row.append(element('span',{text:r.name}),svg,element('span',{className:'dot-value',text:pctOfGni(r.now)}));document.getElementById('dotRows').append(row);}popupPager.sync();}
+  function renderPopup(){const s=state.get(),all=donorDetail(s.selected,s),page=Math.min(s.popupPage,Math.max(0,Math.ceil(all.length/pageSize)-1)),shown=all.slice(page*pageSize,(page+1)*pageSize),max=Math.max(.000001,...shown.flatMap(r=>[r.base,r.now]));document.getElementById('dotRows').replaceChildren();for(const r of shown){const row=element('div',{className:'dot-row'}),svg=svgEl('svg',{'aria-label':`${r.name}: ${pctOfGni(r.base)} in 2024, ${pctOfGni(r.now)} in 2028`}),x=v=>`${4+92*v/max}%`;const dotBase=svgEl('circle',{cx:x(r.base),cy:15,r:3,fill:'var(--cgd-gold)'}),dotNow=svgEl('circle',{cx:x(r.now),cy:15,r:3.5,fill:'var(--cgd-teal)'});
+    svg.append(svgEl('line',{x1:x(r.base),x2:x(r.now),y1:15,y2:15,stroke:'#85A5AD','stroke-width':1.2}),dotBase,dotNow);
+    /* One colour pair for every row, as in F11: colouring the 2028 dot by DONOR
+       made each row a different colour, so the pair read as a category key
+       rather than as before-and-after. */
+    const move=r.now-r.base,
+      shift=Math.abs(move)<1e-9?'no change':`${move>0?'up':'down'} ${pctOfGni(Math.abs(move))} of GNI`;
+    UI.hoverTip(dotBase,`${r.name} \u2014 2024: ${pctOfGni(r.base)} of GNI.`);
+    UI.hoverTip(dotNow,`${r.name} \u2014 2028: ${pctOfGni(r.now)} of GNI (${shift} on 2024).`);
+    const nameCell=element('span',{text:r.name});
+    UI.hoverTip(nameCell,`${r.name}: ${pctOfGni(r.base)} of GNI in 2024, ${pctOfGni(r.now)} in 2028 (${shift}).`);
+    row.append(nameCell,svg,element('span',{className:'dot-value',text:pctOfGni(r.now)}));document.getElementById('dotRows').append(row);}popupPager.sync();}
   function render(){const s=state.get(),parts=partition(s),all=parts.shown,top=topDonors(s),page=Math.min(s.page,Math.max(0,Math.ceil(all.length/pageSize)-1)),shown=all.slice(page*pageSize,(page+1)*pageSize),keys=[...top,OTHER];palette=window.CGDSet.assignColours(keys,{residual:[OTHER]});
     /* Logarithmic. Attributed cuts span more than three orders of magnitude —
        Marshall Islands at over 100% of GNI against recipients at hundredths of
@@ -99,19 +117,19 @@
        carry the values and the notes say so. */
     const maxTotal=Math.max(...all.map(r=>r.total),1e-9),floor=1e-4,hi=maxTotal*1.12,lo=Math.min(floor,hi/1.0001),logX=v=>{const c=Math.max(lo,Math.min(hi,v));return (Math.log10(c)-Math.log10(lo))/(Math.log10(hi)-Math.log10(lo)||1)*100;};document.getElementById('rows').replaceChildren();for(const row of shown){const wrap=element('div',{className:'loss-row'}),name=element('button',{className:'loss-name',text:row.name,attributes:{type:'button',title:row.name}});name.addEventListener('click',()=>openDetail(row.iso,name));const bar=element('div',{className:'loss-bar'}),svg=svgEl('svg',{'aria-label':`${row.name}: cuts worth ${pctOfGni(row.total)} of GNI`});let acc=0,x=0;for(const code of keys){const value=row.segments[code];if(!(value>0))continue;const from=acc>0?logX(acc):0;acc+=value;const to=logX(acc),w=Math.max(to-from,0);x=from;const rect=svgEl('rect',{x:`${x}%`,width:`${w}%`,y:4,height:19,fill:colour(code),tabindex:'0',role:'img','aria-label':`${row.name}, ${code===OTHER?OTHER:payload.donorName(code)}: ${pctOfGni(value)} of GNI`});rect.addEventListener('pointerenter',()=>showTip(row,code,rect));rect.addEventListener('pointerleave',()=>tooltip.hidden=true);rect.addEventListener('focus',()=>showTip(row,code,rect));rect.addEventListener('blur',()=>tooltip.hidden=true);rect.addEventListener('click',e=>{e.stopPropagation();openDetail(row.iso,rect);});svg.append(rect);}bar.append(svg);wrap.append(name,bar,element('div',{className:'loss-total',text:pctOfGni(row.total)}));document.getElementById('rows').append(wrap);}
     const axis=document.getElementById('axisSvg');axis.replaceChildren();const decades=[];for(let e=Math.floor(Math.log10(lo));e<=Math.ceil(Math.log10(hi));e+=1){const v=10**e;if(v>=lo&&v<=hi)decades.push(v);}if(!decades.length)decades.push(lo,hi);const ticks=C.thinTicks(decades,innerWidth<=520?3:5);ticks.forEach((v,i)=>{const pos=logX(v),first=i===0,last=i===ticks.length-1;const tx=svgEl('text',{x:`${pos}%`,y:16,dx:first?2:last?-2:0,'text-anchor':first?'start':last?'end':'middle',class:'axis'});tx.textContent=M.percent(v,{decimals:v<.01?2:v<.1?1:0});axis.append(tx);});const legend=document.getElementById('legend');legend.replaceChildren();for(const code of keys){const sw=element('span',{className:'legend-swatch'});sw.style.background=colour(code);legend.append(element('span',{className:'legend-key'},[sw,element('span',{text:code===OTHER?'Other cutting donors':payload.donorName(code)})]));}
-    document.getElementById('vizSub').textContent=`Gross bilateral ODA cuts between 2024 and 2028 under ${M.scenarioInfo(s.scenario).name.toLowerCase()}.`;document.getElementById('chartSummary').textContent=`Recipients ${page*pageSize+1}–${page*pageSize+shown.length} of ${all.length} with positive attributed cuts and available GNI.`+(parts.excluded.length?` Excluded outliers: ${parts.excluded.map(r=>r.name).sort().join(', ')}.`:'');renderNotes(parts);if(!popup.hidden)renderPopup();window.CGD_READY=true;
-  }
-  function renderNotes(parts){
-    /* The exclusion is reported on the count line above, not as a paragraph of its
-       own: the reader wants the names, and the fact that the axis is recomputed is
-       in the notes. */
-    document.getElementById('notes').replaceChildren(UI.notes({notes:[
+    document.getElementById('vizSub').textContent=`Gross bilateral ODA cuts between 2024 and 2028 under ${M.scenarioInfo(s.scenario).name.toLowerCase()}.`;UI.renderNotes('notes',{visible:[`Recipients ${page*pageSize+1}–${page*pageSize+shown.length} of ${all.length} with positive attributed cuts and available GNI.`+(parts.excluded.length?` Excluded outliers: ${parts.excluded.map(r=>r.name).sort().join(', ')}.`:'')],notes:[
       'The axis is logarithmic and starts at 0.01% of GNI; smaller cuts are drawn at the axis floor.',
       'Cuts are donor-recipient reductions floored at zero, so increases from other donors do not offset them.',
       'Marshall Islands is an exceptional 2024 case: its baseline includes large US Compact payments, so its cut should not be read as a fall from a normal annual aid level.',
       M.denominatorNote(payload,'gni'),
       UI.STANDARD_NOTES.prices
-    ].filter(Boolean).filter(Boolean)}));
+    ].filter(Boolean).filter(Boolean)});renderNotes(parts);if(mainPager&&mainPager.sync)mainPager.sync();if(!popup.hidden)renderPopup();window.CGD_READY=true;
+  }
+  function renderNotes(parts){
+    /* The exclusion is reported on the count line above, not as a paragraph of its
+       own: the reader wants the names, and the fact that the axis is recomputed is
+       in the notes. */
+    
   }
   let seq=0;async function schedule(){const n=++seq;tooltip.hidden=true;try{await ensure(state.get());if(n!==seq)return;render();}catch(error){if(n===seq)P.renderFailState(chartArea,error); window.CGD_READY = true;}}
   await ensure(state.get());render();document.getElementById('fullscreenBtn').addEventListener('click',()=>document.fullscreenElement?document.exitFullscreen():root.requestFullscreen?.());window.ODA_F6={state,rows:()=>rowsFor(state.get()),partition:()=>partition(state.get()),OUTLIER_THRESHOLD,detail:()=>donorDetail(state.get().selected,state.get())};

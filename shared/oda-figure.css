@@ -360,7 +360,10 @@
                      border-top: 1px solid var(--cgd-teal-gray, #85A5AD); }
 .oda-track i { position: absolute; top: 5px; width: 8px; height: 8px; border-radius: 50%;
                background: var(--cgd-teal, #0B4C5B); }
-.oda-track i.baseline { background: var(--cgd-light-blue, #BFDEE0); }
+/* Gold for the baseline year against teal for the projection. Light blue on
+   teal was too close to read as before-and-after at 8px. Only F11 uses
+   .baseline, so this pair is its own. */
+.oda-track i.baseline { background: var(--cgd-gold, #FFB52C); }
 .oda-track-axis { display: flex; justify-content: space-between; font-size: 10.8px;
                   color: var(--cgd-dark-gray, #394649); padding: 2px 0 6px; }
 @media (max-width: 520px) {
@@ -413,6 +416,19 @@
    Appended to <body> and therefore `position: fixed`, so it is not clipped by
    the panel's overflow the way an absolutely-positioned tip inside the chart
    would be. */
+/* The '?' next to a label. Sized to the 24px tap-target floor while looking
+   like a footnote mark rather than a control. */
+.oda-help {
+  flex: 0 0 auto; margin-left: 4px; padding: 0;
+  min-width: 24px; min-height: 24px; width: 24px; height: 24px;
+  border: 1px solid var(--border); border-radius: 50%;
+  background: #fff; color: var(--cgd-teal);
+  font: inherit; font-size: 10.2px; font-weight: 700; line-height: 1;
+  cursor: help; display: inline-flex; align-items: center; justify-content: center;
+}
+.oda-help:hover { background: var(--cgd-offwhite); }
+.oda-help:focus-visible { outline: 2px solid var(--cgd-gold); outline-offset: 1px; }
+
 .oda-hovertip {
   position: fixed; z-index: 60; max-width: 260px;
   padding: 5px 8px; border-radius: 5px;
@@ -456,7 +472,7 @@
 
    A figure needing a different indicator for a particular mark should add a
    MORE specific rule (see the .map-svg rules in F3), never re-enable outline. */
-.viz-wrapper svg [tabindex]:focus { outline: none; }
+.viz-wrapper svg :focus { outline: none; }
 .viz-wrapper svg [tabindex]:focus-visible {
   stroke: var(--cgd-gold, #FFB52C); stroke-width: 2; paint-order: stroke;
 }

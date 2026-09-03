@@ -123,6 +123,24 @@ of the tool's anchor.**
 - [ ] Reallocate defaults to 50%, and the methodology and its plain-language
       companion say so.
 
+### 0.4b One notes block
+
+- [ ] Exactly one prose block under the figure, built by `UI.renderNotes`.
+- [ ] No sentence appears in both `visible` and `notes`.
+- [ ] Exactly one `Source: CGD modelling.` on the figure.
+- [ ] No caption says "see notes", "see below" or "see above": there is one
+      block, so a cross-reference to it is a cross-reference to itself.
+- [ ] The block does not grow when a control is changed twice.
+
+### 0.4c Units and precision
+
+- [ ] US$ values carry a decimal place. `M.usd` enforces this; only axis ticks
+      pass `{compact:true}`, where a forced ".0" on every round tick is noise.
+- [ ] No floating dot (U+22C5 or U+00B7) is used as a separator anywhere.
+- [ ] A per-something ratio states WHICH something in the control the reader
+      sees, not only in the long label, and is suppressed where the denominator
+      is too small for the ratio to mean anything.
+
 ### 0.5 Responsive and accessible
 
 - [ ] Works at desktop and mobile widths, reformatting reliably.

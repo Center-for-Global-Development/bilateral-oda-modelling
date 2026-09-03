@@ -339,6 +339,30 @@
    * @param {function} [options.labelOf] key -> label (defaults to the key)
    * @param {function} [options.tipOf]   key -> hover description
    */
+  /* A small '?' next to a label, carrying an explanation on hover, focus or
+     tap. There was no such affordance in the set: figures either used a native
+     `title` -- which the house rules forbid, because it waits a second, cannot
+     be reached by keyboard and never appears on touch -- or left the
+     explanation off the figure entirely.
+
+     It is a real button so it is tabbable and works on touch; hoverTip gives it
+     the same styled bubble every other hint in the set uses. */
+  function helpBadge(textOf, { label = 'What is this?' } = {}) {
+    const button = element('button', {
+      className: 'oda-help',
+      text: '?',
+      attributes: { type: 'button', 'aria-label': label }
+    });
+    hoverTip(button, textOf);
+    /* Touch has no hover: a tap focuses the button, which hoverTip shows on,
+       and a second tap dismisses it. */
+    button.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+    });
+    return button;
+  }
+
   function filterLegend({ host, keys, state, stateKey = 'hidden',
                           colourOf, labelOf = k => k, tipOf = null }) {
     host.replaceChildren();
@@ -430,6 +454,23 @@
    * @param {string[]} options.notes   standing notes, joined into one paragraph
    * @param {string}  [options.attribution] extra credit, appended last
    */
+  /* THE figure's notes block, rebuilt in place.
+
+     Every figure carried two: a live caption element under the chart and a
+     standing notes block under that. Nothing kept them apart, so the same
+     sentence turned up in both -- "All values in constant 2024 US$" beside
+     "All values are in constant 2024 US dollars" -- and captions said "see
+     notes" about explanations that had since been removed from the notes.
+     One block, live lines first, and a caption can no longer cite its sibling.
+
+     replaceChildren, not append: F5 appended on every render, so its notes
+     grew by three sentences each time the allocation rule changed. */
+  function renderNotes(host, options) {
+    const node = typeof host === 'string' ? document.getElementById(host) : host;
+    if (node) node.replaceChildren(notes(options));
+    return node;
+  }
+
   function notes({ visible = [], notes: standing = [], attribution } = {}) {
     const root = element('div', { className: 'notes' });
 
@@ -832,7 +873,7 @@
     pagerActions,
     createState, selfSync, controlGroup, scenarioSelect, measureToggle, yearControl,
     sortSelect, applySort, pager, notes, SOURCE, STANDARD_NOTES, attachDismiss,
-    hoverTip, hideHoverTip, filterLegend, hiddenSet,
+    hoverTip, hideHoverTip, helpBadge, filterLegend, hiddenSet, renderNotes,
     modal, trapFocus, pagerRow, pagedList, rankRow, trackAxis, orphanDrilldown
   };
 })();

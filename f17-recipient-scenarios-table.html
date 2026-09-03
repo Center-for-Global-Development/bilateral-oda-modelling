@@ -37,6 +37,9 @@
                         font: inherit; font-weight: 600; cursor: pointer; text-decoration: underline;
                         display: block; width: 100%; min-height: 26px; text-align: inherit; }
   .matrix thead th:not(.recipient) button.sort { text-align: right; }
+  /* The badge sits on the heading's baseline, right of the sort button. */
+  .matrix thead th .oda-help { vertical-align: middle; }
+  .matrix thead th:not(.recipient) { white-space: nowrap; }
   .group-row th { height: 44px; padding: 0 !important; background: var(--cgd-teal) !important;
                   color: #fff !important; text-align: left !important; }
   .group-toggle { width: 100%; min-height: 44px; padding: 8px 10px; border: 0; color: inherit;
@@ -128,7 +131,7 @@
   </div>
   <p class="tagline" id="tagline"></p>
   <section id="tableArea" aria-live="polite"></section>
-  <p id="chartSummary" class="notes"></p>
+  
   <div id="notes"></div>
 </main>
 
@@ -194,7 +197,7 @@
   const objectiveControl = UI.controlGroup('Allocation weighting',
     segmented('objective', objectives, objectives.map(objectiveLabel), 'Allocation weighting objective'));
   const odaMetricControl = UI.controlGroup('ODA metric', segmented('odaMetric',
-    ['oda', 'oda_pc', 'cut', 'cut_pct'], ['US$ ODA', 'US$ per person', 'US$ cut', '% cut'], 'ODA metric'));
+    ['oda', 'oda_pc', 'cut', 'cut_pct'], ['US$ ODA', 'US$ per poor person', 'US$ cut', '% cut'], 'ODA metric'));
   document.getElementById('desktopMetric').append(objectiveControl, odaMetricControl);
 
   const mobileShow = document.getElementById('mobileShow');
@@ -309,6 +312,14 @@
      over the full recipient axis, because that sum is the denominator every other
      recipient's prioritisation ratio is measured against, and dropping a country
      from it would silently change every published number in the table. */
+  /* ODA per person in extreme poverty is a ratio, and below a certain
+     denominator it stops being one. 17 recipients have nobody in extreme
+     poverty and another 38 have fewer than 100,000, so the metric was dividing
+     a real allocation by a handful of people: Bhutan's 57 read as US$1.8m per
+     person, Tuvalu's as US$773,000. This is the same 100,000 the threshold
+     control uses, so the figure states one number rather than two. */
+  const PC_FLOOR = 100000;
+
   const RECIPIENTS = payload.axes.recipient.filter(iso => iso !== 'PRK');
 
   function buildRows(s) {
@@ -321,7 +332,7 @@
       const values = scenarios.map(sc => {
         const value = oda(iso, sc, s.year, s.measure), base = baseline(iso, s.measure);
         if (metric === 'oda') return value;
-        if (metric === 'oda_pc') return poverty ? value * 1e6 / poverty : null;
+        if (metric === 'oda_pc') return poverty >= PC_FLOOR ? value * 1e6 / poverty : null;
         if (metric === 'cut') return base - value;
         if (metric === 'cut_pct') return base > 0 ? (base - value) / base : null;
         return displayRatios.get(`${sc}|${iso}`);
@@ -388,8 +399,13 @@
       const label = col === 'recipient' ? 'Recipient' : col === 'average' ? 'Average' : col === 'range' ? 'Range' : M.scenarioInfo(col).label;
       const th = element('th', { className: col === 'recipient' ? 'recipient' : col === 'average' ? 'summary-start' : col === 'range' ? 'range' : col === scenarios[0] ? 'scen-start' : '' });
       if (col === 'recipient') th.textContent = label;
-      else { const b = element('button', { className:'sort', text: label, attributes:{ type:'button', title: col.startsWith('S') ? M.scenarioInfo(col).name : label } });
-        b.addEventListener('click', () => state.set({ sort: col, direction: s.sort === col && s.direction === 'desc' ? 'asc' : 'desc' })); th.append(b); }
+      else { const b = element('button', { className:'sort', text: label, attributes:{ type:'button' } });
+        b.addEventListener('click', () => state.set({ sort: col, direction: s.sort === col && s.direction === 'desc' ? 'asc' : 'desc' })); th.append(b);
+        /* Ten column headings that read 'S1', 'S2A', 'S3B' say nothing on
+           their own, and this table is nothing but those ten columns. */
+        if (col.startsWith('S')) { const info = M.scenarioInfo(col);
+          th.append(UI.helpBadge(() => info.tip ? `${info.name}. ${info.tip}` : info.name,
+            { label: `What is ${info.label}?` })); } }
       tr.append(th);
     }
     return tr;
@@ -503,13 +519,14 @@
       const grouping=`grouped by ${s.objective} prioritisation`;
       document.getElementById('vizSub').textContent=`${metricLabel(model.metric)} in ${s.year}, across ten allocation rules.`;
       document.getElementById('tagline').textContent=`${M.MEASURE_LABEL[s.measure]} measure; ${grouping}.`;
-      document.getElementById('chartSummary').textContent=`${model.rows.length} of ${RECIPIENTS.length} recipients shown.`;
-      document.getElementById('notes').replaceChildren(UI.notes({notes:[
+      UI.renderNotes('notes',{visible:[`${model.rows.length} of ${RECIPIENTS.length} recipients shown.`],notes:[
         'The prioritisation ratio compares each recipient\u2019s bilateral ODA per unit of need with the global mean for the same year and objective; 100% is the global mean.',
         'Average is the mean across the ten allocation rules; Range is the highest minus the lowest.',
-        'Prioritisation ratios are clipped above 400%, and ODA per person above US$1,000, so outliers do not wash out the colour scale.',
+        'Prioritisation ratios are clipped above 400%, and ODA per poor person above US$1,000, so outliers do not wash out the colour scale.',
+      'ODA per poor person is left blank for recipients with fewer than 100,000 people in extreme poverty, where the ratio divides an allocation by too few people to mean anything.',
         UI.STANDARD_NOTES.projectionYears, UI.STANDARD_NOTES.prices
-      ]}));
+      ]});
+      
       window.CGD_READY = true;
     } catch(error){ if(version===renderVersion)P.renderFailState(tableArea,error); window.CGD_READY = true; }
   }

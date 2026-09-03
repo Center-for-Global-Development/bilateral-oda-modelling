@@ -329,8 +329,13 @@
      Model values are US$ millions, constant 2024 prices. */
 
   const nf = {
-    usdMillions: new Intl.NumberFormat('en-GB', { maximumFractionDigits: 1 }),
-    usdMillions2: new Intl.NumberFormat('en-GB', { maximumFractionDigits: 2 }),
+    /* A MINIMUM of one decimal place, not just a maximum. Without the minimum,
+       and with trimZeros stripping what was left, a round value printed at no
+       decimal places at all -- US$120.0m as "US$120m" -- so the precision
+       shown varied with the value rather than being a property of the figure,
+       and a column of figures did not line up on its decimal point. */
+    usdMillions: new Intl.NumberFormat('en-GB', { minimumFractionDigits: 1, maximumFractionDigits: 1 }),
+    usdMillions2: new Intl.NumberFormat('en-GB', { minimumFractionDigits: 1, maximumFractionDigits: 2 }),
     usdBillions1: new Intl.NumberFormat('en-GB', { minimumFractionDigits: 1, maximumFractionDigits: 2 }),
     integer: new Intl.NumberFormat('en-GB', { maximumFractionDigits: 0 }),
     percent0: new Intl.NumberFormat('en-GB', { maximumFractionDigits: 0 }),
@@ -368,19 +373,26 @@
      than becoming "US$15.00bn". */
 
   /** US$ millions in, display string out. Null/NaN becomes "not available". */
-  function usd(valueMillions, { unit = 'auto' } = {}) {
+  /* `compact` drops a trailing zero, for AXIS TICKS only. Everywhere the
+     reader is reading a value -- tooltips, captions, tables, bar labels --
+     the decimal place is kept, so figures do not vary their precision with
+     the roundness of the number. */
+  function usd(valueMillions, { unit = 'auto', compact = false } = {}) {
     if (valueMillions == null || !Number.isFinite(valueMillions)) return MISSING_TEXT;
     const abs = Math.abs(valueMillions);
     const useBn = unit === 'bn' || (unit === 'auto' && abs >= 1000);
-    if (useBn) return `US$${trimZeros(nf.usdBillions1.format(valueMillions / 1000))}bn`;
-    if (abs === 0) return 'US$0m';
+    if (useBn) { const t = nf.usdBillions1.format(valueMillions / 1000);
+      return `US$${compact ? trimZeros(t) : t}bn`; }
+    if (abs === 0) return compact ? 'US$0m' : 'US$0.0m';
     /* Below a million, one decimal place is not enough to keep a real flow
        visible, so spend a second one — and only there. */
     if (abs < 1) {
       if (abs < 0.005) return `${valueMillions < 0 ? '>-' : '<'}US$0.01m`;
-      return `US$${trimZeros(nf.usdMillions2.format(valueMillions))}m`;
+      { const t = nf.usdMillions2.format(valueMillions);
+        return `US$${compact ? trimZeros(t) : t}m`; }
     }
-    return `US$${trimZeros(nf.usdMillions.format(valueMillions))}m`;
+    const t = nf.usdMillions.format(valueMillions);
+    return `US$${compact ? trimZeros(t) : t}m`;
   }
 
   /** Proportions are stored as fractions; only display multiplies by 100. */

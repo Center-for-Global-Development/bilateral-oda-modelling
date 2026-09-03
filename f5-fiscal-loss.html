@@ -54,7 +54,7 @@
     </div>
   </section>
 
-  <p id="chartSummary" class="notes"></p>
+  
   <div id="notes"></div>
   <div class="tooltip" id="tooltip" hidden></div>
 </div>
@@ -358,9 +358,12 @@
     if (noDenominator.length) excluded.push(`${noDenominator.length} have no ${denom.label}`);
     if (gained.length) excluded.push(`${gained.length} have no loss to plot`);
     if (microExcluded.length) excluded.push(`${microExcluded.length} excluded as microstates`);
-    document.getElementById('chartSummary').textContent =
-      `${rows.length} of ${total} recipients shown` +
-      (excluded.length ? ` (${excluded.join('; ')} \u2014 see notes).` : '.');
+    UI.renderNotes('notes',{visible:[`${rows.length} of ${total} recipients shown` +
+      (excluded.length ? ` (${excluded.join('; ')}).` : '.')],notes: [
+        'Both axes are logarithmic; losses span more than four orders of magnitude.',
+        'Some small states lose an amount worth a very large share of GNI; the advanced option removes those with populations under 1 million.',
+        UI.STANDARD_NOTES.prices
+      ].filter(Boolean).filter(Boolean)});
 
     /* No per-recipient rosters. Each of these used to append a full
        comma-separated list of recipient names -- 'X recipients have no GNI in
@@ -371,13 +374,7 @@
        be running text under the chart. The counts stay in the summary line;
        a reader who wants to know WHICH recipients can select one. */
 
-    notes.append(UI.notes({
-      notes: [
-        'Both axes are logarithmic; losses span more than four orders of magnitude.',
-        'Some small states lose an amount worth a very large share of GNI; the advanced option removes those with populations under 1 million.',
-        UI.STANDARD_NOTES.prices
-      ].filter(Boolean).filter(Boolean)
-    }));
+    
   }
 
   /* ---------------------------------------------------------------- driver -- */

@@ -8,9 +8,11 @@
   <link rel="stylesheet" href="shared/cgd-responsive.css?v=20260902b">
   <link rel="stylesheet" href="shared/oda-figure.css?v=20260902b">
   <style>
-    .disclaimer{margin:0 0 8px;color:var(--cgd-dark-gray);font-size:11.5px;line-height:1.35}
+    .disclaimer{margin:0 0 6px;color:var(--cgd-dark-gray);font-size:11.5px;line-height:1.35}
     .visible-note{margin:7px 0;color:var(--cgd-dark-gray);font-size:11.5px;line-height:1.35}
-    .objective-block{padding:8px 10px;border:1px solid var(--border);border-radius:12px;background:var(--cgd-offwhite);margin-bottom:8px}
+    /* The controls above the chart were taking about a third of the figure
+       before a single mark was drawn. */
+    .objective-block{padding:6px 9px;border:1px solid var(--border);border-radius:12px;background:var(--cgd-offwhite);margin-bottom:6px}
     .objective-head{display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:wrap}
     .objective-head h2{margin:0;color:var(--cgd-teal);font-size:13px;line-height:1.2}
     .objective-buttons{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
@@ -19,18 +21,18 @@
     /* Three columns, not two with a full-width row beneath: the reallocation
        slider is a sibling decision to the weighting, and stacking it cost a
        whole row of height for one 34px control. */
-    .blend-panel{display:grid;grid-template-columns:minmax(120px,148px) minmax(132px,178px) minmax(196px,1fr);gap:8px 15px;align-items:center;margin-top:9px;padding-top:9px;border-top:1px solid var(--border)}
+    .blend-panel{display:grid;grid-template-columns:minmax(110px,132px) minmax(126px,168px) minmax(190px,1fr);gap:6px 14px;align-items:center;margin-top:7px;padding-top:7px;border-top:1px solid var(--border)}
     /* Half the linear size, so a quarter of the area. The corner names moved out to
        the weights list beside it, where they were already printed: three full
        phrases cannot be legible around a 186px triangle, and single letters keyed
        to that list can. */
-    .triangle-wrap{width:100%;max-width:148px;margin:0}
+    .triangle-wrap{width:100%;max-width:132px;margin:0}
     .triangle-wrap svg{height:auto;touch-action:none;overflow:visible}
     .triangle-edge{fill:#fff;stroke:var(--cgd-teal-gray);stroke-width:3}
     .triangle-grid{stroke:var(--border);stroke-width:2;fill:none}
     .triangle-label{fill:var(--cgd-teal);font-size:26px;font-weight:700}
     .triangle-point{fill:var(--cgd-gold);stroke:var(--cgd-teal);stroke-width:3.5;cursor:grab}
-    .weights{display:grid;gap:7px}
+    .weights{display:grid;gap:5px}
     .weight-row{display:grid;grid-template-columns:minmax(64px,1fr) 40px;gap:6px;align-items:center}
     .weight-track{height:7px;background:var(--cgd-light-gray);position:relative}
     .weight-row .weight-track{grid-column:1/-1}
@@ -42,15 +44,15 @@
       gap:5px 8px;align-items:center;margin:0;padding-left:15px;border-left:1px solid var(--border)}
     .intensity-row label{font-size:11.6px;font-weight:600;color:var(--cgd-teal);white-space:nowrap}
     .intensity-row output{text-align:right;color:var(--cgd-teal);font-weight:700;font-variant-numeric:tabular-nums}
-    .intensity-help{grid-column:1/-1;margin:0;color:var(--cgd-dark-gray);font-size:10.8px;line-height:1.35}
+    .intensity-help{grid-column:1/-1;margin:0;color:var(--cgd-dark-gray);font-size:10.4px;line-height:1.3}
     .validation{margin:8px 0 0;color:var(--cgd-red);font-weight:700;line-height:1.35}
     .availability{margin:7px 0 0;color:var(--cgd-dark-gray);line-height:1.35}
     /* The title takes its own line and everything else shares the next one:
        the key, the recipient finder, the view toggle and the pin. Previously the
        key and the three controls were two flex children of one row that wrapped
        at any realistic width, costing about 90px of chart height. */
-    .panel-top{display:block;padding:8px 10px 6px;border-bottom:1px solid #edf2f3}
-    .panel-bar{display:flex;align-items:flex-end;gap:6px 12px;flex-wrap:wrap;margin-top:4px}
+    .panel-top{display:block;padding:6px 10px 5px;border-bottom:1px solid #edf2f3}
+    .panel-bar{display:flex;align-items:flex-end;gap:4px 12px;flex-wrap:wrap;margin-top:3px}
     /* Allowed to take two lines -- at 10.8px it stays legible -- but it yields
        width to the controls first, which have a hard minimum. */
     .key-wrap{flex:1 1 380px;min-width:250px;display:flex;flex-wrap:wrap;gap:2px 9px;align-items:center}
@@ -59,10 +61,12 @@
     .panel-actions .control-label{font-size:10.2px;margin-bottom:2px;white-space:nowrap}
     /* Fixed, not intrinsic. A select is as wide as its longest option unless it
        is told otherwise, and this one lists every recipient. */
-    .panel-actions .plain-select{font-size:11.2px;height:32px;width:136px;min-width:0;
+    .panel-actions .plain-select{font-size:11.2px;height:36px;width:136px;min-width:0;
       text-overflow:ellipsis}
     .panel-actions .segmented button{font-size:11.2px;padding:5px 7px}
-    .pin-button{height:32px;border:1px solid var(--border);border-radius:9px;background:#fff;color:var(--cgd-teal);font:inherit;font-weight:700;font-size:11.2px;padding:5px 9px;cursor:pointer;white-space:nowrap}
+    /* Matched to the selects beside it, which measure 36px with their border;
+       the smaller type is what makes the label fit that box. */
+    .pin-button{height:36px;border:1px solid var(--border);border-radius:9px;background:#fff;color:var(--cgd-teal);font:inherit;font-weight:700;font-size:11px;padding:4px 9px;cursor:pointer;white-space:nowrap}
     .pin-button:disabled{opacity:.45;cursor:not-allowed}
     .key{display:flex;flex-wrap:wrap;gap:3px 10px;color:var(--cgd-dark-gray);font-size:10.8px}
     .key span{display:inline-flex;align-items:center;gap:4px}
@@ -165,7 +169,6 @@
         <div class="key-wrap">
           <div class="key" id="legend" aria-label="Income group: select to show or hide"></div>
           <div class="key" aria-label="Chart key">
-            <span><i class="bandmore"></i><i class="bandless"></i>More / less</span>
             <span><i class="held"></i>Policy-held</span><span><i class="compare"></i>Pinned</span>
             <span>Bubble = peer gap</span>
           </div>
@@ -841,7 +844,11 @@
         ? ` A further ${fmtUsd(current.solution.outOfScope)} is projected for recipients this donor did not fund in 2024, which the tool does not reallocate.`
         : '';
     const up=current.rows.filter(r=>r.change>EPS),down=current.rows.filter(r=>r.change<-EPS),toward=d3.sum(up,r=>r.change),away=-d3.sum(down,r=>r.change),moved=(toward+away)/2,share=current.solution.discretionary>EPS?moved/current.solution.discretionary:0;
-    document.getElementById('summary').textContent=(current.solution.discretionary<=EPS?`No allocation can move for ${payload.donorName(s.donor)} in ${s.year} under ${s.scenario}.`:`${weightPhrase(currentWeights())}, this objective moves about ${fmtUsd(moved)} — ${M.percent(share)} of this donor’s movable envelope — toward ${up.length} recipients and away from ${down.length}, measured against the ${s.year} projection.`)+` ${fixedNote} ${committedNote}${emptyNote}${intensityNote}${zeroNote}${floorNote}${scopeNote}`;
+    /* An objective with nothing to rank by is a real result, not a failure, and
+       has to say so: otherwise it reads as "moves US$0.0m toward 0 recipients
+       and away from 0", which looks like a broken tool. */
+    const noGap=(current.solution.gapSum||0)<=EPS&&current.solution.discretionary>EPS;
+    document.getElementById('summary').textContent=(current.solution.discretionary<=EPS?`No allocation can move for ${payload.donorName(s.donor)} in ${s.year} under ${s.scenario}.`:noGap?`Every recipient ${payload.donorName(s.donor)} funds already receives at or above its benchmark share from other donors, so this objective has no unmet funding gap to rank them by and the projection stands unchanged. This holds under all three objectives for this donor.`:`${weightPhrase(currentWeights())}, this objective moves about ${fmtUsd(moved)} — ${M.percent(share)} of this donor’s movable envelope — toward ${up.length} recipients and away from ${down.length}, measured against the ${s.year} projection.`)+` ${fixedNote} ${committedNote}${emptyNote}${intensityNote}${zeroNote}${floorNote}${scopeNote}`;
   }
 
   function renderChart(s,current){
@@ -1228,7 +1235,7 @@
       const c=currentCov.components[kind];
       if(!c||!c.raw.has(iso)){out.push([OBJECTIVES[kind],'no score']);continue}
       out.push([OBJECTIVES[kind],
-        `${fmtUsd(c.raw.get(iso)||0)} \u00b7 ${M.percent(c.share.get(iso)||0,{decimals:1})}`]);
+        `${fmtUsd(c.raw.get(iso)||0)} (${M.percent(c.share.get(iso)||0,{decimals:1})} of need)`]);
     }
     return out;
   }
@@ -1252,7 +1259,7 @@
     const objective=objectiveRows(d.recipient),parts=[element('strong',{text:d.name}),
       element('div',{className:'tooltip-grid'},cells)];
     if(objective.length){
-      parts.push(element('div',{className:'notes tip-head',text:'Unmet peer gap \u00b7 share of need, by objective'}));
+      parts.push(element('div',{className:'notes tip-head',text:'Unmet peer funding gap by objective, with this recipient\u2019s share of that need'}));
       parts.push(element('div',{className:'tooltip-grid'},
         objective.flatMap(([label,value])=>[element('span',{text:label}),element('b',{text:value})])));
     }
