@@ -500,52 +500,83 @@ fixed list, then a count-based thin, both of which put labels on top of each
 other on a tight domain — they are now thinned by **pixel** distance, walking
 outward from 1 so the no-change line is never the tick that gets dropped.
 
-## The F16 baseline mismatch
+## What F16 recommends, and against what
 
-**This is a known limitation, flagged on the figure rather than fixed, because
-fixing it is a methodology decision.**
+**Revised 2 September 2026 on CGD instruction. This changes every recommended
+allocation the tool produces, and the methodology document needs a matching
+edit.**
 
-F16 solves over the donor's **observed 2024 portfolio** — that is the documented
-method — but the "change implied" it displays is measured against the **audited
-projection** for the selected year. Where a scenario's projection reshapes a
-recipient's funding sharply, those two baselines diverge and the displayed
-percentage is about the divergence, not about the objective.
+The tool answers: *if this donor pursued the selected objective, how would its
+allocation differ from what we project it will actually do?* That requires both
+sides of the comparison to share a base, and until this revision they did not.
 
-The clearest case, and the one that prompted this note: the United States gave
-Marshall Islands US$647.3m in 2024, almost all of it one-off Compact payments,
-and the S1 projection puts 2028 at US$65.8m. Anchored on 2024 and rescaled to
-the envelope (×0.412), the tool lands at roughly US$266m — so the mark reads
-about +305%, identically under every objective. Read plainly that says "increase
-funding to an upper-middle-income country fourfold", and what it actually says
-is "the 2024 spike is still in the anchor".
+### What changed
 
-It is not a small set. At a 3× divergence threshold, 13 of 50 donors have at
-least one affected recipient; for Canada it is 120 of 135, because the
-projection moves that portfolio a long way from its 2024 shape.
+| | Before | Now |
+|---|---|---|
+| x axis | Projected allocation | Unchanged — the audited projection, with every pin, floor and cap in it |
+| Recommendation built from | The **2024 observed portfolio** | The **projection** for the selected year |
+| y axis | 2024-derived recommendation ÷ projection | Change from the projection, which is what the label always claimed |
+| Held for the focus donor | All 96 pinned corridors | **Ukraine only** |
+| Amount reallocated | The gap between the 2024 total and the envelope — an accident of each donor's history | A stated share of the movable envelope, set by the reader, default 100% |
+| Basis for the allocation | Winsorised 0–1 objective score | Unmet peer-funding gap, in dollars |
 
-**Why it is not simply corrected.** Anchoring the solver on the projection
-instead is the obvious fix and it does not work: the audited projection sums
-*exactly* to `tool/envelope_ge`, so `target − sum(anchor)` would be zero, and
-`allocateDesired` distributes only that difference — the objective would have
-nothing to redistribute and every recommendation would equal the projection.
-The 2024 anchor is what gives the objective something to move. Which baseline
-the tool should use, and whether exceptional 2024 values should be normalised
-before anchoring, is a question for the methodology and not for the front end.
+Peers are untouched: `coverage()` still reads
+`scenarios/<rule>/donor_recipient_year__gross` at the selected year, so the
+peer-funding gap that drives the objective still reflects projected spend
+including every donor's own held corridors. Grain is unchanged: recipient, not
+recipient-sector, restricted to recipients the donor funded in 2024.
 
-**What the figure does instead.** `derive()` computes a `shapeShift` per
-recipient — its share of the 2024 anchor over its share of the projected
-envelope — and flags any recipient beyond 3× in either direction as `anchored`.
-Flagged marks take a dotted outline (`.oda-anchored`; policy-held marks are
-dashed and are excluded from the flag, so the two cannot be confused) and their
-tooltip states both figures and says the change shown mostly reflects the gap
-between them. Nothing is recomputed and no published number changes.
+**No emitter change was needed.** Everything required was already in the
+payload — the projection, the envelope, the Ukraine pin, the viability floor and
+the 2024 support set. The other 46 corridors remain in `tool/pinned_ge`; the
+tool simply stops applying them to the focus donor.
 
-Two things that are **not** wrong, having been checked: the y axis is not
-inverted (`scaleLog([1/k, k], [bottom, top])` maps higher ratios upward), and
-Marshall Islands is not a policy-held pin — EU Institutions has exactly one such
-pin, Ukraine, and the US none.
+### Why the old design produced nonsense
 
-### The Poland hang
+The US gave Marshall Islands US$647.3m in 2024, almost all one-off Compact
+payments; the S1 projection puts 2028 at US$65.8m. The old solver cut RMI 63%
+from the 2024 anchor — the deepest proportional cut in the portfolio, since its
+objective score is zero — landing at US$237.6m. Divide that by a projection that
+had cut 90% and the mark read **+261%**, which looks like a recommendation to
+quadruple funding to an upper-middle-income country. Nothing was holding RMI up:
+it was not pinned, not floored, and no US recipient hit the viability floor. It
+was two different cuts of the same 2024 number, displayed as a ratio.
+
+Under the new design RMI is projected US$65.8m, has no unmet peer-funding gap,
+and is therefore allocated nothing. It falls, as it should.
+
+### Three consequences worth knowing
+
+* **At full intensity, most recipients get nothing.** About 70% of a donor's
+  recipients have no unmet peer-funding gap under any single objective, so a
+  clean slate leaves them with zero. The summary states the count, and the
+  chart labels the clamped row `cut to zero` — a ratio of zero cannot sit on a
+  log axis, so those marks pile on the bottom of the domain and would otherwise
+  read as whatever the lowest tick says.
+* **The movable pool is the projection over the 2024-funded set, not the
+  envelope less Ukraine.** They differ: US$121.2m of the UK's US$1.84bn 2028
+  envelope is projected for recipients it did not fund in 2024. Scaling the
+  2024-funded set up to the full envelope would quietly move that money into
+  the 2024 set, which broke two invariants — intensity 0 stopped reproducing the
+  projection, and the recommendation summed to more than the projection over the
+  same rows. It is reported as out of scope instead.
+* **Intensity 0 is the projection, bar the viability floor.** The floor applies
+  at every setting, so a projection that puts a recipient below a viable level
+  is still lifted. For the US that is US$1.5m on US$13.9bn — 0.01% — and the
+  help text says so rather than claiming the projection stands untouched.
+
+### What the emitter question still is
+
+The payload pins 96 corridors and the note on `tool/pinned_ge` calls them
+"audited projected value; the tool holds these fixed". 89 of the 96 are *value*
+pins rather than exits, and 27 of those are UK country programmes — which is to
+say, announced country allocations. F16 no longer applies them to the focus
+donor, so the figure is now consistent with its own note. **But the pinned set
+itself may be wider than intended, and it still governs peers.** That is a
+question for the emitter and the methodology, not the front end.
+
+### The Poland hang### The Poland hang
 
 **Selecting Poland and stepping the year used to kill the tab.** Worth recording,
 because the shape of it will recur.
@@ -595,19 +626,21 @@ nothing — the one thing a before-and-after pin is for. One held scale gives
 both: the rings stay still, and the live bubbles still grow and shrink, because
 their gap genuinely changes with the objective.
 
-### Why the objective sometimes appears to do nothing
+### Why the objective used to appear to do nothing
 
-`allocateDesired` distributes the **difference** between the target envelope and
-the 2024 portfolio it starts from. Where those two are close, the weights have
-almost nothing to redistribute and every recipient stays near its 2024 level
-whatever the reader does with the triangle.
+**Resolved by the redesign above; kept as a record of what the old anchor did.**
 
-EU Institutions is exactly that case: in 2026–2028 its discretionary envelope is
-within 1% of its 2024 portfolio (US$11.34bn against US$11.28bn), which is why its
-recommended allocation for Malaysia sits at the 2024 value of US$4.81m under
-every objective setting. That is the documented method working, not a fault —
-but it reads as a dead control, so the summary line now states the two totals and
-how close they are whenever the gap is under 5%.
+`allocateDesired` distributed the *difference* between the target envelope and
+the 2024 portfolio it started from, so where those two were close the weights
+had almost nothing to redistribute and every recipient stayed near its 2024
+level whatever the reader did with the triangle. EU Institutions was exactly
+that case: in 2026–2028 its discretionary envelope was within 1% of its 2024
+portfolio (US$11.34bn against US$11.28bn), which is why its recommended
+allocation for Malaysia sat at the 2024 value of US$4.81m under every objective.
+
+The objective's reach is now a stated share of the movable envelope rather than
+an artefact of each donor's history, so this cannot recur. `allocateDesired` has
+been removed.
 
 ## Checkboxes
 

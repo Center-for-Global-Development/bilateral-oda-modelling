@@ -81,6 +81,27 @@ running paragraph. See *Notes* in `README.md`.
       bumped in the same change as any edit to `shared/`. A stale stamp serves
       readers a mixture of old and new behaviour.
 
+### 0.4a F16 allocation semantics
+
+**Added 2 September 2026 on CGD instruction; supersedes any earlier description
+of the tool's anchor.**
+
+- [ ] The x axis is the audited projection for the selected year, including all
+      pins, floors and caps, consistent with every other figure.
+- [ ] The recommendation is a reallocation OF THAT PROJECTION, so the y axis is
+      a change from it and intensity 0 reproduces it (bar the viability floor).
+- [ ] The focus donor holds one corridor only: Ukraine, at its projected value.
+      No other announced allocation or floor constrains the focus donor.
+- [ ] Peer donors follow the full projection, including all of their own held
+      corridors. The peer-funding gap is computed from that.
+- [ ] Recipients are allocated in proportion to unmet peer-funding gap in US$,
+      not to the winsorised 0-1 score, which discards magnitude.
+- [ ] The reallocatable pool is the projection over recipients the donor funded
+      in 2024. Projected spend outside that set is reported, never absorbed.
+- [ ] The share of that pool the objective may move is the reader's choice,
+      defaulting to 100%, and is stated whenever it is not the default.
+- [ ] Grain is recipient, not recipient-sector.
+
 ### 0.5 Responsive and accessible
 
 - [ ] Works at desktop and mobile widths, reformatting reliably.

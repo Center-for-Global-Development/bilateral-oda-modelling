@@ -33,6 +33,13 @@
     .weight-row .weight-track{grid-column:1/-1}
     .weight-track i{display:block;height:100%;background:var(--cgd-light-teal)}
     .weight-row output{text-align:right;color:var(--cgd-teal);font-weight:700;font-variant-numeric:tabular-nums}
+    /* Spans both blend-panel columns: it governs the whole recommendation, not
+       just the weighting, so it reads as a separate decision below the two. */
+    .intensity-row{grid-column:1/-1;display:grid;grid-template-columns:auto minmax(90px,1fr) 46px;
+      gap:6px 9px;align-items:center;margin-top:8px;padding-top:9px;border-top:1px solid var(--border)}
+    .intensity-row label{font-size:11.6px;font-weight:600;color:var(--cgd-teal);white-space:nowrap}
+    .intensity-row output{text-align:right;color:var(--cgd-teal);font-weight:700;font-variant-numeric:tabular-nums}
+    .intensity-help{grid-column:1/-1;margin:0;color:var(--cgd-dark-gray);font-size:10.8px;line-height:1.35}
     .validation{margin:8px 0 0;color:var(--cgd-red);font-weight:700;line-height:1.35}
     .availability{margin:7px 0 0;color:var(--cgd-dark-gray);line-height:1.35}
     .panel-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:8px 10px 6px;border-bottom:1px solid #edf2f3;flex-wrap:wrap}
@@ -95,6 +102,22 @@
     <div class="blend-panel" id="blendPanel" hidden>
       <div class="triangle-wrap"><svg id="triangle" viewBox="0 0 360 255" role="img" aria-label="Blend poverty, humanitarian risk and fiscal vulnerability"></svg></div>
       <div class="weights" id="weights"></div>
+      <!-- How much of the movable envelope the objective is allowed to move.
+           It applies in every objective mode, not only in the blend, so its
+           value is also stated in the summary under the chart whenever it is
+           below 100% and this panel is closed. -->
+      <div class="intensity-row" id="intensityRow">
+        <label for="intensityInput">Reallocate</label>
+        <input type="range" id="intensityInput" min="0" max="100" step="5" value="100"
+               aria-describedby="intensityHelp">
+        <output id="intensityOut">100%</output>
+        <p class="intensity-help" id="intensityHelp">
+          Share of this donor&rsquo;s movable envelope the objective may redistribute. At 100%
+          the whole of it is allocated by the objective alone; at 0% the projection stands,
+          apart from allocations the country viability floor lifts off the floor. The
+          Ukraine corridor is held at every setting.
+        </p>
+      </div>
     </div>
     <p class="availability" id="objectiveAvailability"></p>
     <p class="validation" id="validation" role="alert" hidden></p>
@@ -164,7 +187,7 @@
   const years=payload.axes.year.slice();
   const donors=payload.axes.donor.slice().sort((a,b)=>payload.donorName(a).localeCompare(payload.donorName(b)));
   const parsed=parseUrl();
-  const defaults={scenario:parsed.scenario||'S1',donor:parsed.donor||'USA',year:parsed.year||2028,poverty:parsed.poverty??1,humanitarian:parsed.humanitarian??0,fiscal:parsed.fiscal??0,view:parsed.view||'pct'};
+  const defaults={scenario:parsed.scenario||'S1',donor:parsed.donor||'USA',year:parsed.year||2028,poverty:parsed.poverty??1,humanitarian:parsed.humanitarian??0,fiscal:parsed.fiscal??0,view:parsed.view||'pct',intensity:parsed.intensity??1};
   normaliseWeights(defaults);
   const state=UI.createState(defaults,{onChange:()=>schedule()});
 
@@ -220,13 +243,26 @@
     findSelect.value = highlighted || '';
   }
 
+  /* `input` rather than `change`, so the chart follows the thumb. Writes to
+     figure state like any other control, so it survives a donor or year change
+     and is captured in the shareable URL. */
+  const intensityInput=document.getElementById('intensityInput'),
+    intensityOut=document.getElementById('intensityOut');
+  function syncIntensity(){const v=Math.round((state.get().intensity??1)*100);
+    intensityInput.value=String(v);intensityOut.textContent=`${v}%`;}
+  intensityInput.addEventListener('input',()=>{
+    state.set({intensity:Number(intensityInput.value)/100});
+  });
+  state.subscribe(syncIntensity);syncIntensity();
+
   const noPriorityNode = document.getElementById('noPriorityNote');
   document.getElementById('notes').append(UI.notes({
     notes:[
       'Allocations and the donor envelope are grant-equivalent.',
-      'Announced country allocations and country floors are deliberately not applied, so the tool may imply funding for a country from which the donor has announced an exit.',
       'Peer donors follow the selected allocation rule and are then held fixed; they are never re-optimised.',
-      'The recommendation is solved at recipient level over the donor\u2019s observed 2024 portfolio; it does not choose sectors.',
+      'Recipients are allocated in proportion to their unmet peer-funding gap under the selected objective. The Reallocate control sets how much of the movable envelope is distributed that way.',
+      'The recommendation reallocates the donor\u2019s projected allocation for the selected year, across the recipients it funded in 2024. It is solved at recipient level and does not choose sectors.',
+      'Only the Ukraine corridor is held for the donor being examined. Other announced country allocations and floors are not applied to it, so the tool may imply funding for a country from which it has announced an exit. Peer donors follow the full projection, including all of their own held corridors.',
       UI.STANDARD_NOTES.prices
     ]
   }));
@@ -255,7 +291,7 @@
     const n=k=>{if(!q.has(k))return null;const v=Number(q.get(k));return Number.isFinite(v)?v:null};
     const year=n('year'),p=n('p'),h=n('h'),f=n('f'),pp=n('pp'),ph=n('ph'),pf=n('pf');
     const pin=[pp,ph,pf].every(Number.isFinite)?normalisedObject(pp,ph,pf):null;
-    return{scenario:validScenario?q.get('scenario'):null,donor:validDonor?q.get('donor'):null,year:years.includes(year)?year:null,poverty:p,humanitarian:h,fiscal:f,view:['pct','abs'].includes(q.get('view'))?q.get('view'):null,pin};
+    return{scenario:validScenario?q.get('scenario'):null,donor:validDonor?q.get('donor'):null,year:years.includes(year)?year:null,poverty:p,humanitarian:h,fiscal:f,intensity:(()=>{const v=Number(q.get('i'));return Number.isFinite(v)&&v>=0&&v<=1?v:null})(),view:['pct','abs'].includes(q.get('view'))?q.get('view'):null,pin};
   }
 
   function normalisedObject(p,h,f){const x={poverty:Math.max(0,p),humanitarian:Math.max(0,h),fiscal:Math.max(0,f)};let sum=x.poverty+x.humanitarian+x.fiscal;if(sum<=EPS){x.poverty=1;sum=1}Object.keys(x).forEach(k=>x[k]/=sum);return x}
@@ -380,10 +416,33 @@
     await payload.blobs(names);scenarioLoaded=scenario;
   }
 
+  /* The FOCUS donor holds one corridor only: Ukraine.
+
+     The payload pins 96 donor-recipient corridors, and the tool used to hold
+     all of them. For the UK that is 27 announced country programmes worth
+     US$1.48bn of an US$1.84bn envelope, so four fifths of its portfolio could
+     not move and the objective had almost nothing to work with; Poland,
+     Lithuania, Latvia and Estonia were pinned to 100% and the tool could do
+     nothing at all. That also contradicted this figure's own note, which says
+     announced country allocations are deliberately not applied.
+
+     Holding only Ukraine is the editorial decision: it is the one corridor
+     whose scale would otherwise swamp any reallocation, and it is held at its
+     audited projected value, which the payload guarantees is identical to the
+     Ukraine projection for all 50 donors. The other 46 corridors stay in the
+     data -- PEERS still follow the full projection including every pin, so the
+     peer-funding gap driving the objective is unaffected -- they simply no
+     longer constrain the focus donor's own recommendation. */
+  const HELD_RECIPIENTS=new Set(['UKR']);
   function pinMap(s){
     const pd=payload._blobs.get('tool/pinned_donor_index'),pr=payload._blobs.get('tool/pinned_recipient_index'),out=new Map();
     const scenarioIndex=payload.scenarios.indexOf(s.scenario);
-    for(let i=0;i<pd.length;i++)if(payload.axes.donor[pd[i]]===s.donor){const recipient=payload.axes.recipient[pr[i]],value=payload.at('tool/pinned_ge',{scenario:scenarioIndex,pin:i,year:s.year});out.set(recipient,value)}
+    for(let i=0;i<pd.length;i++){
+      if(payload.axes.donor[pd[i]]!==s.donor)continue;
+      const recipient=payload.axes.recipient[pr[i]];
+      if(!HELD_RECIPIENTS.has(recipient))continue;
+      out.set(recipient,payload.at('tool/pinned_ge',{scenario:scenarioIndex,pin:i,year:s.year}));
+    }
     return out;
   }
 
@@ -401,31 +460,14 @@
     return{peer,focal,components,score:r=>d3.sum(Object.keys(weights),k=>weights[k]*(components[k].score.get(r)||0)),gap:r=>d3.sum(Object.keys(weights),k=>weights[k]*(components[k].raw.get(r)||0))};
   }
 
-  function allocateDesired(anchor,score,target){
-    const total=d3.sum(anchor);if(!anchor.length)return[];if(Math.abs(target-total)<=EPS)return anchor.slice();
-    if(target>total){let weights=anchor.map((v,i)=>v*Math.exp(LAMBDA*score[i])),sum=d3.sum(weights);if(sum<=EPS){weights=score.map(q=>Math.exp(LAMBDA*q));sum=d3.sum(weights)}return anchor.map((v,i)=>v+(target-total)*weights[i]/sum)}
-    let cut=total-target,weights=anchor.map((v,i)=>v*Math.exp(-LAMBDA*score[i])),result=anchor.slice(),active=result.map(()=>true);
-    while(cut>EPS&&active.some(Boolean)){
-      const ids=active.map((v,i)=>v?i:-1).filter(i=>i>=0),sum=d3.sum(ids,i=>weights[i]);
-      let closed=false;
-      ids.forEach(i=>{const proposed=cut*(sum>EPS?weights[i]/sum:1/ids.length);if(proposed>=result[i]-EPS){cut-=result[i];result[i]=0;active[i]=false;closed=true}});
-      if(!closed){ids.forEach(i=>{result[i]-=cut*(sum>EPS?weights[i]/sum:1/ids.length)});cut=0}
-    }
-    return result.map(v=>v<EPS?0:v);
-  }
+  /* allocateDesired has been removed. It distributed the DIFFERENCE between
+     the 2024 anchor total and the target envelope, weighted by exp(+/-lambda*score).
+     That mechanism is what made the objective's influence depend on how far a
+     donor's envelope happened to sit from its 2024 portfolio -- large for the
+     US, almost nil for EU Institutions in 2026-28. solve() now blends the
+     projection with a gap-proportional allocation instead, so the amount moved
+     is a stated choice. */
 
-  /* A bisection over mu, and it must cope with a target it cannot reach.
-     Selecting Poland and stepping to 2026 used to hang the browser outright:
-     Poland's Ukraine corridor (US$170.45m) consumes essentially its whole
-     projected envelope (US$170.5m), so `target` came out as a floating-point
-     sliver -- US$0.0000046m -- while the viability-floor pass had already closed
-     EVERY free recipient. With nothing open, alloc(mu) is all zeros for any mu,
-     so `sum < target` stayed true, `hi` doubled forever, and the renderer
-     process died. No error, no fail state: a hung tab.
-
-     Two defences. Infeasible cases return the best allocation available instead
-     of searching for one that does not exist, and both searches are bounded, so
-     no future input can spin here either. */
   function projectBox(desired,target,closed){
     const n=desired.length,scaleFloor=Math.max(target/Math.max(n,1)*1e-4,1e-8),scale=desired.map(v=>Math.max(v,scaleFloor));
     const alloc=mu=>desired.map((v,i)=>closed.has(i)?0:Math.max(0,v+mu*scale[i]));
@@ -442,14 +484,55 @@
     return alloc((lo+hi)/2);
   }
 
-  function solve(s,weights,cov){
+  /* The recommendation is a reallocation OF THE PROJECTION.
+
+     `anchor` is each recipient's projected allocation for the selected year, so
+     "no reallocation" means exactly the projection and the y axis reads zero
+     everywhere. `ideal` is what the objective would do with a clean slate:
+     distribute the whole movable pool in proportion to each recipient's unmet
+     peer-funding gap. `intensity` slides between the two.
+
+     The gap in DOLLARS is the basis, not the 0-1 score. The score is
+     `min(1, gap/p95)` -- winsorised, because it was built as a tilt weight --
+     and using it as an allocation share throws the magnitude away: under a
+     poverty objective it puts DRC, Ethiopia and Nigeria all on 10.2% of the US
+     envelope, where their actual unmet gaps are 17%, 8% and 23%. The gap is
+     also the quantity this figure already headlines in its key.
+
+     Both `anchor` and `ideal` sum to the movable pool, so any blend of them
+     does too, and no rescaling is needed before the viability-floor pass. */
+  function solve(s,weights,cov,intensity=1){
     const pins=pinMap(s),support=supportRecipients(s.donor),free=support.filter(r=>!pins.has(r)),envelope=payload.at('tool/envelope_ge',{scenario:payload.scenarios.indexOf(s.scenario),donor:s.donor,year:s.year}),pinnedTotal=d3.sum(pins.values()),
-      /* Snapped to zero below US$1,000. envelope-pinnedTotal is a difference of
-         two numbers around US$170m, so its floating-point residue can be a few
-         millionths of a million dollars -- a "budget" that is nothing but which
-         the solver would still try to allocate. */
-      rawTarget=envelope-pinnedTotal,target=rawTarget>1e-3?rawTarget:0;
-    const anchor=free.map(r=>payload.at('tool/baseline_recipient_ge',{donor:s.donor,recipient:r})),scores=free.map(r=>cov.score(r)),desired=allocateDesired(anchor,scores,target),grossTotal=d3.sum(cov.focal.values()),ratio=envelope>EPS?grossTotal/envelope:1;
+      /* Snapped to zero below US$1,000: a difference of two numbers around
+         US$170m can leave a floating-point residue that is not a budget. */
+      rawTarget=envelope-pinnedTotal,heldFree=rawTarget>1e-3?rawTarget:0;
+    const geName=`scenarios/${s.scenario}/donor_recipient_year__ge`;
+    const anchor=free.map(r=>payload.at(geName,{donor:s.donor,recipient:r,year:s.year})||0),
+      anchorSum=d3.sum(anchor),
+      gaps=free.map(r=>Math.max(0,cov.gap(r)||0)),gapSum=d3.sum(gaps),
+      blend=Math.max(0,Math.min(1,Number(intensity)));
+    /* THE MOVABLE POOL IS THE PROJECTION OVER THE RECIPIENTS THE TOOL MAY TOUCH,
+       not the whole envelope less Ukraine.
+
+       Those are not the same number. The tool may only reallocate across
+       recipients the donor funded in 2024, and a scenario projection can put
+       money into recipients outside that set -- US$121m of the UK's US$1.84bn
+       envelope in 2028. Scaling the 2024-funded set up to the full envelope
+       would quietly move that money into the 2024 set, which broke two
+       invariants at once: intensity 0 no longer reproduced the projection (it
+       inflated every recipient by ~7%), and the recommendation summed to the
+       envelope while the projection over the same rows summed to less.
+
+       So the pool is anchorSum, intensity 0 IS the projection exactly, and the
+       projected spend outside the 2024 set is reported as out of scope rather
+       than absorbed. */
+    const target=anchorSum,
+      outOfScope=Math.max(0,heldFree-anchorSum);
+    /* No gap anywhere means the objective cannot distinguish between
+       recipients, so the projection stands whatever the intensity. */
+    const ideal=gapSum>EPS?gaps.map(g=>target*g/gapSum):anchor.slice();
+    const desired=anchor.map((v,i)=>(1-blend)*v+blend*ideal[i]);
+    const scores=free.map(r=>cov.score(r)),grossTotal=d3.sum(cov.focal.values()),ratio=envelope>EPS?grossTotal/envelope:1;
     const closed=new Set();let allocation=desired.slice();
     for(let iteration=0;iteration<=free.length;iteration++){
       allocation=closed.size?projectBox(desired,target,closed):desired.slice();
@@ -458,18 +541,20 @@
       candidates.sort((a,b)=>d3.ascending(a.score,b.score)||d3.ascending(a.value,b.value)||d3.ascending(a.r,b.r));closed.add(candidates[0].i);
     }
     const recommended=new Map();support.forEach(r=>recommended.set(r,pins.has(r)?pins.get(r):allocation[free.indexOf(r)]||0));
-    /* `anchorTotal` is the 2024 portfolio over the recipients the solver can
-       actually move. It is returned because it BOUNDS the objective's influence:
-       allocateDesired distributes the difference between the target and this
-       total, so where the two are close, the weights have almost nothing to
-       redistribute and every recipient stays near its 2024 level. That is the
-       method working as documented, but it looks like a broken control unless
-       the figure says so -- see the summary line. */
-    return{recommended,pins,envelope,pinnedTotal,discretionary:target,anchorTotal:d3.sum(anchor),ratio,closed:new Set([...closed].map(i=>free[i]))};
+    /* How many recipients the objective would leave with nothing. At full
+       intensity this is large -- about 70% of a donor's recipients have no
+       unmet peer-funding gap at all -- and it is the headline consequence of
+       the clean-slate default, so the summary reports it. */
+    const zeroed=free.filter((_r,i)=>(allocation[i]||0)<=EPS&&anchor[i]>EPS).length;
+    /* `anchorTotal` is the projected allocation over the recipients the solver
+       can move -- the sum the recommendation must come back to. It is returned
+       so the summary can report what share of it actually moved. */
+    return{recommended,pins,envelope,pinnedTotal,discretionary:target,anchorTotal:anchorSum,
+      outOfScope,intensity:blend,zeroed,gapSum,ratio,closed:new Set([...closed].map(i=>free[i]))};
   }
 
   function derive(s,weights){
-    const cov=coverage(s,weights),solution=solve(s,weights,cov),projected=new Map();
+    const cov=coverage(s,weights),solution=solve(s,weights,cov,s.intensity),projected=new Map();
     /* The audited grant-equivalent donor-recipient projection, read directly.
        It sums exactly to tool/envelope_ge for every donor-year, so there is
        nothing to rescale — an earlier build derived this axis by rescaling the
@@ -477,36 +562,14 @@
        already carries exactly. */
     const geName=`scenarios/${s.scenario}/donor_recipient_year__ge`;
     solution.recommended.forEach((_v,r)=>projected.set(r,payload.at(geName,{donor:s.donor,recipient:r,year:s.year})||0));
-    /* `anchored` marks a recipient whose displayed change is dominated by the
-       BASELINE MISMATCH rather than by the objective.
-
-       The solver allocates over the donor's observed 2024 portfolio; the change
-       shown is measured against the audited projection for the selected year.
-       Where a scenario's projection reshapes a recipient's funding sharply --
-       an exceptional 2024, a planned exit, a Ukraine surge -- those two
-       baselines differ by an order of magnitude, and the resulting percentage
-       is about the difference between them, not about the allocation.
-
-       The clearest case: the US gave Marshall Islands US$647m in 2024, almost
-       all of it one-off Compact payments, and the projection puts 2028 at
-       US$66m. Anchored on 2024 and rescaled to the envelope, the tool lands at
-       roughly US$266m -- so the mark reads "+305%" under every objective, which
-       looks like a recommendation to quadruple funding to an upper-middle-income
-       country and is really the 2024 spike showing through.
-
-       Flagged rather than silently corrected: which baseline the tool should
-       anchor on is a methodology question, and anchoring on the projection
-       instead would make the objective do nothing at all, because the
-       projection already sums exactly to the envelope. */
-    const ANCHOR_FLAG=3;
+    /* The baseline-mismatch flag is gone. It existed because the solver
+       allocated over the 2024 portfolio while the chart measured against the
+       projection, so a recipient whose projection diverged sharply from 2024
+       showed a change that was about the baseline rather than the objective.
+       The anchor is the projection now, so that divergence cannot arise and
+       there is nothing left to warn about. */
     const viewRows=[...solution.recommended].map(([recipient,recommended])=>{const before=projected.get(recipient)||0,ratio=before>EPS?recommended/before:(recommended>EPS?Infinity:1),change=recommended-before;
-      const anchorValue=payload.at('tool/baseline_recipient_ge',{donor:s.donor,recipient})||0,
-        anchorShare=solution.anchorTotal>EPS?anchorValue/solution.anchorTotal:0,
-        projShare=solution.envelope>EPS?before/solution.envelope:0,
-        shapeShift=projShare>0&&anchorShare>0?anchorShare/projShare:null,
-        anchored=!solution.pins.has(recipient)&&Number.isFinite(shapeShift)
-          &&(shapeShift>ANCHOR_FLAG||shapeShift<1/ANCHOR_FLAG);
-      return{recipient,name:payload.recipientName(recipient),income:M.incomeGroup(payload,recipient),projected:before,recommended,ratio,change,gap:cov.gap(recipient),score:cov.score(recipient),held:solution.pins.has(recipient),closed:solution.closed.has(recipient),anchorValue,shapeShift,anchored}});
+      return{recipient,name:payload.recipientName(recipient),income:M.incomeGroup(payload,recipient),projected:before,recommended,ratio,change,gap:cov.gap(recipient),score:cov.score(recipient),held:solution.pins.has(recipient),closed:solution.closed.has(recipient)}});
     return{rows:viewRows,solution,cov};
   }
 
@@ -694,26 +757,39 @@
        sentence that reports the movement, so they follow it in the same paragraph
        rather than standing as two more lines under the chart. */
     const fixedNote=`Note that the focus donor’s projected ODA envelope is fixed, and peers’ allocation behaviour is fixed by announced commitments and scenario projections.`;
-    const committedNote=`${fmtUsd(current.solution.pinnedTotal)} of ${payload.donorName(s.donor)}’s ${fmtUsd(current.solution.envelope)} projected envelope is already committed and cannot move.`;
+    const committedNote=current.solution.pinnedTotal>EPS
+      ? `${fmtUsd(current.solution.pinnedTotal)} of ${payload.donorName(s.donor)}’s ${fmtUsd(current.solution.envelope)} projected envelope is held for Ukraine and cannot move.`
+      : `None of ${payload.donorName(s.donor)}’s ${fmtUsd(current.solution.envelope)} projected envelope is held.`;
     /* Recipients with nothing either way are not on the chart, so the count has
        to be here: otherwise "130 recipients" in the notes and 89 marks on the
        plot disagree with no explanation. */
     const emptyNote=(()=>{const n=current.rows.filter(d=>!(d.projected>EPS||d.recommended>EPS)).length;
       return n?` ${M.countPhrase(n,'recipient','has/have')} neither projected nor recommended funding in ${s.year} and ${n===1?'is':'are'} not plotted.`:'';})();
-    /* Without this, a donor-year whose envelope happens to land on its 2024
-       portfolio reads as a dead control: the reader drags the objective triangle,
-       watches almost every recommended allocation stay put, and concludes the tool
-       is broken. EU Institutions in 2026-28 is exactly that case -- the
-       discretionary envelope is within 1% of the 2024 portfolio -- which is why
-       its Malaysia recommendation sits at the 2024 value whatever the weights. */
-    const anchorTotal=current.solution.anchorTotal||0,
-      headroom=Math.abs(current.solution.discretionary-anchorTotal),
-      headroomShare=anchorTotal>EPS?headroom/anchorTotal:1,
-      headroomNote=(anchorTotal>EPS&&headroomShare<.05)
-        ?` This objective redistributes the difference between the discretionary envelope (${fmtUsd(current.solution.discretionary)}) and the 2024 portfolio it starts from (${fmtUsd(anchorTotal)}). Those are within ${M.percent(headroomShare)} of each other here, so there is little to move and most recipients stay near their 2024 level whatever the weights.`
-        :'';
+    /* The headroom note is gone with the 2024 anchor: the objective no longer
+       redistributes the gap between the envelope and the 2024 portfolio, so how
+       much it can move is a stated choice rather than an accident. What the
+       reader needs instead is that choice, whenever it is not the default, and
+       what full intensity costs -- roughly 70% of a donor's recipients have no
+       unmet peer-funding gap at all, so a clean slate leaves them with nothing. */
+    const intensity=current.solution.intensity??1,
+      intensityNote=intensity>=0.999?''
+        :` The objective is set to redistribute ${M.percent(intensity)} of the movable envelope; the rest stays as projected.`,
+      zeroed=current.solution.zeroed||0,
+      zeroNote=zeroed?` At this setting ${M.countPhrase(zeroed,'recipient','is/are')} left with nothing, having no unmet peer-funding gap under this objective.`:'',
+      /* Projected spend on recipients the donor did not fund in 2024. The tool
+         may not reallocate it, so it is named rather than silently excluded. */
+      /* The viability floor bites at any intensity, including 0, so it is
+         disclosed separately from the objective's own effect. */
+      floored=current.solution.closed?current.solution.closed.size:0,
+      /* Only where the floor closes recipients the objective had NOT already
+         zeroed. At full intensity the two sets coincide, and reporting both read
+         as "90 recipients ... 90 recipients" in consecutive sentences. */
+      floorNote=(floored&&floored!==zeroed)?` ${M.countPhrase(floored,'recipient','falls/fall')} below the country viability floor at this setting and ${floored===1?'is':'are'} closed to zero.`:'',
+      scopeNote=(current.solution.outOfScope||0)>1
+        ? ` A further ${fmtUsd(current.solution.outOfScope)} is projected for recipients this donor did not fund in 2024, which the tool does not reallocate.`
+        : '';
     const up=current.rows.filter(r=>r.change>EPS),down=current.rows.filter(r=>r.change<-EPS),toward=d3.sum(up,r=>r.change),away=-d3.sum(down,r=>r.change),moved=(toward+away)/2,share=current.solution.discretionary>EPS?moved/current.solution.discretionary:0;
-    document.getElementById('summary').textContent=(current.solution.discretionary<=EPS?`No allocation can move for ${payload.donorName(s.donor)} in ${s.year} under ${s.scenario}.`:`${weightPhrase(currentWeights())}, this objective moves about ${fmtUsd(moved)} — ${M.percent(share)} of this donor’s discretionary envelope — toward ${up.length} recipients and away from ${down.length}.`)+` ${fixedNote} ${committedNote}${emptyNote}${headroomNote}`;
+    document.getElementById('summary').textContent=(current.solution.discretionary<=EPS?`No allocation can move for ${payload.donorName(s.donor)} in ${s.year} under ${s.scenario}.`:`${weightPhrase(currentWeights())}, this objective moves about ${fmtUsd(moved)} — ${M.percent(share)} of this donor’s movable envelope — toward ${up.length} recipients and away from ${down.length}, measured against the ${s.year} projection.`)+` ${fixedNote} ${committedNote}${emptyNote}${intensityNote}${zeroNote}${floorNote}${scopeNote}`;
   }
 
   function renderChart(s,current){
@@ -767,8 +843,18 @@
     svg.append('g').attr('class','axis').attr('transform',`translate(0,${h-m.bottom})`).call(d3.axisBottom(x).tickValues(xTicks).tickFormat(v=>v<.1?d3.format('.2f')(v):v<1?d3.format('.1f')(v):d3.format('~s')(v)).tickSizeOuter(0));
     svg.append('g').attr('class','axis').attr('transform',`translate(${m.left},0)`).call(d3.axisLeft(y).tickValues(yTicks).tickFormat(v=>view==='pct'?ratioLabel(v):fmtSigned(v)).tickSize(-plotW)).call(g=>g.select('.domain').remove());
     const zeroY=y(view==='pct'?1:0);svg.append('line').attr('x1',m.left).attr('x2',w-m.right).attr('y1',zeroY).attr('y2',zeroY).attr('stroke','var(--cgd-dark-gray)').attr('stroke-dasharray','4 3');svg.append('text').attr('x',w-m.right).attr('y',zeroY-5).attr('text-anchor','end').attr('class','small-text ref-label').text('no change');
+    /* A ratio of zero cannot sit on a log axis, so a recipient cut to nothing is
+       clamped to the bottom of the domain -- where it lands on whatever the
+       lowest tick happens to be and reads as that value. With the clean-slate
+       default that row can hold most of a donor's recipients, so it is labelled
+       for what it is. */
+    if(view==='pct'&&data.some(d=>d.projected>EPS&&d.recommended<=EPS)){
+      const floorY=y(y.domain()[0]);
+      svg.append('text').attr('x',w-m.right).attr('y',floorY-5).attr('text-anchor','end')
+        .attr('class','small-text ref-label').text('cut to zero');
+    }
     svg.append('text').attr('class','axis-title').attr('x',(m.left+w-m.right)/2).attr('y',h-7).attr('text-anchor','middle').text(w<430?'Projected allocation (GE US$m, log)':'Projected allocation before this objective (grant-equivalent US$m, log scale)');
-    svg.append('text').attr('class','axis-title').attr('x',m.left).attr('y',13).text(view==='pct'?(w<430?'Recommended change (log ratio)':'Recommended change (log-ratio scale)'):(w<430?'Recommended change (GE US$m, symlog)':'Recommended change (grant-equivalent US$m, symlog scale)'));
+    svg.append('text').attr('class','axis-title').attr('x',m.left).attr('y',13).text(view==='pct'?(w<430?'Recommended change (log ratio)':'Recommended change versus projection (log-ratio scale)'):(w<430?'Recommended change (GE US$m, symlog)':'Recommended change (grant-equivalent US$m, symlog scale)'));
     if(comparison?.rows){const by=new Map(comparison.rows.map(d=>[d.recipient,d]));
       const paired=data.filter(d=>by.has(d.recipient)&&!d.held);
       /* A PIN IS A FROZEN SNAPSHOT, so every part of its mark reads from the
@@ -824,11 +910,9 @@
       /* The chart carries a class while a highlight is active, so the CSS can dim
          everything else. A 2.4px ring on a 4px bubble among 130 bubbles is not
          findable on its own, which defeats the point of a Find control. */
-      .attr('class',d=>[
-        'current point',
-        d.anchored&&!d.held?'oda-anchored':'',
-        d.recipient===highlighted?'oda-highlighted':''
-      ].filter(Boolean).join(' ')).attr('cx',d=>x(Math.max(xFloor,d.projected))).attr('cy',d=>d.held?zeroY:pointY(d,view,y)).attr('r',d=>r(d.gap)).attr('fill',d=>d.held?'#fff':d.change>=0?'var(--cgd-light-teal)':'var(--cgd-gold)').attr('stroke',d=>d.held?'var(--cgd-dark-gray)':'#fff').attr('stroke-dasharray',d=>d.held?'3 2':null).attr('stroke-width',d=>d.held?1.5:1).attr('tabindex',0).attr('aria-label',d=>tooltipText(d)).on('pointerenter',(event,d)=>showTooltip(event,d)).on('pointermove',event=>positionTooltip(event)).on('pointerleave',()=>hideTooltip()).on('focus',(event,d)=>showTooltip(event,d)).on('blur',()=>hideTooltip()).on('click',function(event,d){event.stopPropagation();hideTooltip();openSectorDiagnostic(d.recipient,this)}).on('keydown',function(event,d){if(event.key==='Enter'||event.key===' '){event.preventDefault();hideTooltip();openSectorDiagnostic(d.recipient,this)}});
+      /* No baseline-mismatch class any more: the anchor is the projection, so
+         the mismatch that class warned about cannot arise. */
+      .attr('class',d=>d.recipient===highlighted?'current point oda-highlighted':'current point').attr('cx',d=>x(Math.max(xFloor,d.projected))).attr('cy',d=>d.held?zeroY:pointY(d,view,y)).attr('r',d=>r(d.gap)).attr('fill',d=>d.held?'#fff':d.change>=0?'var(--cgd-light-teal)':'var(--cgd-gold)').attr('stroke',d=>d.held?'var(--cgd-dark-gray)':'#fff').attr('stroke-dasharray',d=>d.held?'3 2':null).attr('stroke-width',d=>d.held?1.5:1).attr('tabindex',0).attr('aria-label',d=>tooltipText(d)).on('pointerenter',(event,d)=>showTooltip(event,d)).on('pointermove',event=>positionTooltip(event)).on('pointerleave',()=>hideTooltip()).on('focus',(event,d)=>showTooltip(event,d)).on('blur',()=>hideTooltip()).on('click',function(event,d){event.stopPropagation();hideTooltip();openSectorDiagnostic(d.recipient,this)}).on('keydown',function(event,d){if(event.key==='Enter'||event.key===' '){event.preventDefault();hideTooltip();openSectorDiagnostic(d.recipient,this)}});
     /* Selecting a mark opens the sector diagnostic rather than pinning the
        tooltip; the dialog carries its own Escape and outside-click dismissal
        through UI.modal, so there is no pinned state here to manage. */
@@ -910,11 +994,6 @@
     /* A mark whose change is an artefact of the baseline mismatch says so, on
        the mark itself. Without this the reader is shown a large percentage with
        no way to tell that it is about 2024 rather than about the objective. */
-    if(d.anchored){const st=state.get();tip.append(element('div',{className:'notes',
-      text:`This figure is dominated by the baseline, not the objective: `
-        +`${payload.donorName(st.donor)}\u2019s 2024 spending in ${d.name} was ${fmtUsd(d.anchorValue)}, `
-        +`and the ${st.year} projection is ${fmtUsd(d.projected)}. The tool allocates from the 2024 `
-        +`portfolio, so the change shown mostly reflects that gap.`}));}
     tip.hidden=false;positionTooltip(event)}
   function positionTooltip(event){const tip=document.getElementById('tooltip'),pad=10,box=tip.getBoundingClientRect(),cx=event.clientX??innerWidth/2,cy=event.clientY??innerHeight/2;tip.style.left=`${Math.max(pad,Math.min(innerWidth-box.width-pad,cx+12))}px`;tip.style.top=`${Math.max(pad,Math.min(innerHeight-box.height-pad,cy+12))}px`}
   function hideTooltip(){document.getElementById('tooltip').hidden=true}
@@ -928,7 +1007,7 @@
   }
   function syncPinButton(current){const b=document.getElementById('pinButton');b.disabled=current.solution.discretionary<=EPS;b.textContent=comparison?'Clear comparison':'Pin this allocation'}
   function updateUrl(s){
-    const q=new URLSearchParams();q.set('scenario',s.scenario);q.set('donor',s.donor);q.set('year',s.year);q.set('p',s.poverty.toFixed(4));q.set('h',s.humanitarian.toFixed(4));q.set('f',s.fiscal.toFixed(4));q.set('view',s.view);if(comparison?.weights){q.set('pp',comparison.weights.poverty.toFixed(4));q.set('ph',comparison.weights.humanitarian.toFixed(4));q.set('pf',comparison.weights.fiscal.toFixed(4))}history.replaceState(null,'',`${location.pathname}?${q}`)
+    const q=new URLSearchParams();q.set('scenario',s.scenario);q.set('donor',s.donor);q.set('year',s.year);q.set('p',s.poverty.toFixed(4));q.set('h',s.humanitarian.toFixed(4));q.set('f',s.fiscal.toFixed(4));q.set('i',(s.intensity??1).toFixed(2));q.set('view',s.view);if(comparison?.weights){q.set('pp',comparison.weights.poverty.toFixed(4));q.set('ph',comparison.weights.humanitarian.toFixed(4));q.set('pf',comparison.weights.fiscal.toFixed(4))}history.replaceState(null,'',`${location.pathname}?${q}`)
   }
 
   window.ODA_F16={state,rows:()=>rows,comparison:()=>comparison,derive,solve,coverage,missingIssue,setWeights};

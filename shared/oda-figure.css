@@ -477,11 +477,6 @@
   overflow: hidden; line-height: 1.25;
 }
 
-/* A mark whose displayed change is dominated by the baseline mismatch rather
-   than by the objective (F16). Dotted, not dashed: the dashed outline already
-   means "policy-held", and a reader should not have to tell two dash patterns
-   apart. The tooltip carries the explanation. */
-.viz-wrapper .point.oda-anchored { stroke: var(--cgd-dark-gray, #394649); stroke-width: 1.4; stroke-dasharray: 1 2; }
 /* The recipient picked from F16's Find control. Highlight, not filter: the
    point of finding one bubble among 130 is to see it IN the cloud -- so the rest
    are dimmed rather than removed, and the picked one keeps its own colour and
