@@ -576,7 +576,95 @@ donor, so the figure is now consistent with its own note. **But the pinned set
 itself may be wider than intended, and it still governs peers.** That is a
 question for the emitter and the methodology, not the front end.
 
-### The Poland hang### The Poland hang
+## What F16's axes may and may not respond to
+
+**Revised 3 September 2026.** Four separate defects here shared one cause: a
+quantity was allowed to set a scale it has no business setting.
+
+### The reallocation default was 0%, not 100%
+
+`parseUrl` read the intensity as `Number(q.get('i'))`. With no `i` in the query
+string `q.get` returns `null`, `Number(null)` is `0`, and `0` is finite and
+inside `[0, 1]` — so an absent parameter parsed as a deliberate "reallocate
+nothing" and the tool opened with every mark on the no-change line. The `n(k)`
+helper three lines above already guarded presence with `q.has`; this did not use
+it. **Any new URL parameter with a valid zero must go through `n()`.**
+
+The default is now 50%, which the methodology and its plain-language companion
+both state. Changing it means changing them too.
+
+### The x axis is the projection and nothing else
+
+Its domain was `max(projected, recommended)` over the *plotted* rows. Both
+halves were wrong. `recommended` is a function of the Reallocate slider, so
+dragging a control that cannot change a single projected value slid every
+bubble sideways; and reading it from the plotted rows rescaled it whenever the
+income legend hid a group. It is now the projection over `current.rows`, which
+no control in the figure can alter.
+
+### Three different things were being confused at the top of the y axis
+
+| | Test | Treatment |
+|---|---|---|
+| No base | projection under US$0.05m | Its own band above the plot, dodged 15px a row and individually labelled |
+| Off scale | a real projection, recommendation more than 50x it | Stays at its true x, clamps to the domain top, counted in an annotation |
+| Genuine outlier | inside the 20x cap | Plotted normally |
+
+The old code had only the first category, tested at US$0.01m, which caught
+almost nothing: EU Institutions projects **US$19,000** to Burkina Faso against a
+recommendation of US$64.8m, and **US$105,000** to DPRK against US$285m. Read as
+increases of 3,456% and 2,724% those two rows drove the domain to its 20x cap
+and flattened EU Institutions' genuine 13.8x for Nigeria into the middle of the
+chart.
+
+An intermediate fix folded "off scale" into "no base" using the 50x test alone.
+That was worse in a way no automated check caught: it put rows that **do** have a
+projected allocation into a band captioned "no projected allocation to change",
+so for Türkiye the figure asserted that of Nigeria and Kenya while their marks
+sat mid-axis at their real projections. **A caption that names a category must be
+true of every mark in it.** The two tests are now separate.
+
+### The domain was symmetric, which cost half the plot
+
+It was `[1/K, K]` — symmetric in log space, so "half as much" and "twice as
+much" sat equal distances from no change. That is a defensible reading of a
+ratio, and it is also why the UK's axis ran to +1900%: its deepest cut is 95%,
+a ratio of 1/18.75, and the headroom on that pinned the top to the cap when its
+largest increase was 7x. Ninety-five per cent of its recipients sat inside 7.4x.
+Each end is now set from its own side of the data. The no-change line is drawn
+and labelled, so zero is not ambiguous without the symmetry.
+
+Donors still reaching the cap do so on real data — Türkiye would give Sudan 25
+times its projection under a pure poverty objective, and Mali 45 times — so the
+clamped marks are counted rather than hidden.
+
+### A pin holds the y scale
+
+`scaleRows` and `rawAbs` include `comparison.rows`, so the domain is the union
+of the live data and the pin. Sliding Reallocate from 100% to 10% shrinks the
+live spread, and on a domain read from live data alone the pinned rings — the
+fixed thing the reader is comparing against — slid off the top of the chart.
+Union rather than freeze, so a live mark can never be clipped by a stale domain.
+
+### The band adds height; it does not take it
+
+The UK reopens 19 corridors. Carving that out of a fixed 490px chart left the
+ratio axis about 130px tall, and label collisions were then unavoidable. `h` is
+`490 + bandH`, so the plot keeps its own space. A 10.8px label measures 13.3px,
+so the row pitch is 15px: at 13px adjacent labels overlapped by three tenths of
+a pixel, which the render gate reports as colliding text.
+
+### Colour is income group, direction is the background
+
+Fill was teal for an increase and gold for a cut, which spent the one channel a
+reader expects to mean "which kind of country" on a fact the y axis already
+carries. Fill is now `CGDSet.colourFor(d.income)` with a `UI.filterLegend`, as
+in F4, F5, F9 and F11; direction is a pale green wash above the no-change line
+and a pale red one below. The **key** swatches use a stronger tint than the
+bands — at 10px square a 7.5% wash is white — while the bands stay pale because
+130 marks sit on them.
+
+### The Poland hang
 
 **Selecting Poland and stepping the year used to kill the tab.** Worth recording,
 because the shape of it will recur.

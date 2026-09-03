@@ -16,53 +16,91 @@
     .objective-buttons{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
     .objective-buttons .segmented{flex-wrap:wrap}
     .objective-buttons .segmented button:disabled{opacity:.45;cursor:not-allowed}
-    .blend-panel{display:grid;grid-template-columns:minmax(150px,186px) minmax(190px,1fr);gap:16px;align-items:center;margin-top:9px;padding-top:9px;border-top:1px solid var(--border)}
+    /* Three columns, not two with a full-width row beneath: the reallocation
+       slider is a sibling decision to the weighting, and stacking it cost a
+       whole row of height for one 34px control. */
+    .blend-panel{display:grid;grid-template-columns:minmax(120px,148px) minmax(132px,178px) minmax(196px,1fr);gap:8px 15px;align-items:center;margin-top:9px;padding-top:9px;border-top:1px solid var(--border)}
     /* Half the linear size, so a quarter of the area. The corner names moved out to
        the weights list beside it, where they were already printed: three full
        phrases cannot be legible around a 186px triangle, and single letters keyed
        to that list can. */
-    .triangle-wrap{width:100%;max-width:186px;margin:0}
+    .triangle-wrap{width:100%;max-width:148px;margin:0}
     .triangle-wrap svg{height:auto;touch-action:none;overflow:visible}
     .triangle-edge{fill:#fff;stroke:var(--cgd-teal-gray);stroke-width:3}
     .triangle-grid{stroke:var(--border);stroke-width:2;fill:none}
     .triangle-label{fill:var(--cgd-teal);font-size:26px;font-weight:700}
     .triangle-point{fill:var(--cgd-gold);stroke:var(--cgd-teal);stroke-width:3.5;cursor:grab}
     .weights{display:grid;gap:7px}
-    .weight-row{display:grid;grid-template-columns:minmax(110px,1fr) 48px;gap:8px;align-items:center}
+    .weight-row{display:grid;grid-template-columns:minmax(64px,1fr) 40px;gap:6px;align-items:center}
     .weight-track{height:7px;background:var(--cgd-light-gray);position:relative}
     .weight-row .weight-track{grid-column:1/-1}
     .weight-track i{display:block;height:100%;background:var(--cgd-light-teal)}
     .weight-row output{text-align:right;color:var(--cgd-teal);font-weight:700;font-variant-numeric:tabular-nums}
-    /* Spans both blend-panel columns: it governs the whole recommendation, not
-       just the weighting, so it reads as a separate decision below the two. */
-    .intensity-row{grid-column:1/-1;display:grid;grid-template-columns:auto minmax(90px,1fr) 46px;
-      gap:6px 9px;align-items:center;margin-top:8px;padding-top:9px;border-top:1px solid var(--border)}
+    /* Its own column to the right of the weights, divided by a rule rather
+       than by a border-top, since it no longer sits underneath them. */
+    .intensity-row{display:grid;grid-template-columns:auto minmax(72px,1fr) 44px;
+      gap:5px 8px;align-items:center;margin:0;padding-left:15px;border-left:1px solid var(--border)}
     .intensity-row label{font-size:11.6px;font-weight:600;color:var(--cgd-teal);white-space:nowrap}
     .intensity-row output{text-align:right;color:var(--cgd-teal);font-weight:700;font-variant-numeric:tabular-nums}
     .intensity-help{grid-column:1/-1;margin:0;color:var(--cgd-dark-gray);font-size:10.8px;line-height:1.35}
     .validation{margin:8px 0 0;color:var(--cgd-red);font-weight:700;line-height:1.35}
     .availability{margin:7px 0 0;color:var(--cgd-dark-gray);line-height:1.35}
-    .panel-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:8px 10px 6px;border-bottom:1px solid #edf2f3;flex-wrap:wrap}
-    .panel-actions{display:flex;gap:7px;align-items:flex-end;flex-wrap:wrap}
-    .panel-actions .control-group{min-width:155px}
-    .pin-button{height:34px;border:1px solid var(--border);border-radius:9px;background:#fff;color:var(--cgd-teal);font:inherit;font-weight:700;padding:6px 10px;cursor:pointer}
+    /* The title takes its own line and everything else shares the next one:
+       the key, the recipient finder, the view toggle and the pin. Previously the
+       key and the three controls were two flex children of one row that wrapped
+       at any realistic width, costing about 90px of chart height. */
+    .panel-top{display:block;padding:8px 10px 6px;border-bottom:1px solid #edf2f3}
+    .panel-bar{display:flex;align-items:flex-end;gap:6px 12px;flex-wrap:wrap;margin-top:4px}
+    /* Allowed to take two lines -- at 10.8px it stays legible -- but it yields
+       width to the controls first, which have a hard minimum. */
+    .key-wrap{flex:1 1 380px;min-width:250px;display:flex;flex-wrap:wrap;gap:2px 9px;align-items:center}
+    .panel-actions{display:flex;gap:6px;align-items:flex-end;flex:0 0 auto}
+    .panel-actions .control-group{flex:0 0 auto;min-width:0}
+    .panel-actions .control-label{font-size:10.2px;margin-bottom:2px;white-space:nowrap}
+    /* Fixed, not intrinsic. A select is as wide as its longest option unless it
+       is told otherwise, and this one lists every recipient. */
+    .panel-actions .plain-select{font-size:11.2px;height:32px;width:136px;min-width:0;
+      text-overflow:ellipsis}
+    .panel-actions .segmented button{font-size:11.2px;padding:5px 7px}
+    .pin-button{height:32px;border:1px solid var(--border);border-radius:9px;background:#fff;color:var(--cgd-teal);font:inherit;font-weight:700;font-size:11.2px;padding:5px 9px;cursor:pointer;white-space:nowrap}
     .pin-button:disabled{opacity:.45;cursor:not-allowed}
-    .key{display:flex;flex-wrap:wrap;gap:5px 12px;margin-top:5px;color:var(--cgd-dark-gray);font-size:10.8px}
+    .key{display:flex;flex-wrap:wrap;gap:3px 10px;color:var(--cgd-dark-gray);font-size:10.8px}
     .key span{display:inline-flex;align-items:center;gap:4px}
-    .key i{width:10px;height:10px;border-radius:50%;display:inline-block}
-    .key .more{background:var(--cgd-light-teal)}
-    .key .less{background:var(--cgd-gold)}
+    .key i{width:10px;height:10px;border-radius:50%;display:inline-block;flex:0 0 auto}
     .key .held{background:#fff;border:1.5px dashed var(--cgd-dark-gray)}
     .key .compare{background:#fff;border:1.5px solid var(--cgd-blue)}
+    /* The two background bands, which is where direction now lives. */
+    .key .bandmore{border-radius:2px;background:rgba(0,137,108,.3);border:1px solid rgba(0,137,108,.6)}
+    .key .bandless{border-radius:2px;background:rgba(209,85,83,.28);border:1px solid rgba(209,85,83,.6)}
+    /* Income group is now the fill, so its legend is a filter and lives in the
+       same row. The shared legend-item button carries its own 24px tap target. */
+    #legend{display:flex;flex-wrap:wrap;gap:2px 6px}
+    #legend .legend-item{font-size:10.8px}
+    /* Pale enough to read as ground rather than as a series. */
+    #vizRoot{--band-more:rgba(0,137,108,.075);--band-less:rgba(209,85,83,.07)}
+    /* The new/reopened cluster shares one x, so its labels are the only way to
+       tell those marks apart; they are interactive, unlike the outlier labels. */
+    .band-label{fill:var(--cgd-teal);cursor:pointer}
+    .band-label:focus-visible{outline:2px solid var(--cgd-gold);outline-offset:1px}
     .chart-area{position:relative;min-height:430px}
     #chart{display:block;width:100%}
     .summary{margin:8px 10px 10px;color:var(--cgd-teal-black);font-size:12px;line-height:1.4}
     .loading{min-height:430px;display:flex;align-items:center;justify-content:center;color:var(--cgd-dark-gray)}
     .tooltip{position:fixed}
+    /* Divides the recipient's own numbers from the per-objective breakdown,
+       which would otherwise read as five more rows of the same table. */
+    .tooltip .tip-head{margin:7px 0 0;padding-top:5px;border-top:1px solid var(--border);
+      font-size:10.4px;line-height:1.3;color:var(--cgd-dark-gray)}
+    @media(max-width:980px){
+      /* Two columns: triangle beside weights, reallocation below both. */
+      .blend-panel{grid-template-columns:minmax(120px,148px) minmax(132px,1fr)}
+      .intensity-row{grid-column:1/-1;padding-left:0;border-left:0;
+        margin-top:7px;padding-top:8px;border-top:1px solid var(--border)}
+    }
     @media(max-width:720px){
       .blend-panel{grid-template-columns:1fr}
-      .panel-top{display:block}
-      .panel-actions{margin-top:7px}
+      .panel-actions{margin-top:7px;flex-wrap:wrap}
+      .key-wrap{flex:1 1 100%}
       .chart-area{min-height:390px;padding-left:5px;padding-right:5px}
     }
     @media(max-width:430px){
@@ -108,14 +146,12 @@
            below 100% and this panel is closed. -->
       <div class="intensity-row" id="intensityRow">
         <label for="intensityInput">Reallocate</label>
-        <input type="range" id="intensityInput" min="0" max="100" step="5" value="100"
+        <input type="range" id="intensityInput" min="0" max="100" step="5" value="50"
                aria-describedby="intensityHelp">
-        <output id="intensityOut">100%</output>
+        <output id="intensityOut">50%</output>
         <p class="intensity-help" id="intensityHelp">
-          Share of this donor&rsquo;s movable envelope the objective may redistribute. At 100%
-          the whole of it is allocated by the objective alone; at 0% the projection stands,
-          apart from allocations the country viability floor lifts off the floor. The
-          Ukraine corridor is held at every setting.
+          Share of this donor&rsquo;s bilateral ODA budget the objective may redistribute
+          versus projected allocations. Note ODA to Ukraine is held static.
         </p>
       </div>
     </div>
@@ -124,23 +160,26 @@
   </section>
   <section class="panel" id="chartPanel">
     <div class="panel-top">
-      <div>
-        <h2 class="panel-title" id="panelTitle">Change by recipient under allocation objective function</h2>
-        <div class="key" aria-label="Chart key">
-          <span><i class="more"></i>More</span><span><i class="less"></i>Less</span>
-          <span><i class="held"></i>Policy-held</span><span><i class="compare"></i>Pinned comparison</span>
-          <span>Larger bubble = larger peer funding gap</span>
+      <h2 class="panel-title" id="panelTitle">Change by recipient under allocation objective function</h2>
+      <div class="panel-bar">
+        <div class="key-wrap">
+          <div class="key" id="legend" aria-label="Income group: select to show or hide"></div>
+          <div class="key" aria-label="Chart key">
+            <span><i class="bandmore"></i><i class="bandless"></i>More / less</span>
+            <span><i class="held"></i>Policy-held</span><span><i class="compare"></i>Pinned</span>
+            <span>Bubble = peer gap</span>
+          </div>
         </div>
-      </div>
       <div class="panel-actions">
         <!-- Between the key and the Change-shown toggle, as a way of FINDING a
              recipient among 130 unlabelled bubbles. It highlights; it does not
              filter, so the selected recipient is read in the context of the rest
              of the portfolio rather than on its own. -->
         <div class="control-group"><div class="control-label">Find recipient</div>
-          <select class="plain-select oda-select-wide" id="findRecipient" aria-label="Highlight a recipient"></select></div>
+          <select class="plain-select" id="findRecipient" aria-label="Highlight a recipient"></select></div>
         <div class="control-group"><div class="control-label">Change shown</div><div class="segmented" id="viewToggle" role="group" aria-label="Change shown"></div></div>
         <button class="pin-button" id="pinButton" type="button">Pin this allocation</button>
+      </div>
       </div>
     </div>
     <div class="chart-area" id="chartArea"><svg id="chart" role="img" aria-labelledby="panelTitle"></svg></div>
@@ -169,6 +208,9 @@
   const OBJECTIVES={poverty:'Poverty',humanitarian:'Humanitarian risk',fiscal:'Fiscal vulnerability'};
   const LAMBDA=2.3, EPS=1e-7;
   let payload, width=700, scenarioLoaded=null, rows=[], comparison=null, requestSeq=0, advancedOpen=false;
+  /* The coverage in force at the last render, for the tooltip's per-objective
+     block: the tooltip outlives the render that produced its data. */
+  let currentCov=null;
   /* The highlighted recipient, or null. Deliberately NOT in the state store:
      it changes nothing about the allocation, so it must not reset a page or
      re-run the solver the way a state key would. */
@@ -187,7 +229,7 @@
   const years=payload.axes.year.slice();
   const donors=payload.axes.donor.slice().sort((a,b)=>payload.donorName(a).localeCompare(payload.donorName(b)));
   const parsed=parseUrl();
-  const defaults={scenario:parsed.scenario||'S1',donor:parsed.donor||'USA',year:parsed.year||2028,poverty:parsed.poverty??1,humanitarian:parsed.humanitarian??0,fiscal:parsed.fiscal??0,view:parsed.view||'pct',intensity:parsed.intensity??1};
+  const defaults={scenario:parsed.scenario||'S1',donor:parsed.donor||'USA',year:parsed.year||2028,poverty:parsed.poverty??1,humanitarian:parsed.humanitarian??0,fiscal:parsed.fiscal??0,view:parsed.view||'pct',intensity:parsed.intensity??.5,hiddenIncome:parsed.hiddenIncome??''};
   normaliseWeights(defaults);
   const state=UI.createState(defaults,{onChange:()=>schedule()});
 
@@ -234,7 +276,7 @@
       .sort((a, b) => a[1].localeCompare(b[1]));
     const wanted = ['', ...names.map(n => n[0])].join('|');
     if (findSelect.dataset.keys !== wanted) {
-      findSelect.replaceChildren(new Option('No highlight', ''),
+      findSelect.replaceChildren(new Option('None', ''),
         ...names.map(([iso, name]) => new Option(name, iso)));
       findSelect.dataset.keys = wanted;
     }
@@ -248,7 +290,7 @@
      and is captured in the shareable URL. */
   const intensityInput=document.getElementById('intensityInput'),
     intensityOut=document.getElementById('intensityOut');
-  function syncIntensity(){const v=Math.round((state.get().intensity??1)*100);
+  function syncIntensity(){const v=Math.round((state.get().intensity??.5)*100);
     intensityInput.value=String(v);intensityOut.textContent=`${v}%`;}
   intensityInput.addEventListener('input',()=>{
     state.set({intensity:Number(intensityInput.value)/100});
@@ -258,11 +300,8 @@
   const noPriorityNode = document.getElementById('noPriorityNote');
   document.getElementById('notes').append(UI.notes({
     notes:[
-      'Allocations and the donor envelope are grant-equivalent.',
-      'Peer donors follow the selected allocation rule and are then held fixed; they are never re-optimised.',
-      'Recipients are allocated in proportion to their unmet peer-funding gap under the selected objective. The Reallocate control sets how much of the movable envelope is distributed that way.',
-      'The recommendation reallocates the donor\u2019s projected allocation for the selected year, across the recipients it funded in 2024. It is solved at recipient level and does not choose sectors.',
-      'Only the Ukraine corridor is held for the donor being examined. Other announced country allocations and floors are not applied to it, so the tool may imply funding for a country from which it has announced an exit. Peer donors follow the full projection, including all of their own held corridors.',
+      'Allocations and the donor envelope are grant-equivalent, and are solved at recipient level: the tool does not choose sectors.',
+      'Only the Ukraine corridor is held for the donor being examined, so the tool may imply funding for a country from which it has announced an exit. Peer donors follow the full projection, including all of their own announced commitments, and are never re-optimised.',
       UI.STANDARD_NOTES.prices
     ]
   }));
@@ -291,7 +330,7 @@
     const n=k=>{if(!q.has(k))return null;const v=Number(q.get(k));return Number.isFinite(v)?v:null};
     const year=n('year'),p=n('p'),h=n('h'),f=n('f'),pp=n('pp'),ph=n('ph'),pf=n('pf');
     const pin=[pp,ph,pf].every(Number.isFinite)?normalisedObject(pp,ph,pf):null;
-    return{scenario:validScenario?q.get('scenario'):null,donor:validDonor?q.get('donor'):null,year:years.includes(year)?year:null,poverty:p,humanitarian:h,fiscal:f,intensity:(()=>{const v=Number(q.get('i'));return Number.isFinite(v)&&v>=0&&v<=1?v:null})(),view:['pct','abs'].includes(q.get('view'))?q.get('view'):null,pin};
+    return{scenario:validScenario?q.get('scenario'):null,donor:validDonor?q.get('donor'):null,year:years.includes(year)?year:null,poverty:p,humanitarian:h,fiscal:f,intensity:(()=>{const v=n('i');return v!==null&&v>=0&&v<=1?v:null})(),hiddenIncome:q.get('hi'),view:['pct','abs'].includes(q.get('view'))?q.get('view'):null,pin};
   }
 
   function normalisedObject(p,h,f){const x={poverty:Math.max(0,p),humanitarian:Math.max(0,h),fiscal:Math.max(0,f)};let sum=x.poverty+x.humanitarian+x.fiscal;if(sum<=EPS){x.poverty=1;sum=1}Object.keys(x).forEach(k=>x[k]/=sum);return x}
@@ -455,7 +494,8 @@
       const valid=recipients.filter(r=>Number.isFinite(payload.at(`tool/need_${kind}`,{recipient:r}))),needTotal=d3.sum(valid,r=>Math.max(0,payload.at(`tool/need_${kind}`,{recipient:r}))),peerTotal=d3.sum(valid,r=>peer.get(r));
       const raw=new Map(valid.map(r=>{const share=needTotal>0?Math.max(0,payload.at(`tool/need_${kind}`,{recipient:r}))/needTotal:0;return[r,Math.max(0,share*peerTotal-peer.get(r))]}));
       const positive=[...raw.values()].filter(v=>v>0).sort(d3.ascending),p95=d3.quantileSorted(positive,.95)||1;
-      components[kind]={raw,score:new Map(valid.map(r=>[r,Math.min(1,(raw.get(r)||0)/p95)]))};
+      components[kind]={raw,score:new Map(valid.map(r=>[r,Math.min(1,(raw.get(r)||0)/p95)])),
+        share:new Map(valid.map(r=>[r,needTotal>0?Math.max(0,payload.at(`tool/need_${kind}`,{recipient:r}))/needTotal:0]))};
     });
     return{peer,focal,components,score:r=>d3.sum(Object.keys(weights),k=>weights[k]*(components[k].score.get(r)||0)),gap:r=>d3.sum(Object.keys(weights),k=>weights[k]*(components[k].raw.get(r)||0))};
   }
@@ -579,10 +619,21 @@
   }
 
   function render(s){
-    const weights=currentWeights(),current=derive(s,weights);rows=current.rows;
+    const weights=currentWeights(),current=derive(s,weights);rows=current.rows;currentCov=current.cov;
     if(comparison?.context&&(comparison.context.scenario!==s.scenario||comparison.context.donor!==s.donor||comparison.context.year!==s.year))comparison=null;
     if(comparison&&!comparison.rows){const issue=missingIssue(s.donor,comparison.weights);if(issue)comparison=null;else{comparison={...comparison,...derive(s,comparison.weights)};comparison.gapMax=d3.max(comparison.rows,d=>d.gap)||1;}}
-    syncObjective();updateUrl(s);renderNotes(s,current);renderChart(s,current);renderSummary(s,current);syncPinButton(current);window.CGD_READY=true;
+    syncObjective();updateUrl(s);renderNotes(s,current);renderLegend(current);renderChart(s,current);renderSummary(s,current);syncPinButton(current);window.CGD_READY=true;
+  }
+
+  /* Income group is the fill, so its key is also the filter, exactly as in F4,
+     F5, F9 and F11. Only groups actually present in this donor's portfolio are
+     offered; the shared control refuses to hide the last visible one. */
+  function renderLegend(current){
+    const present=M.INCOME_GROUPS.filter(g=>current.rows.some(r=>r.income===g));
+    UI.filterLegend({host:document.getElementById('legend'),keys:present,state,
+      stateKey:'hiddenIncome',colourOf:g=>window.CGDSet.colourFor(g),
+      tipOf:g=>{const n=current.rows.filter(r=>r.income===g).length;
+        return `${n} recipient${n===1?'':'s'} of this donor in this group.`}});
   }
 
   function renderNotes(s,current){
@@ -772,8 +823,9 @@
        what full intensity costs -- roughly 70% of a donor's recipients have no
        unmet peer-funding gap at all, so a clean slate leaves them with nothing. */
     const intensity=current.solution.intensity??1,
-      intensityNote=intensity>=0.999?''
-        :` The objective is set to redistribute ${M.percent(intensity)} of the movable envelope; the rest stays as projected.`,
+      intensityNote=intensity>=0.999
+        ? ` The objective is set to redistribute the whole of this donor’s movable budget.`
+        : ` The objective is set to redistribute ${M.percent(intensity)} of this donor’s movable budget; the rest stays as projected.`,
       zeroed=current.solution.zeroed||0,
       zeroNote=zeroed?` At this setting ${M.countPhrase(zeroed,'recipient','is/are')} left with nothing, having no unmet peer-funding gap under this objective.`:'',
       /* Projected spend on recipients the donor did not fund in 2024. The tool
@@ -802,9 +854,49 @@
        0% line at the x-axis floor as though the objective had considered it and
        left it alone. Dropped from the plot and counted in the summary instead --
        the same rule F8 applies to a zero-height band. */
-    const plottable=current.rows.filter(d=>d.projected>EPS||d.recommended>EPS),
+    const hiddenIncome=UI.hiddenSet(s.hiddenIncome),
+      plottable=current.rows.filter(d=>(d.projected>EPS||d.recommended>EPS)&&!hiddenIncome.has(d.income)),
       emptyRows=current.rows.length-plottable.length,
-      data=plottable,w=Math.max(280,Math.floor(area.clientWidth||width)),h=w<430?430:490,m={top:48,right:18,bottom:58,left:w<430?64:76},plotW=w-m.left-m.right,plotH=h-m.top-m.bottom,maxX=Math.max(10,d3.max(data,d=>Math.max(d.projected,d.recommended))||10),xFloor=.03,x=d3.scaleLog([xFloor,maxX*1.15],[m.left,w-m.right]).clamp(true),view=s.view;
+      data=plottable,w=Math.max(280,Math.floor(area.clientWidth||width)),view=s.view;
+    /* noBase and isNewOrReopened are module-level; see their definition. */
+    /* Band membership decides the chart's HEIGHT, so it is settled before the
+       geometry rather than after it. The band exists only on the ratio axis: in
+       absolute terms a new or reopened recipient has an ordinary change -- its
+       recommended amount -- and plots on the symlog scale like anything else.
+       Pinned rows join it so a ring cannot be orphaned when the live row it
+       belonged to leaves the band. */
+    const bandMembers=new Map();
+    if(view==='pct'){
+      for(const d of data)if(isNewOrReopened(d))bandMembers.set(d.recipient,d);
+      for(const d of (comparison?.rows||[]))
+        if(isNewOrReopened(d)&&!bandMembers.has(d.recipient))bandMembers.set(d.recipient,d);
+    }
+    const newRows=[...bandMembers.values()]
+        .sort((a,b)=>d3.descending(a.recommended,b.recommended)||d3.ascending(a.name,b.name)),
+      /* THE BAND ADDS HEIGHT, it does not take it from the plot. The United
+         Kingdom reopens 19 corridors; carving that out of a fixed 490px chart
+         left the ratio axis about 130px tall and made label collisions
+         unavoidable. A 10.8px label measures 13.3px tall, so the row pitch is
+         15px: at 13px adjacent labels overlapped by three tenths of a pixel,
+         which the render gate reports as colliding text. */
+      bandH=newRows.length?Math.min(320,20+(newRows.length-1)*15):0,
+      bandStep=newRows.length>1?Math.min(15,(bandH-14)/(newRows.length-1)):0,
+      h=(w<430?430:490)+bandH,
+      m={top:48,right:18,bottom:58,left:w<430?64:76},
+      plotW=w-m.left-m.right,plotH=h-m.top-m.bottom,
+      yTop=m.top+bandH,
+      bandY=new Map(newRows.map((d,i)=>[d.recipient,m.top+8+i*bandStep])),
+      /* THE X AXIS IS THE PROJECTION, so its domain is the projection over EVERY
+         row of the portfolio -- not over the plotted rows, and never over
+         `recommended`. Taking the max of projected AND recommended made a
+         supposedly fixed axis a function of the Reallocate slider: at a high
+         intensity one recipient can be allocated many times any projected
+         amount, which stretched the domain and slid every bubble sideways as
+         the reader dragged a control that cannot change a single projected
+         value. Reading it from `data` also rescaled it when the income legend
+         hid a group, or when a recipient dropped out of the plot entirely. */
+      maxX=Math.max(10,d3.max(current.rows,d=>d.projected)||10),
+      xFloor=.03,x=d3.scaleLog([xFloor,maxX*1.15],[m.left,w-m.right]).clamp(true);
     /* The percentage-change axis was hard-coded to a ratio domain of [0.1, 10] --
        a fixed window from "10% of projected" to "ten times projected" -- for every
        donor and every allocation rule. Almost no donor spans anything like that,
@@ -818,10 +910,33 @@
        one recipient going from near-zero to funded cannot flatten everyone else --
        the scale still clamps, so such a point is pinned to the axis end rather
        than dropped. */
-    const ratios=data.map(d=>d.ratio).filter(v=>Number.isFinite(v)&&v>0),
-      spread=ratios.length?Math.max(...ratios.map(r=>Math.max(r,1/r))):1,
-      ratioK=Math.min(20,Math.max(1.05,spread*1.15));
-    const rawAbs=d3.max(data,d=>Math.abs(d.change))||1,absMax=Math.max(1,rawAbs*1.15),y=view==='pct'?d3.scaleLog([1/ratioK,ratioK],[h-m.bottom,m.top]).clamp(true):d3.scaleSymlog().constant(Math.max(.05,absMax/30)).domain([-absMax,absMax]).range([h-m.bottom,m.top]);
+    /* Rows with no base are excluded from the domain and drawn in their own
+       band above the plot, so the axis is set by the largest change among
+       recipients that HAVE a projected allocation to change.
+
+       Pinned rows are in the pool too, which is what holds the scale while a
+       comparison is up: sliding Reallocate from 100% down to 10% shrinks the
+       live spread, and on a domain read from the live data alone the pinned
+       rings -- the fixed thing the reader is comparing against -- would slide
+       off the top of the chart. Taking the union rather than freezing outright
+       also means a live mark can never be clipped by a stale domain. */
+    const scaleRows=[...data,...(comparison?.rows||[])].filter(d=>!noBase(d)&&!offScale(d)),
+      ratios=scaleRows.map(d=>d.ratio).filter(v=>Number.isFinite(v)&&v>0),
+      up=ratios.filter(v=>v>1),down=ratios.filter(v=>v<1),
+      /* Each end from its own side, floored at 5% so a portfolio that barely
+         moves does not get an axis magnifying rounding noise, and capped at 20x
+         so one recipient going from almost nothing to funded cannot flatten
+         everyone else. The scale still clamps, so a row outside the cap is
+         pinned to the axis end rather than dropped. */
+      hiK=Math.min(20,Math.max(1.05,(up.length?Math.max(...up):1)*1.15)),
+      loK=Math.max(1/20,Math.min(1/1.05,(down.length?Math.min(...down):1)/1.15));
+    const rawAbs=Math.max(d3.max(data,d=>Math.abs(d.change))||1,
+        comparison?.rows?d3.max(comparison.rows,d=>Math.abs(d.change))||0:0),
+      absMax=Math.max(1,rawAbs*1.15),
+      y=view==='pct'?d3.scaleLog([loK,hiK],[h-m.bottom,yTop]).clamp(true)
+        :d3.scaleSymlog().constant(Math.max(.05,absMax/30)).domain([-absMax,absMax]).range([h-m.bottom,yTop]);
+    /* Band members aside, every mark still reads its y off the scale. */
+    const yOf=d=>bandY.has(d.recipient)?bandY.get(d.recipient):pointY(d,view,y);
     /* While a comparison is pinned, the bubble-radius DOMAIN is held at the value
        it had when the pin was taken. Freezing the pinned row's gap was not enough
        on its own: this domain is the maximum peer funding gap in the current data,
@@ -840,9 +955,20 @@
       r=d3.scaleSqrt([0,gapMax],[4,w<430?12:17]);
     const svg=d3.select('#chart').attr('viewBox',`0 0 ${w} ${h}`).attr('height',h).style('height',`${h}px`);svg.selectAll('*').remove();
     const tickCandidates=[.03,.05,.1,.2,.5,1,2,5,10,20,50,100,200,500,1000,2000,5000,10000].filter(v=>v>=xFloor&&v<=maxX*1.15),xTicks=C.thinTicks(tickCandidates,w<430?4:6),yTicks=view==='pct'?ratioTicks(y):y.ticks(w<430?5:7);
-    svg.append('g').attr('class','axis').attr('transform',`translate(0,${h-m.bottom})`).call(d3.axisBottom(x).tickValues(xTicks).tickFormat(v=>v<.1?d3.format('.2f')(v):v<1?d3.format('.1f')(v):d3.format('~s')(v)).tickSizeOuter(0));
-    svg.append('g').attr('class','axis').attr('transform',`translate(${m.left},0)`).call(d3.axisLeft(y).tickValues(yTicks).tickFormat(v=>view==='pct'?ratioLabel(v):fmtSigned(v)).tickSize(-plotW)).call(g=>g.select('.domain').remove());
-    const zeroY=y(view==='pct'?1:0);svg.append('line').attr('x1',m.left).attr('x2',w-m.right).attr('y1',zeroY).attr('y2',zeroY).attr('stroke','var(--cgd-dark-gray)').attr('stroke-dasharray','4 3');svg.append('text').attr('x',w-m.right).attr('y',zeroY-5).attr('text-anchor','end').attr('class','small-text ref-label').text('no change');
+    const drawAxes=()=>{
+      svg.append('g').attr('class','axis').attr('transform',`translate(0,${h-m.bottom})`).call(d3.axisBottom(x).tickValues(xTicks).tickFormat(v=>v<.1?d3.format('.2f')(v):v<1?d3.format('.1f')(v):d3.format('~s')(v)).tickSizeOuter(0));
+      svg.append('g').attr('class','axis').attr('transform',`translate(${m.left},0)`).call(d3.axisLeft(y).tickValues(yTicks).tickFormat(v=>view==='pct'?ratioLabel(v):fmtSigned(v)).tickSize(-plotW)).call(g=>g.select('.domain').remove());
+    };
+    const zeroY=y(view==='pct'?1:0);
+    /* Direction is the BACKGROUND now that fill carries income group: above the
+       no-change line the objective would give this recipient more, below it
+       less. Drawn before the axes so the gridlines and marks sit on top. */
+    svg.append('rect').attr('x',m.left).attr('y',m.top).attr('width',plotW)
+      .attr('height',Math.max(0,zeroY-m.top)).attr('fill','var(--band-more)');
+    svg.append('rect').attr('x',m.left).attr('y',zeroY).attr('width',plotW)
+      .attr('height',Math.max(0,h-m.bottom-zeroY)).attr('fill','var(--band-less)');
+    drawAxes();
+    svg.append('line').attr('x1',m.left).attr('x2',w-m.right).attr('y1',zeroY).attr('y2',zeroY).attr('stroke','var(--cgd-dark-gray)').attr('stroke-dasharray','4 3');svg.append('text').attr('x',w-m.right).attr('y',zeroY-5).attr('text-anchor','end').attr('class','small-text ref-label').text('no change');
     /* A ratio of zero cannot sit on a log axis, so a recipient cut to nothing is
        clamped to the bottom of the domain -- where it lands on whatever the
        lowest tick happens to be and reads as that value. With the clean-slate
@@ -852,6 +978,22 @@
       const floorY=y(y.domain()[0]);
       svg.append('text').attr('x',w-m.right).attr('y',floorY-5).attr('text-anchor','end')
         .attr('class','small-text ref-label').text('cut to zero');
+    }
+    /* The domain is capped at 20x so that one recipient cannot flatten the rest,
+       and the scale clamps rather than dropping anything -- but a clamped mark
+       then sits on the top gridline reading as whatever that tick says. Turkey
+       really would give Sudan 25 times its projection under a pure poverty
+       objective, and Mali 45 times; those are the data, not an artefact, and
+       they are named here for the same reason the bottom row is. */
+    if(view==='pct'){
+      const clamped=data.filter(d=>!bandY.has(d.recipient)&&Number.isFinite(d.ratio)
+        &&d.ratio>y.domain()[1]*1.001);
+      if(clamped.length){
+        const capY=y(y.domain()[1]);
+        svg.append('text').attr('x',w-m.right).attr('y',capY+11).attr('text-anchor','end')
+          .attr('class','small-text ref-label')
+          .text(`${clamped.length} beyond the top of the scale`);
+      }
     }
     svg.append('text').attr('class','axis-title').attr('x',(m.left+w-m.right)/2).attr('y',h-7).attr('text-anchor','middle').text(w<430?'Projected allocation (GE US$m, log)':'Projected allocation before this objective (grant-equivalent US$m, log scale)');
     svg.append('text').attr('class','axis-title').attr('x',m.left).attr('y',13).text(view==='pct'?(w<430?'Recommended change (log ratio)':'Recommended change versus projection (log-ratio scale)'):(w<430?'Recommended change (GE US$m, symlog)':'Recommended change (grant-equivalent US$m, symlog scale)'));
@@ -871,11 +1013,11 @@
          invisible against the grid. */
       svg.append('g').selectAll('line').data(paired).join('line')
         .attr('x1',d=>x(Math.max(xFloor,d.projected))).attr('x2',d=>x(Math.max(xFloor,d.projected)))
-        .attr('y1',d=>pointY(d,view,y)).attr('y2',d=>pointY(pinned(d),view,y))
+        .attr('y1',d=>yOf(d)).attr('y2',d=>yOf(pinned(d)))
         .attr('stroke','var(--cgd-blue)').attr('stroke-width',1).attr('stroke-opacity',.55)
         .attr('stroke-dasharray','2 2');
       svg.append('g').selectAll('circle').data(paired).join('circle')
-        .attr('cx',d=>x(Math.max(xFloor,d.projected))).attr('cy',d=>pointY(pinned(d),view,y))
+        .attr('cx',d=>x(Math.max(xFloor,d.projected))).attr('cy',d=>yOf(pinned(d)))
         .attr('r',d=>r(pinned(d).gap)+2).attr('fill','none').attr('stroke','var(--cgd-blue)')
         .attr('stroke-width',1.2).attr('opacity',.75)
         /* The rings had no tooltip and no keyboard stop at all, so the pinned
@@ -912,14 +1054,63 @@
          findable on its own, which defeats the point of a Find control. */
       /* No baseline-mismatch class any more: the anchor is the projection, so
          the mismatch that class warned about cannot arise. */
-      .attr('class',d=>d.recipient===highlighted?'current point oda-highlighted':'current point').attr('cx',d=>x(Math.max(xFloor,d.projected))).attr('cy',d=>d.held?zeroY:pointY(d,view,y)).attr('r',d=>r(d.gap)).attr('fill',d=>d.held?'#fff':d.change>=0?'var(--cgd-light-teal)':'var(--cgd-gold)').attr('stroke',d=>d.held?'var(--cgd-dark-gray)':'#fff').attr('stroke-dasharray',d=>d.held?'3 2':null).attr('stroke-width',d=>d.held?1.5:1).attr('tabindex',0).attr('aria-label',d=>tooltipText(d)).on('pointerenter',(event,d)=>showTooltip(event,d)).on('pointermove',event=>positionTooltip(event)).on('pointerleave',()=>hideTooltip()).on('focus',(event,d)=>showTooltip(event,d)).on('blur',()=>hideTooltip()).on('click',function(event,d){event.stopPropagation();hideTooltip();openSectorDiagnostic(d.recipient,this)}).on('keydown',function(event,d){if(event.key==='Enter'||event.key===' '){event.preventDefault();hideTooltip();openSectorDiagnostic(d.recipient,this)}});
+      /* Fill is income group, as in every other figure in the set; direction has
+         moved to the background bands, which say the same thing without spending
+         the one channel a reader expects to mean "which kind of country". */
+      .attr('class',d=>d.recipient===highlighted?'current point oda-highlighted':'current point').attr('cx',d=>x(Math.max(xFloor,d.projected))).attr('cy',d=>d.held?zeroY:yOf(d)).attr('r',d=>r(d.gap)).attr('fill',d=>d.held?'#fff':window.CGDSet.colourFor(d.income)).attr('stroke',d=>d.held?'var(--cgd-dark-gray)':'#fff').attr('stroke-dasharray',d=>d.held?'3 2':null).attr('stroke-width',d=>d.held?1.5:1).attr('tabindex',0).attr('aria-label',d=>tooltipText(d)).on('pointerenter',(event,d)=>showTooltip(event,d)).on('pointermove',event=>positionTooltip(event)).on('pointerleave',()=>hideTooltip()).on('focus',(event,d)=>showTooltip(event,d)).on('blur',()=>hideTooltip()).on('click',function(event,d){event.stopPropagation();hideTooltip();openSectorDiagnostic(d.recipient,this)}).on('keydown',function(event,d){if(event.key==='Enter'||event.key===' '){event.preventDefault();hideTooltip();openSectorDiagnostic(d.recipient,this)}});
     /* Selecting a mark opens the sector diagnostic rather than pinning the
        tooltip; the dialog carries its own Escape and outside-click dismissal
        through UI.modal, so there is no pinned state here to manage. */
-    const labelCount=w<520?4:9,extreme=data.filter(d=>!d.held).slice().sort((a,b)=>d3.descending(Math.abs(logRatio(a.ratio)),Math.abs(logRatio(b.ratio)))||d3.descending(Math.max(a.projected,a.recommended),Math.max(b.projected,b.recommended))),selected=[];
+    const labelCount=w<520?4:9,extreme=data.filter(d=>!d.held&&!bandY.has(d.recipient)).slice().sort((a,b)=>d3.descending(Math.abs(logRatio(a.ratio)),Math.abs(logRatio(b.ratio)))||d3.descending(Math.max(a.projected,a.recommended),Math.max(b.projected,b.recommended))),selected=[];
     extreme.slice(0,Math.ceil(labelCount*.65)).forEach(d=>selected.push(d));data.slice().sort((a,b)=>d3.descending(Math.max(a.projected,a.recommended),Math.max(b.projected,b.recommended))).forEach(d=>{if(selected.length<labelCount&&!selected.includes(d)&&!d.held)selected.push(d)});
     const labelText=d=>w<430?({'Democratic Republic of the Congo':'DR Congo','Saint Vincent and the Grenadines':'St Vincent & Grenadines'}[d.name]||d.name):d.name,labelEnds=d=>x(Math.max(xFloor,d.projected))+7+labelText(d).length*5.8>w-m.right;
-    const labelData=w<430?selected.filter(d=>pointY(d,view,y)<h-m.bottom-55):selected,labels=svg.append('g').selectAll('text').data(labelData).join('text').attr('class','small-text outlier-label').attr('x',d=>x(Math.max(xFloor,d.projected))+(labelEnds(d)?-7:7)).attr('y',d=>pointY(d,view,y)-5).attr('text-anchor',d=>labelEnds(d)?'end':'start').text(labelText),occupied=[...svg.selectAll('.axis text,.axis-title,.ref-label').nodes()].map(n=>n.getBBox());
+    /* THE NEW/REOPENED CLUSTER.
+
+       These marks have no projected allocation, so they all clamp to the x-axis
+       floor and land on precisely the same point -- an unreadable pile in the
+       top-left corner where the only way to identify one was to hit a 4px
+       target and read the tooltip. They are dodged down their own band and
+       labelled individually, and the LABEL carries the same tooltip, focus stop
+       and click-through as the mark, so the text is the hit area.
+
+       Their vertical order is by recommended amount and carries no quantitative
+       meaning -- there is no percentage change to plot against a base of zero,
+       which is the whole reason the band exists -- so the band is fenced off
+       with a rule and says what it is. */
+    const bandBoxes=[];
+    if(newRows.length){
+      const fenceY=m.top+bandH-4;
+      svg.append('line').attr('x1',m.left).attr('x2',w-m.right).attr('y1',fenceY).attr('y2',fenceY)
+        .attr('stroke','var(--cgd-teal-gray)').attr('stroke-width',1).attr('stroke-dasharray','3 3');
+      svg.append('text').attr('x',w-m.right).attr('y',m.top-5).attr('text-anchor','end')
+        .attr('class','small-text ref-label')
+        /* The full sentence measures 263px, which overflows a 280px viewBox on
+           a phone. Shortened the same way the axis titles are; the band labels
+           and the tooltip still name the case. */
+        .text(w<620?`new/reopened${newRows.length>1?` (${newRows.length})`:''}`
+          :`new or reopened${newRows.length>1?` (${newRows.length})`:''} \u2014 no projected allocation to change`);
+      const bandGroup=svg.append('g');
+      bandGroup.selectAll('line').data(newRows).join('line')
+        .attr('x1',d=>x(Math.max(xFloor,d.projected))+r(d.gap)+1.5)
+        .attr('x2',d=>x(Math.max(xFloor,d.projected))+r(d.gap)+9)
+        .attr('y1',d=>bandY.get(d.recipient)).attr('y2',d=>bandY.get(d.recipient))
+        .attr('stroke','var(--cgd-teal-gray)').attr('stroke-width',.9);
+      bandGroup.selectAll('text').data(newRows).join('text')
+        .attr('class','small-text band-label')
+        .attr('x',d=>x(Math.max(xFloor,d.projected))+r(d.gap)+12)
+        .attr('y',d=>bandY.get(d.recipient)+3.2)
+        .attr('tabindex',0).attr('role','img').attr('aria-label',d=>tooltipText(d))
+        .text(labelText)
+        .on('pointerenter',(event,d)=>showTooltip(event,d))
+        .on('pointermove',event=>positionTooltip(event))
+        .on('pointerleave',()=>hideTooltip())
+        .on('focus',(event,d)=>showTooltip(event,d))
+        .on('blur',()=>hideTooltip())
+        .on('click',function(event,d){event.stopPropagation();hideTooltip();openSectorDiagnostic(d.recipient,this)})
+        .on('keydown',function(event,d){if(event.key==='Enter'||event.key===' '){event.preventDefault();hideTooltip();openSectorDiagnostic(d.recipient,this)}})
+        .each(function(){bandBoxes.push(this.getBBox())});
+    }
+    const labelData=w<430?selected.filter(d=>yOf(d)<h-m.bottom-55):selected,labels=svg.append('g').selectAll('text').data(labelData).join('text').attr('class','small-text outlier-label').attr('x',d=>x(Math.max(xFloor,d.projected))+(labelEnds(d)?-7:7)).attr('y',d=>yOf(d)-5).attr('text-anchor',d=>labelEnds(d)?'end':'start').text(labelText),occupied=[...svg.selectAll('.axis text,.axis-title,.ref-label').nodes()].map(n=>n.getBBox()).concat(bandBoxes);
     /* Bubbles are obstacles too. Testing labels only against axis text let an
        outlier label sit on top of a mark, which is the collision a reader
        actually notices. */
@@ -968,7 +1159,38 @@
   /* Defers to the set-wide formatter so the tool agrees with every other figure;
      only sub-US$10m values need the extra precision this tool works at. */
   function fmtUsd(v){if(!Number.isFinite(v))return M.MISSING_TEXT;if(Math.abs(v)<10&&v!==0)return`US$${d3.format('.2~f')(v)}m`;return M.usd(v)}
-  function pctChange(d){if(d.projected<=EPS)return d.recommended<=EPS?'0%':'new/reopened';return`${d.change/d.projected>0?'+':''}${d3.format('.1f')(d.change/d.projected*100)}%`}
+  /* WHAT COUNTS AS HAVING NO BASE TO CHANGE.
+
+     Either the projection is negligible in absolute terms, or it is negligible
+     NEXT TO THE RECOMMENDATION -- under a fiftieth of it. The second condition
+     is the one that matters and the one a dollar floor cannot express: EU
+     Institutions projects US$19,000 to Burkina Faso and US$105,000 to DPRK,
+     against recommendations of US$64.8m and US$285m. Those are new programmes,
+     not increases of 3,456% and 2,724%, and while they were treated as
+     increases they set the y domain to its 20x cap and flattened every real
+     movement -- including EU Institutions' genuine 13.8x for Nigeria -- into
+     the middle of the chart.
+
+     `noBase` is the absolute case: under US$0.05m there is no percentage to
+     compute at all, and the row belongs in the band. `offScale` is a different
+     fact -- a real projection with a recommendation more than fifty times it.
+     Those keep their place on the x axis and clamp to the top of the y domain,
+     because they DO have a projected allocation and captioning them as new
+     would be untrue.
+
+     Declared as functions so renderChart, which uses them earlier in the file,
+     gets them hoisted. */
+  const NO_BASE_USD=0.05,OFF_SCALE_RATIO=50;
+  function noBase(d){return d.projected<NO_BASE_USD}
+  function isNewOrReopened(d){return noBase(d)&&d.recommended>d.projected+EPS}
+  function offScale(d){return !noBase(d)&&Number.isFinite(d.ratio)&&d.ratio>OFF_SCALE_RATIO}
+  function pctChange(d){
+    if(isNewOrReopened(d))return'new/reopened';
+    if(noBase(d))return d.recommended<=EPS?(d.projected>EPS?'cut to zero':'0%'):'base too small';
+    /* Beyond fifty-fold a percentage stops being readable -- DPRK against EU
+       Institutions is +271,000% -- so it is stated as a multiple instead. */
+    if(offScale(d))return`\u00d7${d3.format(d.ratio<100?'.0f':'~s')(d.ratio)}`;
+    return`${d.change/d.projected>0?'+':''}${d3.format('.1f')(d.change/d.projected*100)}%`}
   /* What the pin was taken UNDER, not just what it says: a reader comparing two
      objective settings needs the weights and the scenario/donor/year the snapshot
      was frozen at, or the ring is an unlabelled second dot. */
@@ -990,10 +1212,51 @@
       element('div',{className:'notes',text:pinContextText()}));
     tip.hidden=false;positionTooltip(event)}
   function tooltipText(d){return`${d.name}. Projected allocation ${fmtUsd(d.projected)}. Change ${pctChange(d)}. Recommended allocation ${fmtUsd(d.recommended)}. Peer funding gap ${fmtUsd(d.gap)}. Income group ${d.income}.`}
-  function showTooltip(event,d){const tip=document.getElementById('tooltip');tip.replaceChildren(element('strong',{text:d.name}),element('div',{className:'tooltip-grid'},[element('span',{text:'Projected allocation'}),element('b',{text:fmtUsd(d.projected)}),element('span',{text:'Change implied'}),element('b',{text:d.held?'0% (policy-held)':pctChange(d)}),element('span',{text:'Recommended allocation'}),element('b',{text:fmtUsd(d.recommended)}),element('span',{text:'Peer funding gap'}),element('b',{text:fmtUsd(d.gap)}),element('span',{text:'Income group'}),element('b',{text:d.income})]));
-    /* A mark whose change is an artefact of the baseline mismatch says so, on
-       the mark itself. Without this the reader is shown a large percentage with
-       no way to tell that it is about 2024 rather than about the objective. */
+  /* The blended gap in the row above is one number over three objectives, so a
+     reader cannot see WHICH objective is pulling a recipient up. These are the
+     per-objective components of it: the unmet peer-funding gap the objective
+     produces on its own, and the share of that objective's total need this
+     recipient carries, which is what generates the gap.
+
+     A recipient the objective cannot score says so rather than showing zero --
+     no score and no need are different claims, and the methodology turns on the
+     difference. */
+  function objectiveRows(iso){
+    if(!currentCov)return[];
+    const out=[];
+    for(const kind of Object.keys(OBJECTIVES)){
+      const c=currentCov.components[kind];
+      if(!c||!c.raw.has(iso)){out.push([OBJECTIVES[kind],'no score']);continue}
+      out.push([OBJECTIVES[kind],
+        `${fmtUsd(c.raw.get(iso)||0)} \u00b7 ${M.percent(c.share.get(iso)||0,{decimals:1})}`]);
+    }
+    return out;
+  }
+  /* Against the pin as well as against the projection. The ring already carried
+     its own value on hover, but reading the change BETWEEN the two settings
+     meant hovering each in turn and subtracting. */
+  function vsPinned(d,p){const diff=d.recommended-p.recommended;
+    if(Math.abs(diff)<=EPS)return'no change';
+    const pct=p.recommended>EPS?` (${diff>0?'+':''}${d3.format('.1f')(diff/p.recommended*100)}%)`:'';
+    return`${diff>0?'+':''}${fmtUsd(diff)}${pct}`}
+  function showTooltip(event,d){const tip=document.getElementById('tooltip');
+    const cells=[element('span',{text:'Projected allocation'}),element('b',{text:fmtUsd(d.projected)}),
+      element('span',{text:'Change implied'}),element('b',{text:d.held?'0% (policy-held)':pctChange(d)}),
+      element('span',{text:'Recommended allocation'}),element('b',{text:fmtUsd(d.recommended)}),
+      element('span',{text:'Peer funding gap'}),element('b',{text:fmtUsd(d.gap)}),
+      element('span',{text:'Income group'}),element('b',{text:d.income})];
+    const pinnedRow=comparison?.rows?comparison.rows.find(row=>row.recipient===d.recipient):null;
+    if(pinnedRow&&!d.held)cells.push(
+      element('span',{text:'Pinned recommendation'}),element('b',{text:fmtUsd(pinnedRow.recommended)}),
+      element('span',{text:'Change vs pinned'}),element('b',{text:vsPinned(d,pinnedRow)}));
+    const objective=objectiveRows(d.recipient),parts=[element('strong',{text:d.name}),
+      element('div',{className:'tooltip-grid'},cells)];
+    if(objective.length){
+      parts.push(element('div',{className:'notes tip-head',text:'Unmet peer gap \u00b7 share of need, by objective'}));
+      parts.push(element('div',{className:'tooltip-grid'},
+        objective.flatMap(([label,value])=>[element('span',{text:label}),element('b',{text:value})])));
+    }
+    tip.replaceChildren(...parts);
     tip.hidden=false;positionTooltip(event)}
   function positionTooltip(event){const tip=document.getElementById('tooltip'),pad=10,box=tip.getBoundingClientRect(),cx=event.clientX??innerWidth/2,cy=event.clientY??innerHeight/2;tip.style.left=`${Math.max(pad,Math.min(innerWidth-box.width-pad,cx+12))}px`;tip.style.top=`${Math.max(pad,Math.min(innerHeight-box.height-pad,cy+12))}px`}
   function hideTooltip(){document.getElementById('tooltip').hidden=true}
@@ -1007,7 +1270,7 @@
   }
   function syncPinButton(current){const b=document.getElementById('pinButton');b.disabled=current.solution.discretionary<=EPS;b.textContent=comparison?'Clear comparison':'Pin this allocation'}
   function updateUrl(s){
-    const q=new URLSearchParams();q.set('scenario',s.scenario);q.set('donor',s.donor);q.set('year',s.year);q.set('p',s.poverty.toFixed(4));q.set('h',s.humanitarian.toFixed(4));q.set('f',s.fiscal.toFixed(4));q.set('i',(s.intensity??1).toFixed(2));q.set('view',s.view);if(comparison?.weights){q.set('pp',comparison.weights.poverty.toFixed(4));q.set('ph',comparison.weights.humanitarian.toFixed(4));q.set('pf',comparison.weights.fiscal.toFixed(4))}history.replaceState(null,'',`${location.pathname}?${q}`)
+    const q=new URLSearchParams();q.set('scenario',s.scenario);q.set('donor',s.donor);q.set('year',s.year);q.set('p',s.poverty.toFixed(4));q.set('h',s.humanitarian.toFixed(4));q.set('f',s.fiscal.toFixed(4));q.set('i',(s.intensity??.5).toFixed(2));q.set('view',s.view);if(s.hiddenIncome)q.set('hi',s.hiddenIncome);if(comparison?.weights){q.set('pp',comparison.weights.poverty.toFixed(4));q.set('ph',comparison.weights.humanitarian.toFixed(4));q.set('pf',comparison.weights.fiscal.toFixed(4))}history.replaceState(null,'',`${location.pathname}?${q}`)
   }
 
   window.ODA_F16={state,rows:()=>rows,comparison:()=>comparison,derive,solve,coverage,missingIssue,setWeights};

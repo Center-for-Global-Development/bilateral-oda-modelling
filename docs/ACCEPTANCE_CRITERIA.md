@@ -102,6 +102,27 @@ of the tool's anchor.**
       defaulting to 100%, and is stated whenever it is not the default.
 - [ ] Grain is recipient, not recipient-sector.
 
+### 0.4b F16 axes and encoding
+
+**Added 3 September 2026.**
+
+- [ ] The x axis domain is the projection over all rows. No control in the
+      figure — Reallocate, the income legend, the objective — may move it.
+- [ ] The y axis responds to Reallocate, and is held to the union of the live
+      and pinned data while a comparison is pinned.
+- [ ] Each end of the ratio domain is set from its own side of the data.
+- [ ] A row with no base (projection under US$0.05m) goes in the band above the
+      plot, individually labelled, with a leader to its mark; the label carries
+      the mark's tooltip, focus stop and click-through.
+- [ ] A row with a real projection is NEVER in that band, whatever its ratio.
+      Off-scale rows clamp to the domain top and are counted in an annotation.
+- [ ] Any annotation naming a category is true of every mark in it, and cites
+      no threshold the axis does not display.
+- [ ] Marks are filled by income group, with a selectable legend, as elsewhere
+      in the set. Direction is the background wash, not the fill.
+- [ ] Reallocate defaults to 50%, and the methodology and its plain-language
+      companion say so.
+
 ### 0.5 Responsive and accessible
 
 - [ ] Works at desktop and mobile widths, reformatting reliably.
