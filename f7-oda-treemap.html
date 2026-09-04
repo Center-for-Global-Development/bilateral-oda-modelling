@@ -1,12 +1,12 @@
 <!doctype html>
 <html lang="en" data-cgd-interactive-name="oda-f7-oda-treemap">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How aid portfolios are changing</title>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How are donors’ sectoral allocations changing?</title>
 <link rel="stylesheet" href="shared/cgd-figure.css?v=20260902b"><link rel="stylesheet" href="shared/cgd-responsive.css?v=20260902b"><link rel="stylesheet" href="shared/oda-figure.css?v=20260902b">
 <style>
   .treemap-wrap{width:100%;min-height:390px}.treemap-wrap svg{display:block;width:100%}.map-legend{display:flex;gap:8px 12px;flex-wrap:wrap;font-size:11.5px}.legend-key{display:inline-flex;gap:4px;align-items:center}.legend-swatch{width:12px;height:10px}.cell-label{pointer-events:none;font-size:10.5px;font-weight:500;fill:#22383C}.cell-value{pointer-events:none;font-size:10px;font-weight:600;fill:#22383C}.group-label{pointer-events:none;font-size:11px;font-weight:700;fill:#0B4C5B;letter-spacing:.01em}.group-heading{pointer-events:none}.tooltip{position:absolute;z-index:20;max-width:300px}.focus-select{min-width:0}.partner-control[hidden],.nest-control[hidden]{display:none}
   @media(max-width:520px){.treemap-wrap{min-height:330px}.cell-label,.cell-value,.group-label{font-size:10px}}
 </style></head>
-<body><main id="vizRoot" class="viz-wrapper"><div class="header-row"><div class="title-block"><h1>How aid portfolios are changing</h1></div><button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="View fullscreen" title="View fullscreen"><svg class="icon-expand" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5" stroke="currentColor" stroke-width="1.8"/></svg><svg class="icon-compress" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5" stroke="currentColor" stroke-width="1.8"/></svg></button></div>
+<body><main id="vizRoot" class="viz-wrapper"><div class="header-row"><div class="title-block"><h1>How are donors’ sectoral allocations changing?</h1></div><button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="View fullscreen" title="View fullscreen"><svg class="icon-expand" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5" stroke="currentColor" stroke-width="1.8"/></svg><svg class="icon-compress" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5" stroke="currentColor" stroke-width="1.8"/></svg></button></div>
   <div class="controls" id="controls"></div><section class="panel"><div class="panel-header"><div class="map-legend" id="legend"></div></div><div class="chart-area" id="chartArea"><div class="treemap-wrap"><svg id="treemapSvg" role="img" aria-label="Bilateral ODA by donor, recipient and sector"></svg></div></div></section><div id="notes"></div><div class="tooltip" id="tooltip" hidden></div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js" integrity="sha384-CjloA8y00+1SDAUkjs099PVfnY2KmDC2BZnws9kh8D/lX1s46w6EPhpXdqMfjK6i" crossorigin="anonymous" referrerpolicy="no-referrer"></script><script src="shared/dom.js?v=20260902b"></script><script src="shared/chart-core.js?v=20260902b"></script><script src="shared/set-config.js?v=20260902b"></script><script src="shared/oda-payload.js?v=20260902b"></script><script src="shared/oda-model.js?v=20260902b"></script><script src="shared/oda-ui.js?v=20260902b"></script>
@@ -118,11 +118,32 @@ function hierarchy(rows,s){
   const all=[...groups].map(asGroup);
   const {kept,rest}=capped(all,MAX_GROUPS,'Other');
   const children=kept.map(g=>{
-    const leaves=g.rows.map(r=>({name:second==='partner'?partnerName(r.partner,s):payload.sectorName(r.sector),
+    /* AGGREGATED BY THE LEAF DIMENSION.
+
+       g.rows are individual donor-recipient-sector cells. Mapping them straight
+       to leaves drew one rectangle per CELL, so a donor funding humanitarian aid
+       in six recipients got six identically coloured, identically labelled
+       humanitarian squares -- which reads as a rendering fault, and contradicts
+       the nesting control, which promises two levels. Measured at 2026 with no
+       focus: the humanitarian red appeared 18 times across 12 donor groups.
+
+       The single-partner branch above already aggregates this way; this is the
+       same thing for the generic path. */
+    const byLeaf=new Map();
+    for(const r of g.rows){
+      const k=second==='partner'?String(r.partner):String(r.sector);
+      if(!byLeaf.has(k))byLeaf.set(k,[]);
+      byLeaf.get(k).push(r);
+    }
+    const leaves=[...byLeaf].map(([k,list])=>{
       /* The leaf dimension is what composition colouring keys on, so the same
          sector (or the same donor) carries one colour across every group. */
-      kind:second,leafKey:second==='partner'?String(r.partner):String(r.sector),
-      baseline:r.baseline,value:r.value,row:r}));
+      const name=second==='partner'?partnerName(k,s):payload.sectorName(k);
+      return{name,kind:second,leafKey:k,
+        baseline:list.reduce((z,r)=>z+r.baseline,0),
+        value:list.reduce((z,r)=>z+r.value,0),
+        row:list.length===1?list[0]:aggregate(list,name)};
+    }).sort((a,b)=>b.value-a.value);
     const inner=capped(leaves,MAX_CHILDREN,'Other');
     const kids=inner.kept.slice();
     if(inner.rest)kids.push({name:`Other (${inner.rest.cells})`,kind:second,leafKey:null,baseline:inner.rest.baseline,
@@ -131,7 +152,7 @@ function hierarchy(rows,s){
   });
   if(rest){
     const label=first==='partner'?(s.focusType==='recipient'?'donors':'recipients'):'sectors';
-    children.push({name:`Other (${rest.cells} cells)`,kind:first,baseline:rest.baseline,
+    children.push({name:`Other (${rest.cells} ${label})`,kind:first,baseline:rest.baseline,
       children:[{name:`Other (${rest.cells})`,kind:second,leafKey:null,baseline:rest.baseline,value:rest.value,
         row:{...rest,label:`All other ${label}, ${rest.cells} cells`}}]});
   }

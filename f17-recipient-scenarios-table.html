@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>How recipients fare across allocation rules</title>
+<title>The most underprioritised countries are extremely underprioritised</title>
 <link rel="stylesheet" href="shared/cgd-figure.css?v=20260902b">
 <link rel="stylesheet" href="shared/cgd-responsive.css?v=20260902b">
 <link rel="stylesheet" href="shared/oda-figure.css?v=20260902b">
@@ -96,7 +96,7 @@
 <main id="vizRoot" class="viz-wrapper">
   <div class="header-row">
     <div class="title-block">
-      <h1 id="vizTitle">How recipients fare across allocation rules</h1>
+      <h1 id="vizTitle">The most underprioritised countries are extremely underprioritised</h1>
       <p class="viz-sub" id="vizSub"></p>
     </div>
     <button class="fullscreen-btn desktop-only" id="fullscreenBtn" type="button"
@@ -402,10 +402,13 @@
       else { const b = element('button', { className:'sort', text: label, attributes:{ type:'button' } });
         b.addEventListener('click', () => state.set({ sort: col, direction: s.sort === col && s.direction === 'desc' ? 'asc' : 'desc' })); th.append(b);
         /* Ten column headings that read 'S1', 'S2A', 'S3B' say nothing on
-           their own, and this table is nothing but those ten columns. */
+           their own, and this table is nothing but those ten columns. The
+           heading itself carries the explanation, as F15's scenario line
+           labels do -- no separate marker to hunt for. */
         if (col.startsWith('S')) { const info = M.scenarioInfo(col);
-          th.append(UI.helpBadge(() => info.tip ? `${info.name}. ${info.tip}` : info.name,
-            { label: `What is ${info.label}?` })); } }
+          UI.hoverTip(b, () => info.tip ? `${info.label} \u2014 ${info.name}. ${info.tip}`
+                                        : `${info.label} \u2014 ${info.name}`);
+          b.setAttribute('aria-label', `${info.label} \u2014 ${info.name}. Select to sort.`); } }
       tr.append(th);
     }
     return tr;
