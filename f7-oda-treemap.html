@@ -57,7 +57,39 @@
      left in place, unreferenced, so restoring the toggle is a one-line change. */
   colourGroup.hidden=true;
   document.getElementById('controls').append(UI.scenarioSelect(state),UI.yearControl(state,M.displayYears(payload)),UI.measureToggle(state,()=> 'usd'));
-  document.getElementById('controls').append(UI.controlGroup('View by',typeBox,{id:'viewBy'}),colourGroup);
+  /* Jumps the drill path to any member of the CURRENT level, including the
+     ones pooled into Other. It is filled from the data each render, so it never
+     offers a member that has nothing here -- the same rule the old Partner
+     select needed and did not have. */
+  const jumpSelect=element('select',{className:'plain-select oda-select-wide'});
+  jumpSelect.addEventListener('change',()=>{
+    const code=jumpSelect.value;
+    if(!code)return;
+    state.set({drill:[...drillOf(state.get()),code].join('|')});
+  });
+  const jumpGroup=UI.controlGroup('Go to',jumpSelect,{id:'jumpSelect'});
+  document.getElementById('controls').append(UI.controlGroup('View by',typeBox,{id:'viewBy'}),jumpGroup,colourGroup);
+
+  /* Called from draw(), because only then is it known which members actually
+     have data at this level. */
+  function syncJump(rows,s){
+    const path=drillOf(s);
+    /* Nothing below a pair, so nothing to jump to. */
+    if(path.length>=MAX_DEPTH){jumpGroup.hidden=true;return;}
+    jumpGroup.hidden=false;
+    const dim=groupDim(s),seen=new Map();
+    for(const r of rows){const code=String(groupKeyOf(r,s));
+      seen.set(code,(seen.get(code)||0)+(r.value||0));}
+    const items=[...seen.keys()].map(code=>[code,nameOf(dim,code)])
+      .sort((a,b)=>a[1].localeCompare(b[1]));
+    jumpGroup.querySelector('.control-label').textContent=
+      dim==='donor'?'Go to donor':'Go to recipient';
+    jumpSelect.replaceChildren();
+    jumpSelect.append(new Option(`${items.length} ${dim==='donor'?'donors':'recipients'}…`,''));
+    for(const [code,name] of items)jumpSelect.append(new Option(name,code));
+    jumpSelect.value='';
+  }
+
   function fillSelect(select,items,value){select.replaceChildren();for(const[x,l]of items)select.append(element('option',{text:l,attributes:{value:x}}));select.value=value;}
   function syncControls(){
     const s=state.get();
@@ -288,7 +320,7 @@ function hierarchy(rows,s){
        in the header band the treemap reserves for them. */
     const fitLabel=d=>{const room=Math.max(0,d.x1-d.x0-8),name=short(d.data.name);if(room<18)return'';const budget=Math.floor(room/6.2);return budget>=name.length?name:name.slice(0,Math.max(1,budget-1))+'\u2026';};
     svg.selectAll('g.group-heading').data((rootNode.children||[]).filter(d=>d.y1-d.y0>24)).join('g').attr('class',d=>drillOf(state.get()).length<MAX_DEPTH&&d.data.code?'group-heading':'group-heading leafLevel').call(g=>{g.append('rect').attr('x',d=>d.x0).attr('y',d=>d.y0).attr('width',d=>Math.max(0,d.x1-d.x0)).attr('height',14).attr('fill','#F2F7F8');/* The heading strip is a second, more obvious target for the same drill. */g.filter(d=>drillOf(state.get()).length<MAX_DEPTH&&d.data.code).attr('tabindex',0).attr('role','button').attr('aria-label',d=>`${d.data.name}: show its ${groupDim(state.get())==='donor'?'recipients':'donors'}`).on('click',function(e,d){e.stopPropagation();hideTipNow();state.set({drill:[...drillOf(state.get()),d.data.code].join('|')});}).on('keydown',function(e,d){if(e.key==='Enter'||e.key===' '){e.preventDefault();hideTipNow();state.set({drill:[...drillOf(state.get()),d.data.code].join('|')});}});g.append('text').attr('class','group-label').attr('x',d=>d.x0+4).attr('y',d=>d.y0+11).text(fitLabel).append('title').text(d=>d.data.name);});const drawn=rootNode.leaves().filter(d=>!d.data.row.aggregate).length,pooled=rows.length-drawn;UI.renderNotes('notes',{visible:[`${rows.length} funded donor–recipient–sector cells`+(pooled>0?`; the largest ${drawn} are drawn individually and the remaining ${pooled} are pooled into the Other cells`:' shown individually')+`.`+(s.colourBy==='change'?` Colour is capped at ${M.percent(scale.cap,{decimals:0})}, the 95th percentile of absolute change.`:'')],notes:['Select a block to see what is inside it: donors open into their recipients, and a recipient into its sectors. The trail above the chart goes back.',`At most ${MAX_GROUPS} groups and ${MAX_CHILDREN} sectors within each are drawn individually; the Other block carries its own total and cannot be opened.`,'Cells with no 2024 baseline, or one below US$0.1m, are left grey rather than coloured: a change against a near-zero baseline is rounding noise.',UI.STANDARD_NOTES.prices]});window.CGD_READY=true;}
-  async function schedule(){const n=++seq, s={...state.get()};tooltip.hidden=true;try{const rows=await buildData(s);if(n!==seq)return;draw(rows,s,lastWidth);}catch(error){if(n===seq)P.renderFailState(chartArea,error); window.CGD_READY = true;}}
+  async function schedule(){const n=++seq, s={...state.get()};tooltip.hidden=true;try{const rows=await buildData(s);if(n!==seq)return;syncJump(rows,s);draw(rows,s,lastWidth);}catch(error){if(n===seq)P.renderFailState(chartArea,error); window.CGD_READY = true;}}
   C.observeInlineSize(document.querySelector('.treemap-wrap'),w=>{lastWidth=w;schedule();});document.getElementById('fullscreenBtn').addEventListener('click',()=>document.fullscreenElement?document.exitFullscreen():root.requestFullscreen?.());window.ODA_F7={state,buildData:()=>buildData(state.get())};
 })();
 </script><script src="shared/cgd-embed.js?v=20260902b"></script></body></html>
