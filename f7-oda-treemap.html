@@ -3,11 +3,11 @@
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How are donors’ sectoral allocations changing?</title>
 <link rel="stylesheet" href="shared/cgd-figure.css?v=20260902b"><link rel="stylesheet" href="shared/cgd-responsive.css?v=20260902b"><link rel="stylesheet" href="shared/oda-figure.css?v=20260902b">
 <style>
-  .treemap-wrap{width:100%;min-height:390px}.treemap-wrap svg{display:block;width:100%}.map-legend{display:flex;gap:8px 12px;flex-wrap:wrap;font-size:11.5px}.legend-key{display:inline-flex;gap:4px;align-items:center}.legend-swatch{width:12px;height:10px}.cell-label{pointer-events:none;font-size:10.5px;font-weight:500;fill:#22383C}.cell-value{pointer-events:none;font-size:10px;font-weight:600;fill:#22383C}.group-label{pointer-events:none;font-size:11px;font-weight:700;fill:#0B4C5B;letter-spacing:.01em}.group-heading{pointer-events:none}.tooltip{position:absolute;z-index:20;max-width:300px}.focus-select{min-width:0}.partner-control[hidden],.nest-control[hidden]{display:none}
+  .treemap-wrap{width:100%;min-height:390px}.treemap-wrap svg{display:block;width:100%}.map-legend{display:flex;gap:8px 12px;flex-wrap:wrap;font-size:11.5px}.legend-key{display:inline-flex;gap:4px;align-items:center}.legend-swatch{width:12px;height:10px}.cell-label{pointer-events:none;font-size:10.5px;font-weight:500;fill:#22383C}.cell-value{pointer-events:none;font-size:10px;font-weight:600;fill:#22383C}.group-label{pointer-events:none;font-size:11px;font-weight:700;fill:#0B4C5B;letter-spacing:.01em}.group-heading{cursor:pointer}.group-heading .hit{fill:transparent}.group-heading.leafLevel{cursor:default}/* The breadcrumb is the way back out, so it has to look like controls, not   like prose. */.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:2px 4px;margin:0 0 7px}.crumbs button{font:inherit;font-size:11.5px;color:var(--cgd-teal);background:none;border:0;border-radius:7px;padding:4px 7px;min-height:24px;cursor:pointer;text-decoration:underline}.crumbs button:hover{background:var(--cgd-offwhite)}.crumbs button:focus-visible{outline:2px solid var(--cgd-gold);outline-offset:1px}.crumbs span.here{font-size:11.5px;font-weight:700;color:var(--cgd-teal-black);padding:4px 2px}.crumbs span.sep{color:var(--cgd-teal-gray);font-size:11.5px}.tooltip{position:absolute;z-index:20;max-width:300px}
   @media(max-width:520px){.treemap-wrap{min-height:330px}.cell-label,.cell-value,.group-label{font-size:10px}}
 </style></head>
 <body><main id="vizRoot" class="viz-wrapper"><div class="header-row"><div class="title-block"><h1>How are donors’ sectoral allocations changing?</h1></div><button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="View fullscreen" title="View fullscreen"><svg class="icon-expand" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5" stroke="currentColor" stroke-width="1.8"/></svg><svg class="icon-compress" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5" stroke="currentColor" stroke-width="1.8"/></svg></button></div>
-  <div class="controls" id="controls"></div><section class="panel"><div class="panel-header"><div class="map-legend" id="legend"></div></div><div class="chart-area" id="chartArea"><div class="treemap-wrap"><svg id="treemapSvg" role="img" aria-label="Bilateral ODA by donor, recipient and sector"></svg></div></div></section><div id="notes"></div><div class="tooltip" id="tooltip" hidden></div>
+  <div class="controls" id="controls"></div><nav class="crumbs" id="crumbs" aria-label="Treemap level"></nav><section class="panel"><div class="panel-header"><div class="map-legend" id="legend"></div></div><div class="chart-area" id="chartArea"><div class="treemap-wrap"><svg id="treemapSvg" role="img" aria-label="Bilateral ODA by donor, recipient and sector"></svg></div></div></section><div id="notes"></div><div class="tooltip" id="tooltip" hidden></div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js" integrity="sha384-CjloA8y00+1SDAUkjs099PVfnY2KmDC2BZnws9kh8D/lX1s46w6EPhpXdqMfjK6i" crossorigin="anonymous" referrerpolicy="no-referrer"></script><script src="shared/dom.js?v=20260902b"></script><script src="shared/chart-core.js?v=20260902b"></script><script src="shared/set-config.js?v=20260902b"></script><script src="shared/oda-payload.js?v=20260902b"></script><script src="shared/oda-model.js?v=20260902b"></script><script src="shared/oda-ui.js?v=20260902b"></script>
 <script>
@@ -15,13 +15,29 @@
   window.CGD_READY = false;const{element}=window.CGDDom,C=window.CGDCore,P=window.ODAPayload,M=window.ODAModel,UI=window.ODAUI;const root=document.getElementById('vizRoot'),chartArea=document.getElementById('chartArea');let payload;
   try{payload=await P.load();if(!window.d3)throw new Error('The pinned chart dependency did not load.');}catch(error){P.renderFailState(chartArea,error); window.CGD_READY = true;return;}
   const defaultRecipient=payload.axes.recipient.includes('UKR')?'UKR':payload.axes.recipient[0];
-  /* Declared before syncControls, which runs during setup. */
-  let validPartners=null;
-  const state=UI.createState({scenario:'S1',measure:'gross',year:2028,focusType:'recipient',focus:'ALL',partner:'ALL',nest:'partner-sector',unit:'usd',colourBy:'composition'},{dependents:{focusType:['partner'],focus:['partner']},onChange:()=>{syncControls();schedule();}});
-  const typeBox=element('div',{className:'segmented',attributes:{role:'group','aria-label':'Focus type'}});for(const[v,l]of[['donor','Donor'],['recipient','Recipient']]){const b=element('button',{text:l,attributes:{type:'button','data-focus-type':v}});b.addEventListener('click',()=>{const focus=v==='recipient'?(payload.axes.recipient.includes(state.get().focus)?state.get().focus:defaultRecipient):(payload.axes.donor.includes(state.get().focus)?state.get().focus:payload.axes.donor[0]);state.set({focusType:v,focus,partner:'ALL'});});typeBox.append(b);}
-  const focusSelect=element('select',{className:'plain-select oda-select-wide focus-select'});focusSelect.addEventListener('change',()=>state.set({focus:focusSelect.value,partner:'ALL'}));const partnerSelect=element('select',{className:'plain-select'});partnerSelect.addEventListener('change',()=>state.set({partner:partnerSelect.value}));
-  const nestSelect=element('select',{className:'plain-select'});for(const[v,l]of[['partner-sector','Partner → sector'],['sector-partner','Sector → partner']])nestSelect.append(element('option',{text:l,attributes:{value:v}}));nestSelect.addEventListener('change',()=>state.set({nest:nestSelect.value}));
-  const focusGroup=UI.controlGroup('Focus',focusSelect,{id:'focusSelect'}),partnerGroup=UI.controlGroup('Partner',partnerSelect,{id:'partnerSelect',extraClass:'partner-control'}),nestGroup=UI.controlGroup('Nesting order',nestSelect,{id:'nestSelect',extraClass:'nest-control'});
+  /* THE DRILL PATH, as a '|'-joined string rather than an array: createState
+     compares values with ===, so a fresh array would look like a change on every
+     render and reset everything downstream of it.
+
+     ''         -> all groups
+     'USA'      -> inside one donor (or recipient, per viewBy)
+     'USA|ETH'  -> inside one pair
+
+     This replaces Focus, Partner and Nesting order. Depth 2 shows exactly what
+     Focus + Partner used to show, so the old capability survives as two clicks. */
+  const MAX_DEPTH=2;
+  const state=UI.createState({scenario:'S1',measure:'gross',year:2028,viewBy:'donor',drill:'',unit:'usd',colourBy:'composition'},{dependents:{viewBy:['drill']},onChange:()=>{syncControls();schedule();}});
+  const drillOf=s2=>String(s2.drill||'').split('|').filter(Boolean);
+  const otherDim=s2=>s2.viewBy==='donor'?'recipient':'donor';
+  /* The dimension the CURRENT level groups by: the view dimension at the top,
+     the other one once you are inside a single member of it. */
+  const groupDim=s2=>drillOf(s2).length===0?s2.viewBy:otherDim(s2);
+  const nameOf=(dim,code)=>dim==='donor'?payload.donorName(code):payload.recipientName(code);
+  const typeBox=element('div',{className:'segmented',attributes:{role:'group','aria-label':'View by'}});for(const[v,l]of[['donor','Donor'],['recipient','Recipient']]){const b=element('button',{text:l,attributes:{type:'button','data-focus-type':v}});
+    /* Switching the top level invalidates any path built under the old one. */
+    b.addEventListener('click',()=>state.set({viewBy:v,drill:''}));typeBox.append(b);}
+  /* Focus, Partner and Nesting order are gone: clicking a block goes in, the
+     breadcrumb comes back out. */
   /* Size already carries the level, so colour is free to carry either the
      composition or the change. Composition is the default because it is what a
      treemap is for: one cell here is 63% of the canvas, and spending the
@@ -41,33 +57,52 @@
      left in place, unreferenced, so restoring the toggle is a one-line change. */
   colourGroup.hidden=true;
   document.getElementById('controls').append(UI.scenarioSelect(state),UI.yearControl(state,M.displayYears(payload)),UI.measureToggle(state,()=> 'usd'));
-  document.getElementById('controls').append(UI.controlGroup('Focus on',typeBox,{id:'focusType'}),focusGroup,partnerGroup,nestGroup,colourGroup);
+  document.getElementById('controls').append(UI.controlGroup('View by',typeBox,{id:'viewBy'}),colourGroup);
   function fillSelect(select,items,value){select.replaceChildren();for(const[x,l]of items)select.append(element('option',{text:l,attributes:{value:x}}));select.value=value;}
-  function syncControls(){const s=state.get();typeBox.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.focusType===s.focusType)));colourBox.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.colour===s.colourBy)));/* 'All' is a real option, and the default. The cube is only ~80k cells, so an
-     unfiltered read costs the same linear scan as a filtered one, and the capped
-     hierarchy holds the result to 12 groups of 8 -- so the opening view is the
-     whole picture of who funds what, and focusing a country is the reader's
-     first move rather than something they have to undo. */
-    const focusItems=[['ALL','All '+(s.focusType==='recipient'?'recipients':'donors')],...(s.focusType==='recipient'?payload.axes.recipient:payload.axes.donor).map(x=>[x,s.focusType==='recipient'?payload.recipientName(x):payload.donorName(x)]).sort((a,b)=>a[1].localeCompare(b[1]))];if(!focusItems.some(i=>i[0]===s.focus)){s.focus='ALL';}fillSelect(focusSelect,focusItems,s.focus);const partnerType=s.focusType==='recipient'?'donor':'recipient',partnerCodes=(partnerType==='donor'?payload.axes.donor:payload.axes.recipient).filter(x=>!validPartners||validPartners.has(x)),partnerItems=[['ALL','All '+(partnerType==='donor'?'donors':'recipients')],...partnerCodes.map(x=>[x,partnerType==='donor'?payload.donorName(x):payload.recipientName(x)]).sort((a,b)=>a[1].localeCompare(b[1]))];/* A partner carried over from a previous focus, or from a shared URL, may
-       not exist for this one; fall back to All rather than render nothing. */
-    if(s.partner!=='ALL'&&!partnerItems.some(i=>i[0]===s.partner)){state.set({partner:'ALL'});return;}fillSelect(partnerSelect,partnerItems,s.partner);partnerGroup.querySelector('.control-label').textContent=partnerType==='donor'?'Donor partner':'Recipient partner';nestSelect.options[0].textContent=partnerType==='donor'?'Donor first':'Recipient first';nestSelect.options[1].textContent='Sector first';nestSelect.value=s.nest;nestGroup.hidden=s.partner!=='ALL';}
-  syncControls();
-  /* Partners the current focus actually has, for the selected scenario, year
-     and measure. Null means "no focus selected", in which case every partner is
-     valid. Recomputed whenever the data is rebuilt, and the partner select is
-     refilled from it. */
-  async function partnersFor(s){
-    if(s.focus==='ALL')return null;
-    const filter={scenario:s.scenario,measure:s.measure,year:s.year};
-    if(s.focusType==='recipient')filter.recipient=s.focus;else filter.donor=s.focus;
-    const cells=await M.cubeCells(payload,filter),key=s.focusType==='recipient'?'donor':'recipient';
-    const out=new Set();
-    for(const c of cells)if(c.value>0)out.add(c[key]);
-    return out;
+  function syncControls(){
+    const s=state.get();
+    typeBox.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.focusType===s.viewBy)));
+    colourBox.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.colour===s.colourBy)));
+    renderCrumbs(s);
   }
-  async function cellsFor(s,year){const filter={scenario:s.scenario,measure:s.measure,year};if(s.focus!=='ALL'){if(s.focusType==='recipient')filter.recipient=s.focus;else filter.donor=s.focus;}if(s.partner!=='ALL')filter[s.focusType==='recipient'?'donor':'recipient']=s.partner;return M.cubeCells(payload,filter);}
-  function key(r){return`${r.donor}|${r.recipient}|${r.sector}`;}function partnerOf(r,s){return s.focusType==='recipient'?r.donor:r.recipient;}function partnerName(code,s){return s.focusType==='recipient'?payload.donorName(code):payload.recipientName(code);}
-  async function buildData(s){const[base,now]=await Promise.all([cellsFor(s,2024),cellsFor(s,s.year)]),byBase=new Map(base.map(r=>[key(r),r.value])),byNow=new Map(now.map(r=>[key(r),r.value])),proto=new Map([...base,...now].map(r=>[key(r),r])),rows=[];for(const[k,r]of proto){const baseline=byBase.get(k)||0,value=byNow.get(k)||0;if(value<=0)continue;rows.push({...r,baseline,value,change:baseline>0?(value-baseline)/baseline:null,partner:partnerOf(r,s)});}return rows;}
+
+  /* THE WAY BACK OUT. A treemap that only goes deeper is a trap, and the
+     breadcrumb is also the only on-screen statement of what is being shown --
+     the group headings name the members, not the level. */
+  function renderCrumbs(s){
+    const host=document.getElementById('crumbs'),path=drillOf(s);
+    const top=s.viewBy==='donor'?'All donors':'All recipients';
+    const labels=[top,...path.map((code,idx)=>nameOf(idx===0?s.viewBy:otherDim(s),code))];
+    host.replaceChildren();
+    labels.forEach((text,idx)=>{
+      if(idx)host.append(element('span',{className:'sep',text:'›'}));
+      if(idx===labels.length-1){
+        host.append(element('span',{className:'here',text}));
+        return;
+      }
+      const b=element('button',{text,attributes:{type:'button'}});
+      b.addEventListener('click',()=>state.set({drill:path.slice(0,idx).join('|')}));
+      host.append(b);
+    });
+    /* At the top there is one crumb and nothing to go back to, so the row would
+       be a lone bold word taking a line of height for no purpose. */
+    host.hidden=labels.length<2;
+  }
+
+  syncControls();
+  /* The drill path IS the filter: one code narrows to a member of the view
+     dimension, two narrow to a single pair. */
+  async function cellsFor(s,year){
+    const filter={scenario:s.scenario,measure:s.measure,year},path=drillOf(s);
+    if(path[0])filter[s.viewBy]=path[0];
+    if(path[1])filter[otherDim(s)]=path[1];
+    return M.cubeCells(payload,filter);
+  }
+  function key(r){return`${r.donor}|${r.recipient}|${r.sector}`;}
+  /* Which member of the CURRENT grouping dimension a cell belongs to. */
+  function groupKeyOf(r,s){return r[groupDim(s)];}
+  function groupNameOf(code,s){return nameOf(groupDim(s),code);}
+  async function buildData(s){const[base,now]=await Promise.all([cellsFor(s,2024),cellsFor(s,s.year)]),byBase=new Map(base.map(r=>[key(r),r.value])),byNow=new Map(now.map(r=>[key(r),r.value])),proto=new Map([...base,...now].map(r=>[key(r),r])),rows=[];for(const[k,r]of proto){const baseline=byBase.get(k)||0,value=byNow.get(k)||0;if(value<=0)continue;rows.push({...r,baseline,value,change:baseline>0?(value-baseline)/baseline:null,partner:groupKeyOf(r,s)});}return rows;}
   /* A recipient like Ukraine has 389 funded donor-sector cells and a donor like the
    United States has 1,190. Drawing every one of them in a 700x450 box gives an
    average cell under 1,000 square pixels: unreadable, unlabellable, and with
@@ -87,87 +122,66 @@ function capped(list,limit,label){
   return{kept,rest:rest.length?aggregate(rest,label):null};
 }
 function hierarchy(rows,s){
-  /* One focus and one partner: the squares are SECTORS, coloured by sector.
+  /* ALWAYS <group dimension> -> sector. The old build had three shapes -- a
+     single-partner special case, and two nesting orders -- selected by two
+     dropdowns. Drilling makes them one shape at three depths, so the special
+     cases go.
 
-     This case used to fall through the generic two-level path, which keyed the
-     leaves on the partner dimension. With exactly one partner selected, every
-     leaf therefore carried the same key and the whole treemap came out in a
-     single colour -- the one view where the sector breakdown IS the entire
-     content of the chart. Sectors are now the leaves, under one group named for
-     the partner, and they take their pinned sector colours. There are at most
-     21 of them, so none is pooled into Other. */
-  if(s.partner!=='ALL'){
-    const bySector=new Map();
-    for(const r of rows){const k=String(r.sector);
-      if(!bySector.has(k))bySector.set(k,[]);bySector.get(k).push(r);}
-    const leaves=[...bySector].map(([k,list])=>({
-      name:payload.sectorName(k),kind:'sector',leafKey:k,
-      baseline:list.reduce((z,r)=>z+r.baseline,0),
-      value:list.reduce((z,r)=>z+r.value,0),
-      row:list.length===1?list[0]:aggregate(list,payload.sectorName(k))
-    })).sort((a,b)=>b.value-a.value);
-    return{name:'root',children:[{name:partnerName(s.partner,s),kind:'partner',
-      baseline:leaves.reduce((z,l)=>z+l.baseline,0),children:leaves}]};
-  }
-  const first=s.nest==='partner-sector'?'partner':'sector',
-        second=first==='partner'?'sector':'partner',groups=new Map();
-  for(const r of rows){const a=first==='partner'?r.partner:String(r.sector);
+     Leaves are aggregated by sector: g.rows are individual cells, and mapping
+     them straight to leaves drew one rectangle per CELL, so a donor funding
+     humanitarian aid in six recipients got six identical red squares. */
+  const groups=new Map();
+  for(const r of rows){const a=String(groupKeyOf(r,s));
     if(!groups.has(a))groups.set(a,[]);groups.get(a).push(r);}
-  const asGroup=([key,list])=>({key,name:first==='partner'?partnerName(key,s):payload.sectorName(key),
-    kind:first,value:list.reduce((z,r)=>z+r.value,0),baseline:list.reduce((z,r)=>z+r.baseline,0),rows:list});
+  const asGroup=([key,list])=>({key,name:groupNameOf(key,s),kind:groupDim(s),
+    value:list.reduce((z,r)=>z+r.value,0),
+    baseline:list.reduce((z,r)=>z+r.baseline,0),rows:list});
   const all=[...groups].map(asGroup);
+  const label=groupDim(s)==='donor'?'donors':'recipients';
   const {kept,rest}=capped(all,MAX_GROUPS,'Other');
   const children=kept.map(g=>{
-    /* AGGREGATED BY THE LEAF DIMENSION.
-
-       g.rows are individual donor-recipient-sector cells. Mapping them straight
-       to leaves drew one rectangle per CELL, so a donor funding humanitarian aid
-       in six recipients got six identically coloured, identically labelled
-       humanitarian squares -- which reads as a rendering fault, and contradicts
-       the nesting control, which promises two levels. Measured at 2026 with no
-       focus: the humanitarian red appeared 18 times across 12 donor groups.
-
-       The single-partner branch above already aggregates this way; this is the
-       same thing for the generic path. */
-    const byLeaf=new Map();
-    for(const r of g.rows){
-      const k=second==='partner'?String(r.partner):String(r.sector);
-      if(!byLeaf.has(k))byLeaf.set(k,[]);
-      byLeaf.get(k).push(r);
-    }
-    const leaves=[...byLeaf].map(([k,list])=>{
-      /* The leaf dimension is what composition colouring keys on, so the same
-         sector (or the same donor) carries one colour across every group. */
-      const name=second==='partner'?partnerName(k,s):payload.sectorName(k);
-      return{name,kind:second,leafKey:k,
+    const bySector=new Map();
+    for(const r of g.rows){const k=String(r.sector);
+      if(!bySector.has(k))bySector.set(k,[]);bySector.get(k).push(r);}
+    const leaves=[...bySector].map(([k,list])=>{
+      const name=payload.sectorName(k);
+      return{name,kind:'sector',leafKey:k,
         baseline:list.reduce((z,r)=>z+r.baseline,0),
         value:list.reduce((z,r)=>z+r.value,0),
         row:list.length===1?list[0]:aggregate(list,name)};
     }).sort((a,b)=>b.value-a.value);
     const inner=capped(leaves,MAX_CHILDREN,'Other');
     const kids=inner.kept.slice();
-    if(inner.rest)kids.push({name:`Other (${inner.rest.cells})`,kind:second,leafKey:null,baseline:inner.rest.baseline,
-      value:inner.rest.value,row:{...inner.rest,label:`${g.name} — all other ${second==='partner'?(s.focusType==='recipient'?'donors':'recipients'):'sectors'}`}});
-    return{name:g.name,kind:first,baseline:g.baseline,children:kids};
+    if(inner.rest)kids.push({name:`Other (${inner.rest.cells})`,kind:'sector',leafKey:null,
+      baseline:inner.rest.baseline,value:inner.rest.value,
+      row:{...inner.rest,label:`${g.name} — all other sectors`}});
+    /* `code` is what a click drills into; the pooled group has none. */
+    return{name:g.name,code:g.key,kind:groupDim(s),baseline:g.baseline,children:kids};
   });
   if(rest){
-    const label=first==='partner'?(s.focusType==='recipient'?'donors':'recipients'):'sectors';
-    children.push({name:`Other (${rest.cells} ${label})`,kind:first,baseline:rest.baseline,
-      children:[{name:`Other (${rest.cells})`,kind:second,leafKey:null,baseline:rest.baseline,value:rest.value,
-        row:{...rest,label:`All other ${label}, ${rest.cells} cells`}}]});
+    children.push({name:`Other (${rest.cells} ${label})`,kind:groupDim(s),code:null,
+      baseline:rest.baseline,
+      children:[{name:`Other (${rest.cells})`,kind:'sector',leafKey:null,baseline:rest.baseline,
+        value:rest.value,row:{...rest,label:`All other ${label}, ${rest.cells} of them`}}]});
   }
   return{name:'root',children};
 }
   const svg=d3.select('#treemapSvg'),tooltip=document.getElementById('tooltip');let lastWidth=700,seq=0,pinned=null;
+  /* Drilling redraws the whole treemap, so a pinned tooltip would be left
+     anchored to a rectangle that no longer exists. */
+  function hideTipNow(){pinned=null;tooltip.hidden=true;}
   function colourScale(rows){const eligible=rows.filter(r=>r.baseline>=.1&&Number.isFinite(r.change)),abs=eligible.map(r=>Math.abs(r.change)).sort((a,b)=>a-b),cap=Math.max(.01,d3.quantile(abs,.95)||1);return{cap,colour:r=>{if(r.baseline<.1||!Number.isFinite(r.change))return'#DFE0E2';const z=Math.sign(r.change)*Math.log1p(Math.min(cap,Math.abs(r.change))*4)/Math.log1p(cap*4);return z<0?d3.interpolateRgb('#F3F6F7','#D15553')(-z):d3.interpolateRgb('#F3F6F7','#006970')(z);}};}
   /* Set by draw(); showTip needs it and `rows` is a draw() parameter, not a
      module-level binding. */
   let focusTotal=0;
   function showTip(r,target){const s0=state.get(),
-    focusName=s0.focus==='ALL'?(s0.focusType==='recipient'?'all recipients':'all donors'):(s0.focusType==='recipient'?payload.recipientName(s0.focus):payload.donorName(s0.focus)),
+    /* The drill path is the context: at the top there is none, deeper in it
+       names the donor, or the donor and recipient, the reader is inside. */
+    crumbPath=drillOf(s0),
+    focusName=crumbPath.length?crumbPath.map((c,i)=>nameOf(i===0?s0.viewBy:otherDim(s0),c)).join(' — '):(s0.viewBy==='donor'?'all donors':'all recipients'),
     total=focusTotal,
-    lines=[element('strong',{text:r.label?r.label:`${partnerName(r.partner,s0)} — ${payload.sectorName(r.sector)}`}),
-      element('div',{text:s0.focus==='ALL'?`Across ${focusName}`:`${s0.focusType==='recipient'?'Recipient':'Donor'}: ${focusName}`})];
+    lines=[element('strong',{text:r.label?r.label:`${groupNameOf(r.partner,s0)} — ${payload.sectorName(r.sector)}`}),
+      element('div',{text:crumbPath.length?`Within ${focusName}`:`Across ${focusName}`})];
   lines.push(element('div',{text:`${s0.year}: ${M.usd(r.value)}`}),
     element('div',{text:`2024: ${M.usd(r.baseline)}`}),
     element('div',{text:`Change: ${r.baseline>=.1?M.percent(r.change,{decimals:1}):'not comparable (2024 baseline under US$0.1m)'}`}),
@@ -202,10 +216,10 @@ function hierarchy(rows,s){
     const leafOrder=[...leafTotals].sort((a,b)=>b[1]-a[1]).map(x=>x[0]);
     const leafPalette=window.CGDSet.assignColours(leafOrder);
     const leafName=k=>{const s2=state.get(),second=(s2.partner!=='ALL'||s2.nest==='partner-sector')?'sector':'partner';
-      return second==='sector'?payload.sectorName(k):partnerName(k,s2);};
+      return second==='sector'?payload.sectorName(k):groupNameOf(k,s2);};
     const fillFor=d=>s.colourBy==='change'?scale.colour(d.data.row)
       :(d.data.leafKey==null?window.CGDSet.RESIDUAL:leafPalette.get(String(d.data.leafKey)));
-    renderLegend(s,leafOrder,leafPalette,leafName,scale,width);const groups=svg.selectAll('g.group').data(rootNode.children||[]).join('g').attr('class','group');groups.append('rect').attr('x',d=>d.x0).attr('y',d=>d.y0).attr('width',d=>Math.max(0,d.x1-d.x0)).attr('height',d=>Math.max(0,d.y1-d.y0)).attr('fill','none').attr('stroke','#85A5AD');const leaves=svg.selectAll('g.leaf').data(rootNode.leaves()).join('g').attr('class','leaf');leaves.append('rect').attr('x',d=>d.x0).attr('y',d=>d.y0).attr('width',d=>Math.max(0,d.x1-d.x0)).attr('height',d=>Math.max(0,d.y1-d.y0)).attr('fill',d=>fillFor(d)).attr('tabindex',0).attr('role','img').attr('aria-label',d=>`${d.data.row.label||d.data.name}, ${M.usd(d.data.row.value)}, change ${M.percent(d.data.row.change,{decimals:1})}`).on('pointerenter',function(e,d){showTip(d.data.row,this);}).on('pointerleave',()=>{if(!pinned)tooltip.hidden=true;}).on('focus',function(e,d){showTip(d.data.row,this);}).on('blur',()=>{if(!pinned)tooltip.hidden=true;}).on('click',function(e,d){e.stopPropagation();pinned=d.data.row;showTip(d.data.row,this);UI.attachDismiss(tooltip,()=>{pinned=null;tooltip.hidden=true;},{returnFocusTo:this});});/* A cell label has to survive whatever fill it lands on: 'Other multisector'
+    renderLegend(s,leafOrder,leafPalette,leafName,scale,width);const groups=svg.selectAll('g.group').data(rootNode.children||[]).join('g').attr('class','group');groups.append('rect').attr('x',d=>d.x0).attr('y',d=>d.y0).attr('width',d=>Math.max(0,d.x1-d.x0)).attr('height',d=>Math.max(0,d.y1-d.y0)).attr('fill','none').attr('stroke','#85A5AD');const leaves=svg.selectAll('g.leaf').data(rootNode.leaves()).join('g').attr('class','leaf');leaves.append('rect').attr('x',d=>d.x0).attr('y',d=>d.y0).attr('width',d=>Math.max(0,d.x1-d.x0)).attr('height',d=>Math.max(0,d.y1-d.y0)).attr('fill',d=>fillFor(d)).attr('tabindex',0).attr('role','img').attr('aria-label',d=>`${d.data.row.label||d.data.name}, ${M.usd(d.data.row.value)}, change ${M.percent(d.data.row.change,{decimals:1})}`).on('pointerenter',function(e,d){showTip(d.data.row,this);}).on('pointerleave',()=>{if(!pinned)tooltip.hidden=true;}).on('focus',function(e,d){showTip(d.data.row,this);}).on('blur',()=>{if(!pinned)tooltip.hidden=true;}).on('click',function(e,d){e.stopPropagation();/* Click goes DEEPER while there is a level left, which is what a treemap is expected to do; at the deepest level it pins the tooltip instead. The pooled Other group has no code and cannot be entered. */const st=state.get(),parent=d.parent&&d.parent.data;if(drillOf(st).length<MAX_DEPTH&&parent&&parent.code){hideTipNow();state.set({drill:[...drillOf(st),parent.code].join('|')});return;}pinned=d.data.row;showTip(d.data.row,this);UI.attachDismiss(tooltip,()=>{pinned=null;tooltip.hidden=true;},{returnFocusTo:this});});/* A cell label has to survive whatever fill it lands on: 'Other multisector'
        was dark ink on a dark teal gain cell. */
     const DARK_INK='#22383C',LIGHT_INK='#FFFFFF';
     const relLum=hex=>{const c=String(hex).replace('#','');if(c.length<6)return null;
@@ -273,8 +287,8 @@ function hierarchy(rows,s){
     /* Group headings go on LAST, so they sit above every cell, and they are drawn
        in the header band the treemap reserves for them. */
     const fitLabel=d=>{const room=Math.max(0,d.x1-d.x0-8),name=short(d.data.name);if(room<18)return'';const budget=Math.floor(room/6.2);return budget>=name.length?name:name.slice(0,Math.max(1,budget-1))+'\u2026';};
-    svg.selectAll('g.group-heading').data((rootNode.children||[]).filter(d=>d.y1-d.y0>24)).join('g').attr('class','group-heading').call(g=>{g.append('rect').attr('x',d=>d.x0).attr('y',d=>d.y0).attr('width',d=>Math.max(0,d.x1-d.x0)).attr('height',14).attr('fill','#F2F7F8');g.append('text').attr('class','group-label').attr('x',d=>d.x0+4).attr('y',d=>d.y0+11).text(fitLabel).append('title').text(d=>d.data.name);});const drawn=rootNode.leaves().filter(d=>!d.data.row.aggregate).length,pooled=rows.length-drawn;UI.renderNotes('notes',{visible:[`${rows.length} funded donor–recipient–sector cells`+(pooled>0?`; the largest ${drawn} are drawn individually and the remaining ${pooled} are pooled into the Other cells`:' shown individually')+`.`+(s.colourBy==='change'?` Colour is capped at ${M.percent(scale.cap,{decimals:0})}, the 95th percentile of absolute change.`:'')],notes:[`At most ${MAX_GROUPS} groups and ${MAX_CHILDREN} cells within each are drawn individually; the Other cell carries its own total.`,'Cells with no 2024 baseline, or one below US$0.1m, are left grey rather than coloured: a change against a near-zero baseline is rounding noise.',UI.STANDARD_NOTES.prices]});window.CGD_READY=true;}
-  async function schedule(){const n=++seq, s={...state.get()};tooltip.hidden=true;try{validPartners=await partnersFor(s);if(n!==seq)return;syncControls();const rows=await buildData(s);if(n!==seq)return;draw(rows,s,lastWidth);}catch(error){if(n===seq)P.renderFailState(chartArea,error); window.CGD_READY = true;}}
+    svg.selectAll('g.group-heading').data((rootNode.children||[]).filter(d=>d.y1-d.y0>24)).join('g').attr('class',d=>drillOf(state.get()).length<MAX_DEPTH&&d.data.code?'group-heading':'group-heading leafLevel').call(g=>{g.append('rect').attr('x',d=>d.x0).attr('y',d=>d.y0).attr('width',d=>Math.max(0,d.x1-d.x0)).attr('height',14).attr('fill','#F2F7F8');/* The heading strip is a second, more obvious target for the same drill. */g.filter(d=>drillOf(state.get()).length<MAX_DEPTH&&d.data.code).attr('tabindex',0).attr('role','button').attr('aria-label',d=>`${d.data.name}: show its ${groupDim(state.get())==='donor'?'recipients':'donors'}`).on('click',function(e,d){e.stopPropagation();hideTipNow();state.set({drill:[...drillOf(state.get()),d.data.code].join('|')});}).on('keydown',function(e,d){if(e.key==='Enter'||e.key===' '){e.preventDefault();hideTipNow();state.set({drill:[...drillOf(state.get()),d.data.code].join('|')});}});g.append('text').attr('class','group-label').attr('x',d=>d.x0+4).attr('y',d=>d.y0+11).text(fitLabel).append('title').text(d=>d.data.name);});const drawn=rootNode.leaves().filter(d=>!d.data.row.aggregate).length,pooled=rows.length-drawn;UI.renderNotes('notes',{visible:[`${rows.length} funded donor–recipient–sector cells`+(pooled>0?`; the largest ${drawn} are drawn individually and the remaining ${pooled} are pooled into the Other cells`:' shown individually')+`.`+(s.colourBy==='change'?` Colour is capped at ${M.percent(scale.cap,{decimals:0})}, the 95th percentile of absolute change.`:'')],notes:['Select a block to see what is inside it: donors open into their recipients, and a recipient into its sectors. The trail above the chart goes back.',`At most ${MAX_GROUPS} groups and ${MAX_CHILDREN} sectors within each are drawn individually; the Other block carries its own total and cannot be opened.`,'Cells with no 2024 baseline, or one below US$0.1m, are left grey rather than coloured: a change against a near-zero baseline is rounding noise.',UI.STANDARD_NOTES.prices]});window.CGD_READY=true;}
+  async function schedule(){const n=++seq, s={...state.get()};tooltip.hidden=true;try{const rows=await buildData(s);if(n!==seq)return;draw(rows,s,lastWidth);}catch(error){if(n===seq)P.renderFailState(chartArea,error); window.CGD_READY = true;}}
   C.observeInlineSize(document.querySelector('.treemap-wrap'),w=>{lastWidth=w;schedule();});document.getElementById('fullscreenBtn').addEventListener('click',()=>document.fullscreenElement?document.exitFullscreen():root.requestFullscreen?.());window.ODA_F7={state,buildData:()=>buildData(state.get())};
 })();
 </script><script src="shared/cgd-embed.js?v=20260902b"></script></body></html>
