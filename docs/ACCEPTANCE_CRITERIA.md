@@ -5,7 +5,7 @@ Derived from `Visualisation briefs.docx`. This file states what "done" means for
 **Precedence.** `SCOPE.md` governs what the product is and is not. The `cgd-interactive-visualisations` skill (`~/.claude/skills/`) governs house build standards. This file governs per-figure completeness. Where this file and `SCOPE.md` disagree, `SCOPE.md` wins and this file is wrong and must be corrected.
 
 **Payload version.** Arrays are named as they appear in `manifest.blobs` in the active
-`static-v2.2.9-swe-exit-scope` release. The EU-integration additions have landed and
+`static-v2.3.0-overlap-and-source-precedence` release. The EU-integration additions have landed and
 were verified with the rest of the payload. The adjacent v2.2.7 directory is retained
 only as the previous release.
 

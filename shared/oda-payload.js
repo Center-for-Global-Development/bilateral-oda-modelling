@@ -17,7 +17,7 @@
   /* The ONE place the release is named. web/data/README.md requires consumers to
      resolve the payload root from a single shared client constant, so a release
      bump is this line and nothing else. */
-  const RELEASE = 'static-v2.2.9-swe-exit-scope';
+  const RELEASE = 'static-v2.3.0-overlap-and-source-precedence';
   const DEFAULT_ROOT = `data/${RELEASE}/`;
 
   const SCHEMA_MAJOR = 1;

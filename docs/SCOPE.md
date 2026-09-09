@@ -374,11 +374,11 @@ change was and what was measured. Still outstanding:
 | F15 | The allocation universe now contains all 50 CRS reporters, including EU Institutions, so the former all-reporter/model-universe comparison has disappeared. The common universe is 58.05% country specified, 33.63% wholly unspecified and 8.32% regional in 2024 gross bilateral CRS disbursements. Including the EU raises the country-specified share relative to the former 49-provider model, so the earlier claim that exclusion strengthened the data-quality conclusion no longer applies. |
 | F17 | The manifest states schema version, byte order, element order, compression, axis hashes, per-blob dtype, shape, byte counts and SHA-256, units, NaN semantics, the gross >= GE tolerance, and the rule that a consumer must verify every axis hash before indexing and refuse to render on mismatch |
 
-**All of these are live in the current release.** `static-v2.2.9-swe-exit-scope` was
+**All of these are live in the current release.** `static-v2.3.0-overlap-and-source-precedence` was
 promoted on 27 August 2026 and emitted as
-`web/data/static-v2.2.9-swe-exit-scope`. It contains 50 allocation providers, 141
+`web/data/static-v2.3.0-overlap-and-source-precedence`. It contains 50 allocation providers, 141
 recipients, 21 sectors, four projection years, ten scenarios and 225 blobs. Its content
-root is `5700320b00bb69f4`; `verify_payload.py` passes 1,737 checks. The adjacent v2.2.7
+root is `0d316f0309fe4c91`; `verify_payload.py` passes 1,737 checks. The adjacent v2.2.7
 directory is retained only as the previous release. `BUILD_ACTION_LOG.md` in
 `Model output CSVs (static)` carries the release record.
 

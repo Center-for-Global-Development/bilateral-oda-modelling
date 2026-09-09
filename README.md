@@ -90,8 +90,8 @@ GitHub Pages was confirmed correct on 2 September 2026, so nothing needs doing
 today. Run this again on any new host, or after any change to payload serving:
 
 ```
-curl -sI https://center-for-global-development.github.io/bilateral-oda-modelling/data/static-v2.2.9-swe-exit-scope/manifest.json
-curl -sI https://center-for-global-development.github.io/bilateral-oda-modelling/data/static-v2.2.9-swe-exit-scope/cube/baseline__gross.bin.gz
+curl -sI https://center-for-global-development.github.io/bilateral-oda-modelling/data/static-v2.3.0-overlap-and-source-precedence/manifest.json
+curl -sI https://center-for-global-development.github.io/bilateral-oda-modelling/data/static-v2.3.0-overlap-and-source-precedence/cube/baseline__gross.bin.gz
 ```
 
 The `.bin.gz` response must **not** carry a `Content-Encoding: gzip` header. Note
@@ -177,7 +177,7 @@ repo/
     oda-ui.js               PROJECT — shared controls and notes (window.ODAUI)
     oda-figure.css          PROJECT — fail state and missing-value marks only
   data/
-    static-v2.2.9-swe-exit-scope/   the published payload (8.2 MB, 225 blobs)
+    static-v2.3.0-overlap-and-source-precedence/   the published payload (8.2 MB, 225 blobs)
   qa/verify.py              QA gate — §F steps 1-3 (Python + Playwright)
   qa/exercise.py            screenshots, state exercise, keyboard pass
   qa/exercise_f1_f4.py      F1–F4 responsive, state and lazy-failure exercise
@@ -813,7 +813,7 @@ off the pinned ramp.
 `shared/oda-payload.js` holds the release name in a single constant:
 
 ```js
-const RELEASE = 'static-v2.2.9-swe-exit-scope';
+const RELEASE = 'static-v2.3.0-overlap-and-source-precedence';
 ```
 
 That is the only place a release is named, as required by `web/data/README.md`.
