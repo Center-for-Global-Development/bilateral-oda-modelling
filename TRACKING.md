@@ -12,7 +12,7 @@ Analytics: none sent yet. When the first figure ships, record its
 
 ## Release currently targeted
 
-`static-v2.3.0-overlap-and-source-precedence` — schema 1.1.0, content root `0d316f0309fe4c91`,
+`static-v2.3.0-overlap-and-source-precedence` — schema 1.1.0, content root `71d78fd3c648005e`,
 50 donors, 141 recipients, 21 sectors, 225 blobs.
 
 Release-bump procedure: copy the new payload into `data/`, change `RELEASE` in

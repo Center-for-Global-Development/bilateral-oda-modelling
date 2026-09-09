@@ -1,5 +1,5 @@
 {
-  "content_root_sha256": "0d316f0309fe4c91495f68e84114606fb8a5b08a98eaf58ffd35b7a1585d2c57",
+  "content_root_sha256": "71d78fd3c648005e74712d390064446ccc8981f980f2ac4c77b662605740d5e8",
   "components": {
     "schema_version": "1.1.0",
     "model_build": "static-v2.3.0-overlap-and-source-precedence",
@@ -238,7 +238,7 @@
       "tool/pinned_ge": "3d499f1836d45eda5e0b07a98b4f9303672521b92c54042528687dc2743290ed",
       "tool/pinned_recipient_index": "9b3bc3a5324b28878e23d916b860fadb3a07bbf8895091974c50b8749dcda398"
     },
-    "release_input_manifest_sha256": "ed13b3f0725c6de4f2b5a27e15b3988e64c5c012248b8db120817ba90a90fb25",
+    "release_input_manifest_sha256": "2d19ec3a51b9ec55993e0008b35398032727b22c802c7b90b6451c8688a677d2",
     "release_script_sha256": "413059fda1d42078bfe4377714764a1ee51c4ebe3aab57052b2a81d175ce2691",
     "emitter_sha256": "570f11d409850dc337dc7ca71896080d983a5e8dc8060d0a78da657ebbdedb11",
     "environment": {
@@ -247,6 +247,6 @@
       "pandas": "3.0.3"
     }
   },
-  "built_at_utc": "2026-09-09T11:44:43+00:00",
+  "built_at_utc": "2026-09-09T12:59:27+00:00",
   "note": "content_root_sha256 covers the components below and nothing else. It excludes built_at_utc so identical rebuilds match. Any change to the schema, model build, axes, a blob, the release inputs, the release script, the emitter or the environment changes it."
 }

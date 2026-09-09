@@ -378,7 +378,7 @@ change was and what was measured. Still outstanding:
 promoted on 27 August 2026 and emitted as
 `web/data/static-v2.3.0-overlap-and-source-precedence`. It contains 50 allocation providers, 141
 recipients, 21 sectors, four projection years, ten scenarios and 225 blobs. Its content
-root is `0d316f0309fe4c91`; `verify_payload.py` passes 1,737 checks. The adjacent v2.2.7
+root is `71d78fd3c648005e`; `verify_payload.py` passes 1,737 checks. The adjacent v2.2.7
 directory is retained only as the previous release. `BUILD_ACTION_LOG.md` in
 `Model output CSVs (static)` carries the release record.
 
