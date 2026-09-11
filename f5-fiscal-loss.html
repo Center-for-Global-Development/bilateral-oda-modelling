@@ -271,6 +271,23 @@
                                     'text-anchor': 'middle' });
       label.textContent = t >= 1000 ? `${t / 1000}bn` : `${t}m`;
       svg.append(label);
+      /* A centred tick label at the end of the axis hangs half its width past the
+         plot, and at compact widths margin.right is narrower than that half-width,
+         so the glyph escapes the viewBox and is clipped. It depends on where the
+         terminal tick falls, so it appears and disappears with the data: the
+         11 September 2026 rebuild moved the x domain enough to put '10bn' hard
+         against the right edge, clipping it by 1.2px at 320 and 768 (1200 was fine).
+         Clamp the centre by the label's own measured width, which leaves every
+         interior tick exactly where it was and moves only one that would clip.
+         Measured after append so getComputedTextLength() sees real metrics; the
+         width observer re-renders once the web font settles, so the clamp is
+         recomputed against production metrics rather than the fallback. */
+      const half = label.getComputedTextLength() / 2;
+      if (half > 0) {
+        const centred = x(t);
+        const clamped = Math.min(Math.max(centred, half + 1), width - half - 1);
+        if (Math.abs(clamped - centred) > 0.01) label.setAttribute('x', clamped);
+      }
     }
 
     const xTitle = svgEl('text', { class: 'axis-title', x: margin.left + plotW / 2,
