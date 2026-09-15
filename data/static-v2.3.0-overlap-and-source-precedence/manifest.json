@@ -305,8 +305,8 @@
   },
   "cube2024": {
     "purpose": "Observed 2024 donor x recipient x sector allocation baseline.",
-    "populated_cells": 19940,
-    "support_sha256": "d62d4ab0bd5848e716c86b78db3c421e9cbf890226bb3ebda50e6cdcf48fc9ef",
+    "populated_cells": 19959,
+    "support_sha256": "50d5aa5d6e1989a311bbf876441d87ebf6d81f9c924c58f2fd83171de93b4dcc",
     "support_order": "donor-major, then recipient, sector",
     "consumer_rule": "Verify support_sha256 against cube/support2024__donor_index, recipient_index and sector_index before reading cube/baseline__*."
   },
@@ -3273,7 +3273,7 @@
       "count": 50,
       "raw_bytes": 200,
       "gzip_bytes": 246,
-      "sha256_raw": "69592c63986fe5a4304b3d47a0ae83a9137fcd638660666f17454a2d72c3786b",
+      "sha256_raw": "4123fa1620045802264d26ec50f004641f0920f16b3e4ee3928e7760aafbc208",
       "units": "US$ million, 2024 observed, constant 2024 prices",
       "note": "Invariant across scenarios; stored once."
     },
@@ -3289,7 +3289,7 @@
       "count": 50,
       "raw_bytes": 200,
       "gzip_bytes": 249,
-      "sha256_raw": "e47ebde4bcd346ba494b773ad2a751be52abc532234eb87f32f996887d27f893",
+      "sha256_raw": "7dafcf481639c8806d570f0587ba174373d346cd960ceb129742520ef9d389bb",
       "units": "US$ million, 2024 observed, constant 2024 prices",
       "note": "Invariant across scenarios; stored once."
     },
@@ -3306,8 +3306,8 @@
       ],
       "count": 1050,
       "raw_bytes": 4200,
-      "gzip_bytes": 3260,
-      "sha256_raw": "9626baf726ccdaec6f2715fb505d57575dbbb2a405ef7fadeadd91ada844d408",
+      "gzip_bytes": 3258,
+      "sha256_raw": "cb4f15edbc9eeac2aef99ac48054bddccf389c6106397453ccf76b1e61246f63",
       "units": "US$ million, 2024 observed, constant 2024 prices",
       "note": "Invariant across scenarios; stored once."
     },
@@ -3324,8 +3324,8 @@
       ],
       "count": 1050,
       "raw_bytes": 4200,
-      "gzip_bytes": 3262,
-      "sha256_raw": "35e2a51e817c1dceba25e38a0b524e86145589b3e637a9f55c8b7fae9637e4bd",
+      "gzip_bytes": 3263,
+      "sha256_raw": "345042876649c77e898af14550f9227c8248a4423089e05f7f5cde4f6efe4bd4",
       "units": "US$ million, 2024 observed, constant 2024 prices",
       "note": "Invariant across scenarios; stored once."
     },
@@ -3341,7 +3341,7 @@
       "count": 141,
       "raw_bytes": 564,
       "gzip_bytes": 614,
-      "sha256_raw": "dc9d4eba5b548a2a66ba2b0120946f1ad30ae282db26041cde2c3f584246865a",
+      "sha256_raw": "c446addc70840e81fea069b373a9f910c49b3f236ab18da583a56b4085f82853",
       "units": "US$ million, 2024 observed, constant 2024 prices",
       "note": "Invariant across scenarios; stored once."
     },
@@ -3357,7 +3357,7 @@
       "count": 141,
       "raw_bytes": 564,
       "gzip_bytes": 617,
-      "sha256_raw": "38114d8ada691fae941709845f9942289691af9596b9d0568f9ac7eb55cf7008",
+      "sha256_raw": "6b4fb32f7665a5dde73eb8709e8d9c9d29d01863ccc294ac3dd61e5a973e9ae5",
       "units": "US$ million, 2024 observed, constant 2024 prices",
       "note": "Invariant across scenarios; stored once."
     },
@@ -3373,7 +3373,7 @@
       "count": 21,
       "raw_bytes": 84,
       "gzip_bytes": 131,
-      "sha256_raw": "3554bbdb780799c95186d13f75875d02e53797cfd52d1a8f6e3a9c5ef55ed0a6",
+      "sha256_raw": "2badf507328a523192a5569af3ef98edb1a0f2a71e35d5a2ca8570183fd5bfe4",
       "units": "US$ million, 2024 observed, constant 2024 prices",
       "note": "Invariant across scenarios; stored once."
     },
@@ -3389,7 +3389,7 @@
       "count": 21,
       "raw_bytes": 84,
       "gzip_bytes": 134,
-      "sha256_raw": "28fb7469a537fabb125a8fad1b71ceaffda88584926bc68437d24bcbe765d5d6",
+      "sha256_raw": "798e40734fabf9e9a378a6fb7c8fad2b0c2ede0f60eb881fb68592a2473c6231",
       "units": "US$ million, 2024 observed, constant 2024 prices",
       "note": "Invariant across scenarios; stored once."
     },
@@ -3406,8 +3406,8 @@
       ],
       "count": 7050,
       "raw_bytes": 28200,
-      "gzip_bytes": 14849,
-      "sha256_raw": "23f95fd134cfcab4fbd4ba4025b40745dd282f04785ec7754d3469e7248e3742",
+      "gzip_bytes": 14851,
+      "sha256_raw": "0a0bbde2e7186b4a76deb911d8a215798a41ecc2c441e341e64a0069547a4327",
       "units": "US$ million, 2024 observed, constant 2024 prices",
       "note": "Invariant across scenarios; stored once."
     },
@@ -3424,8 +3424,8 @@
       ],
       "count": 7050,
       "raw_bytes": 28200,
-      "gzip_bytes": 14852,
-      "sha256_raw": "90dd4cf1a6415031c8400eb98150dbd51ac051b6eb8e72b3a77e1ac527dfb2b7",
+      "gzip_bytes": 14854,
+      "sha256_raw": "2d19c44a3857681fa19c25baaec39a5b9eef66fdc9d70ffc01f4a735e3ac1d7d",
       "units": "US$ million, 2024 observed, constant 2024 prices",
       "note": "Invariant across scenarios; stored once."
     },
@@ -3442,8 +3442,8 @@
       ],
       "count": 2961,
       "raw_bytes": 11844,
-      "gzip_bytes": 10156,
-      "sha256_raw": "df315b7d8f37ab6c92c05be1f9aab9ffc0feb2cb3aa1713fbc2ff6522900204d",
+      "gzip_bytes": 10159,
+      "sha256_raw": "65a74026e28af3a05713c8a8d8402537a010b30066a0527c49aba2c3699cfd52",
       "units": "US$ million, 2024 observed, constant 2024 prices",
       "note": "Invariant across scenarios; stored once."
     },
@@ -3460,8 +3460,8 @@
       ],
       "count": 2961,
       "raw_bytes": 11844,
-      "gzip_bytes": 10163,
-      "sha256_raw": "efab6edb770c57e9b2a6834d53345da68038217717dafacce6033f17ee8893b3",
+      "gzip_bytes": 10165,
+      "sha256_raw": "03f996de0c6026cb02f85a4135b67a4704bc973490d04cd59c844521347f4db2",
       "units": "US$ million, 2024 observed, constant 2024 prices",
       "note": "Invariant across scenarios; stored once."
     },
@@ -3508,12 +3508,12 @@
         "cell2024"
       ],
       "shape": [
-        19940
+        19959
       ],
-      "count": 19940,
-      "raw_bytes": 19940,
+      "count": 19959,
+      "raw_bytes": 19959,
       "gzip_bytes": 203,
-      "sha256_raw": "7e3a2f8f237d14219416999c2c625cacd9e5f6117d3396efff7527ad433fe379",
+      "sha256_raw": "4117f1ca3c6e19008288f93451de6d68624cd5af2f109dd93bd44164cf672c97",
       "units": "index into the named axis"
     },
     "cube/support2024__recipient_index": {
@@ -3523,12 +3523,12 @@
         "cell2024"
       ],
       "shape": [
-        19940
+        19959
       ],
-      "count": 19940,
-      "raw_bytes": 19940,
-      "gzip_bytes": 4532,
-      "sha256_raw": "ff387bbeee47379f40e77204a6c8c2045f4d2b79f3ebf088fc6ffdac2303a2a0",
+      "count": 19959,
+      "raw_bytes": 19959,
+      "gzip_bytes": 4530,
+      "sha256_raw": "276c6194026ed44886f1832d4f293e4b8e7a55f211e4841bf0349526ff4953a1",
       "units": "index into the named axis"
     },
     "cube/support2024__sector_index": {
@@ -3538,12 +3538,12 @@
         "cell2024"
       ],
       "shape": [
-        19940
+        19959
       ],
-      "count": 19940,
-      "raw_bytes": 19940,
-      "gzip_bytes": 6710,
-      "sha256_raw": "f327b36d2aba5256e9c1def30ec724defb02112eeac5d6c80ffe16f7387731c8",
+      "count": 19959,
+      "raw_bytes": 19959,
+      "gzip_bytes": 6713,
+      "sha256_raw": "f4ca0d24e2878fdf27cee42b2717671ea10296c6f54a7c8f64ecc8d2b647e890",
       "units": "index into the named axis"
     },
     "cube/baseline__ge": {
@@ -3553,12 +3553,12 @@
         "cell2024"
       ],
       "shape": [
-        19940
+        19959
       ],
-      "count": 19940,
-      "raw_bytes": 79760,
-      "gzip_bytes": 71668,
-      "sha256_raw": "944704cfd544f0acc2e783f3f586cfb605b3bb44346da59311f5b6c5f662ddbd",
+      "count": 19959,
+      "raw_bytes": 79836,
+      "gzip_bytes": 71739,
+      "sha256_raw": "a0597e1065e2c3cbc113e45a28636276962c84a035651293f84417f0bb26fcfe",
       "units": "US$ million, grant-equivalent, constant 2024 prices",
       "note": "Aligned to cube/support2024__{donor,recipient,sector}_index."
     },
@@ -3569,12 +3569,12 @@
         "cell2024"
       ],
       "shape": [
-        19940
+        19959
       ],
-      "count": 19940,
-      "raw_bytes": 79760,
-      "gzip_bytes": 71687,
-      "sha256_raw": "121dd87ed11b10371395770cd15be9056eab52edcc51318a1b280f368ec8a4d5",
+      "count": 19959,
+      "raw_bytes": 79836,
+      "gzip_bytes": 71759,
+      "sha256_raw": "566c03e55a217d729d5725144272305e38237c5cf64d939bfac065281f89dbb7",
       "units": "US$ million, gross, constant 2024 prices",
       "note": "Aligned to cube/support2024__{donor,recipient,sector}_index."
     },
@@ -3609,7 +3609,7 @@
       "count": 200,
       "raw_bytes": 800,
       "gzip_bytes": 830,
-      "sha256_raw": "b8fd418c9b2830cc970a1ea847d8cccfcd0ef4ae01837f2a956fc63a8acd99b6",
+      "sha256_raw": "0c60d0a150929ac33f5c52cad523277b487c7d346e391deadda98c14000b0408",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S1/donor_sector_year__ge": {
@@ -3627,8 +3627,8 @@
       ],
       "count": 4200,
       "raw_bytes": 16800,
-      "gzip_bytes": 11808,
-      "sha256_raw": "919eb03f9210ebd47966ffe2c0a1ad70cdfb2f1554ad20c38dcbf9db5109eb98",
+      "gzip_bytes": 11810,
+      "sha256_raw": "8967356211d9aa86a1b0b354701ef07db8d8dd26e7c7be6195d702375ff05247",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S1/donor_sector_year__gross": {
@@ -3646,8 +3646,8 @@
       ],
       "count": 4200,
       "raw_bytes": 16800,
-      "gzip_bytes": 11683,
-      "sha256_raw": "161f00df3c563722afadbbb1c2ef1e4a7f36e7f74bcc0449b3d9d8fc839fceae",
+      "gzip_bytes": 11682,
+      "sha256_raw": "d868672b0045b1762851e8c7b4bd599a4ab9004a1fae9d8cba56c2260b6fee9e",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S1/recipient_year__ge": {
@@ -3663,8 +3663,8 @@
       ],
       "count": 564,
       "raw_bytes": 2256,
-      "gzip_bytes": 2148,
-      "sha256_raw": "d9a52a9647b7e82fb23ec742d703436e7d0eecfd8dc496909e6420f196a59d30",
+      "gzip_bytes": 2141,
+      "sha256_raw": "eeaccd2601efa61a4cab0097f838efbeb1626a9d25bb32380099ae490db6f47a",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S1/recipient_year__gross": {
@@ -3680,8 +3680,8 @@
       ],
       "count": 564,
       "raw_bytes": 2256,
-      "gzip_bytes": 2146,
-      "sha256_raw": "b7d5acae962222ebdb40ac03db6ed4e569a36bf3c694fbb16b91372e08e0d795",
+      "gzip_bytes": 2148,
+      "sha256_raw": "dda2581b638eee3cbd2122f5fecb0c1aa425c8e5d1f04a4a84aaa91f79363e36",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S1/sector_year__ge": {
@@ -3698,7 +3698,7 @@
       "count": 84,
       "raw_bytes": 336,
       "gzip_bytes": 379,
-      "sha256_raw": "62312a7d2caf5c159266b0d27edc23c4d0d3ad401a9d7f73b1fa354855d12f96",
+      "sha256_raw": "3eb40bfa7d580ffc5cfcc22eebf5555832642cf2b5b3432d5631e42e7a1457bf",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S1/sector_year__gross": {
@@ -3715,7 +3715,7 @@
       "count": 84,
       "raw_bytes": 336,
       "gzip_bytes": 382,
-      "sha256_raw": "6384d5504fac1f37aedfa5cfbc477f665f3292900738f25cc532549d3c94490a",
+      "sha256_raw": "1784ec90f1977c97d6af1ae95ee05be0c709cb6166876cb695ea16f3c0101e49",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S1/donor_recipient_year__ge": {
@@ -3733,8 +3733,8 @@
       ],
       "count": 28200,
       "raw_bytes": 112800,
-      "gzip_bytes": 51456,
-      "sha256_raw": "d6496627aab1dda67376911787834ec0b9ce4fbbb451b1a0f6289b13156bade9",
+      "gzip_bytes": 51449,
+      "sha256_raw": "713446c49879dd2f0d1bdbe69d840661a07a6410461e04e1e5d28cd0136e047e",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S1/donor_recipient_year__gross": {
@@ -3753,7 +3753,7 @@
       "count": 28200,
       "raw_bytes": 112800,
       "gzip_bytes": 50374,
-      "sha256_raw": "fc6e3abe61c035be5b28c67f5aec482799bc25a8835ec644bd1d4837c49c11b6",
+      "sha256_raw": "b82b0b7932ed0f272e1000d5e9572555728a12d3ada615ce4347b3c41f44ee30",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S1/recipient_sector_year__ge": {
@@ -3771,8 +3771,8 @@
       ],
       "count": 11844,
       "raw_bytes": 47376,
-      "gzip_bytes": 38629,
-      "sha256_raw": "9caa8434a4df81925efc437518c4c62b94bbe5030a183da09c659005b375a04f",
+      "gzip_bytes": 38603,
+      "sha256_raw": "e7aaacb0dd9dea103315250e24d5f112dea615d5bec45873d55edd795b0f0cc0",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S1/recipient_sector_year__gross": {
@@ -3790,8 +3790,8 @@
       ],
       "count": 11844,
       "raw_bytes": 47376,
-      "gzip_bytes": 38632,
-      "sha256_raw": "1fb75d03d7ce3c005b145fd5e6f8837e5192e19136127ea80e74ed4d5a7c1802",
+      "gzip_bytes": 38634,
+      "sha256_raw": "1efb0fa63fee6404552dba9d4f0645b9a537c995055a2efdecb1159610bca216",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S1/closures__donor_index": {
@@ -3801,12 +3801,12 @@
         "closure"
       ],
       "shape": [
-        2550
+        2553
       ],
-      "count": 2550,
-      "raw_bytes": 5100,
+      "count": 2553,
+      "raw_bytes": 5106,
       "gzip_bytes": 143,
-      "sha256_raw": "a6a5e8d75fc95581031fff40c6e74cb707b3ddd741bb5e55b6bd4316c3e615b7",
+      "sha256_raw": "d4ddff11320a3e0081b37f7f75d825f499582b5f5b6913871c5157e4e65303b5",
       "units": "index into the named axis"
     },
     "scenarios/S1/closures__recipient_index": {
@@ -3816,12 +3816,12 @@
         "closure"
       ],
       "shape": [
-        2550
+        2553
       ],
-      "count": 2550,
-      "raw_bytes": 5100,
-      "gzip_bytes": 689,
-      "sha256_raw": "53c20559d98100ebf3b1699ae977fd30bbf203b5f01abc64eb44105a7639222a",
+      "count": 2553,
+      "raw_bytes": 5106,
+      "gzip_bytes": 693,
+      "sha256_raw": "76aa579200d5b3e606a0bd70db8489cc42ae9e1695979dd20519b183807c3ad7",
       "units": "index into the named axis"
     },
     "scenarios/S1/closures__sector_index": {
@@ -3831,12 +3831,12 @@
         "closure"
       ],
       "shape": [
-        2550
+        2553
       ],
-      "count": 2550,
-      "raw_bytes": 5100,
-      "gzip_bytes": 751,
-      "sha256_raw": "23510f2f837964a1093df091ac87e212368189ae4e6a6a7fc94278d5f18bd149",
+      "count": 2553,
+      "raw_bytes": 5106,
+      "gzip_bytes": 763,
+      "sha256_raw": "468a8e09e4534eb75693676250bb07798ad439dbf1bdd6f87b2e19dc0049cd0a",
       "units": "index into the named axis"
     },
     "scenarios/S1/closures__year_index": {
@@ -3846,12 +3846,12 @@
         "closure"
       ],
       "shape": [
-        2550
+        2553
       ],
-      "count": 2550,
-      "raw_bytes": 5100,
-      "gzip_bytes": 73,
-      "sha256_raw": "b1eb7f29053f7fef7b714359a3e0099f39ad85530546a42d5af634fd108b441e",
+      "count": 2553,
+      "raw_bytes": 5106,
+      "gzip_bytes": 74,
+      "sha256_raw": "63c2bb01eb5a6d5c885e6baa8dde6b82bfcb8d9a4e1af6b6b4c5c656a7de912c",
       "units": "index into the named axis"
     },
     "scenarios/S1/closures__reason": {
@@ -3861,12 +3861,12 @@
         "closure"
       ],
       "shape": [
-        2550
+        2553
       ],
-      "count": 2550,
-      "raw_bytes": 2550,
-      "gzip_bytes": 183,
-      "sha256_raw": "a108eebcfd59dfc867ecb53804183846da6e9100604e1feb7d0c0396854747ea",
+      "count": 2553,
+      "raw_bytes": 2553,
+      "gzip_bytes": 188,
+      "sha256_raw": "5a68ad532182bdbe43bf8f58a1f36dbc12e266c8f3c81f000c463fb6d55265a0",
       "units": "1 = viability, 2 = donor announcement"
     },
     "scenarios/S2A/donor_year__ge": {
@@ -3900,7 +3900,7 @@
       "count": 200,
       "raw_bytes": 800,
       "gzip_bytes": 828,
-      "sha256_raw": "4bfbe98533ea5bb39c664f834eff497635142e0e492a9febded97dc79d6a3f49",
+      "sha256_raw": "b8df50d7c3cef87bf0809731f837156ab31c132e0c43030bc78407398af0b0d1",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S2A/donor_sector_year__ge": {
@@ -3918,8 +3918,8 @@
       ],
       "count": 4200,
       "raw_bytes": 16800,
-      "gzip_bytes": 11503,
-      "sha256_raw": "97ef860bad468e783603204e0e32600336c18dd736b7430242d5bef9de51dbbf",
+      "gzip_bytes": 11502,
+      "sha256_raw": "36abb1eb666bcb6df465cb752a923ace6854b01e9f149c4eb1e02cf9974e6018",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S2A/donor_sector_year__gross": {
@@ -3937,8 +3937,8 @@
       ],
       "count": 4200,
       "raw_bytes": 16800,
-      "gzip_bytes": 11365,
-      "sha256_raw": "444c043852c2cc7cf2bd81ed74f788145b5156d45584a1a7c9d15169f97dcc37",
+      "gzip_bytes": 11361,
+      "sha256_raw": "738f67bf69ad7134a648849be7ebd12368c8f68723aeb7cd838a7e02e4542882",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S2A/recipient_year__ge": {
@@ -3954,8 +3954,8 @@
       ],
       "count": 564,
       "raw_bytes": 2256,
-      "gzip_bytes": 2140,
-      "sha256_raw": "2deee33de3ab2b6743e7b0c6ca18187c532cc44196044c8c17144becd4cc1935",
+      "gzip_bytes": 2144,
+      "sha256_raw": "d8659608a78c27dd997225087cdc6dd6c062078291fb7ec0c2ac053a2bd5f6b5",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S2A/recipient_year__gross": {
@@ -3972,7 +3972,7 @@
       "count": 564,
       "raw_bytes": 2256,
       "gzip_bytes": 2147,
-      "sha256_raw": "1478466ff570efe63292fa5da4d738878f584795a43630d61d802661c4bfa7f4",
+      "sha256_raw": "d255ec67dbd1634a2893c0bc3aab9cece9a4cfa6692a104af867259bbb61f34f",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S2A/sector_year__ge": {
@@ -3989,7 +3989,7 @@
       "count": 84,
       "raw_bytes": 336,
       "gzip_bytes": 379,
-      "sha256_raw": "cf52fb71d4f284423f145cfce495d67c19145fa34c4202829894ef6f16b394c5",
+      "sha256_raw": "5c3cfb237ebe68aae653c32e50175ca914a915735102b7ff853d2db13cb45aaa",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S2A/sector_year__gross": {
@@ -4006,7 +4006,7 @@
       "count": 84,
       "raw_bytes": 336,
       "gzip_bytes": 382,
-      "sha256_raw": "6c206f069f1157ff8cf9e392fa56d23d71c240e1eddf53737401d2f16ef9598e",
+      "sha256_raw": "5170fe3e34f9527fa1e36a90c3fe7c5462f358c1909334f22c7b0d9dfa3f39da",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S2A/donor_recipient_year__ge": {
@@ -4024,8 +4024,8 @@
       ],
       "count": 28200,
       "raw_bytes": 112800,
-      "gzip_bytes": 50898,
-      "sha256_raw": "0b939e55c7b59dd20a9abba6bc5f8880e562c22e46cb0507c2a6ccef53886c84",
+      "gzip_bytes": 50901,
+      "sha256_raw": "f8a27a4994f12e52351ce088037ba86683511b0d6737af2ad57ca2e2d02e74ad",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S2A/donor_recipient_year__gross": {
@@ -4043,8 +4043,8 @@
       ],
       "count": 28200,
       "raw_bytes": 112800,
-      "gzip_bytes": 49926,
-      "sha256_raw": "b147372e27e2ba74ba591b9b6a71d0a90e8227e68368bc5b1271970fd795ffd2",
+      "gzip_bytes": 49932,
+      "sha256_raw": "bac0885bb6ff9e5390fcf6121d543c3d3fabbf4114bf6c46d23160bd6a50dcc1",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S2A/recipient_sector_year__ge": {
@@ -4062,8 +4062,8 @@
       ],
       "count": 11844,
       "raw_bytes": 47376,
-      "gzip_bytes": 38344,
-      "sha256_raw": "2d7cd86f7d288aef1485ae7f265e6bf34e4f75656bfab416b9a70a13af3c08c4",
+      "gzip_bytes": 38304,
+      "sha256_raw": "cee36d0c07602abef4be50f17b0115c473cfc539a34ce4a587ea13c911e028db",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S2A/recipient_sector_year__gross": {
@@ -4081,8 +4081,8 @@
       ],
       "count": 11844,
       "raw_bytes": 47376,
-      "gzip_bytes": 38373,
-      "sha256_raw": "bda2f52d92f5f0c019a0ee25f4bd1c6ec1c523f0e3256a4cf652365026b03e29",
+      "gzip_bytes": 38361,
+      "sha256_raw": "748783d4c2dab1553ef9b08b650eeed687e930bfe7dd37c86050c01a7f0915c5",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S2A/closures__donor_index": {
@@ -4092,12 +4092,12 @@
         "closure"
       ],
       "shape": [
-        8059
+        8070
       ],
-      "count": 8059,
-      "raw_bytes": 16118,
-      "gzip_bytes": 191,
-      "sha256_raw": "6b074c1a829a19724edbca67183e96b87ef41216d2e41196dd108b30bdcf7b8f",
+      "count": 8070,
+      "raw_bytes": 16140,
+      "gzip_bytes": 190,
+      "sha256_raw": "d3ab4fe901d8961c04ee9a006316df16592e9c295905598d8a16ccad1317dcf7",
       "units": "index into the named axis"
     },
     "scenarios/S2A/closures__recipient_index": {
@@ -4107,12 +4107,12 @@
         "closure"
       ],
       "shape": [
-        8059
+        8070
       ],
-      "count": 8059,
-      "raw_bytes": 16118,
-      "gzip_bytes": 1501,
-      "sha256_raw": "0f25778997ff5c2722c0a7905e2b5fb6858fb7828b51a21516fa469bc85bf67e",
+      "count": 8070,
+      "raw_bytes": 16140,
+      "gzip_bytes": 1489,
+      "sha256_raw": "5f951dcec0663d9d8cdf57fd350e9d1dd9ed166887ffaff865c5df27769ac001",
       "units": "index into the named axis"
     },
     "scenarios/S2A/closures__sector_index": {
@@ -4122,12 +4122,12 @@
         "closure"
       ],
       "shape": [
-        8059
+        8070
       ],
-      "count": 8059,
-      "raw_bytes": 16118,
-      "gzip_bytes": 1788,
-      "sha256_raw": "8d65ed1c00647b0a758e388d566869d111ff76057e465996d47b33c0e0b0c054",
+      "count": 8070,
+      "raw_bytes": 16140,
+      "gzip_bytes": 1769,
+      "sha256_raw": "279e2a7eb92a1aafb3b24744faf368cadc158b1d61860c5dba3a2e3919829b79",
       "units": "index into the named axis"
     },
     "scenarios/S2A/closures__year_index": {
@@ -4137,12 +4137,12 @@
         "closure"
       ],
       "shape": [
-        8059
+        8070
       ],
-      "count": 8059,
-      "raw_bytes": 16118,
+      "count": 8070,
+      "raw_bytes": 16140,
       "gzip_bytes": 84,
-      "sha256_raw": "8bcaf16cd3e499404ab26cf204aaf45125e88a47f2a60888ccca613cb8171c7b",
+      "sha256_raw": "3f90117802a352b67dfc25da6d124b45373c3ca1d90cb7716f033fdcc00f2caf",
       "units": "index into the named axis"
     },
     "scenarios/S2A/closures__reason": {
@@ -4152,12 +4152,12 @@
         "closure"
       ],
       "shape": [
-        8059
+        8070
       ],
-      "count": 8059,
-      "raw_bytes": 8059,
-      "gzip_bytes": 242,
-      "sha256_raw": "43d198d4cad95371b08d6ba6270879000702b4af86027d093de767dba911f830",
+      "count": 8070,
+      "raw_bytes": 8070,
+      "gzip_bytes": 233,
+      "sha256_raw": "3f0e2fd69bdecfd337e29d30c0177ccee3fe65e374d0b4d189a7f3a883647efe",
       "units": "1 = viability, 2 = donor announcement"
     },
     "scenarios/S2B/donor_year__ge": {
@@ -4190,8 +4190,8 @@
       ],
       "count": 200,
       "raw_bytes": 800,
-      "gzip_bytes": 828,
-      "sha256_raw": "8e4e4775c4f822a98a96ba9ab73d3b06199adbc662e6e795ce4dadd0b96fb2bf",
+      "gzip_bytes": 827,
+      "sha256_raw": "8ac05c47d39e4ac1cb343ab32f0408487972cc0fba754e390081902aa61a2076",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S2B/donor_sector_year__ge": {
@@ -4209,8 +4209,8 @@
       ],
       "count": 4200,
       "raw_bytes": 16800,
-      "gzip_bytes": 11784,
-      "sha256_raw": "6bc74c741b812659e94f8f49a2d9463661ac5e31285fcc3580a3e08755d39536",
+      "gzip_bytes": 11789,
+      "sha256_raw": "5221eab26b8d0d2300504a1ff552f0af952af18d2c1a7f06313906dd866bb652",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S2B/donor_sector_year__gross": {
@@ -4228,8 +4228,8 @@
       ],
       "count": 4200,
       "raw_bytes": 16800,
-      "gzip_bytes": 11659,
-      "sha256_raw": "fe822a4e2c1d7b01c9c294890d9b4b0fb8f71e774d34342f1c5a2fa23c72a013",
+      "gzip_bytes": 11657,
+      "sha256_raw": "a17d7f49a884639f4b5c24afe81fc1875038c9a68d499b45d1bb0c0d8480cb88",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S2B/recipient_year__ge": {
@@ -4245,8 +4245,8 @@
       ],
       "count": 564,
       "raw_bytes": 2256,
-      "gzip_bytes": 2146,
-      "sha256_raw": "2c67f08cb762ed85ec5937092f5ef415d9ccce1646e447d4bc88d61d00525836",
+      "gzip_bytes": 2141,
+      "sha256_raw": "e64f1ddb6b9c33cba206c84ff5a311435f084ae0dbdaaf1ed65e962b1c05334c",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S2B/recipient_year__gross": {
@@ -4262,8 +4262,8 @@
       ],
       "count": 564,
       "raw_bytes": 2256,
-      "gzip_bytes": 2147,
-      "sha256_raw": "1e72ff34f27ed075648e7cd64577f977db0af1ae0aacb7e6e077ef362f87dbc4",
+      "gzip_bytes": 2148,
+      "sha256_raw": "0847eb2bafef056dfe19d4f8c6a6d98a4f7381aa23a97d63b368c037431fefd2",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S2B/sector_year__ge": {
@@ -4280,7 +4280,7 @@
       "count": 84,
       "raw_bytes": 336,
       "gzip_bytes": 379,
-      "sha256_raw": "5e27715d60c02a9de6e1e06b2b07471ca6da100eca4799b3217ec1d81c115e92",
+      "sha256_raw": "66a4f6b0ae6310f25c5406782a6b58bcfdd237c1bf96c17bfb5d0797b1422439",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S2B/sector_year__gross": {
@@ -4297,7 +4297,7 @@
       "count": 84,
       "raw_bytes": 336,
       "gzip_bytes": 382,
-      "sha256_raw": "d4e132059b777f3bb9745da90a3ff66771cdd5983943bd3535aaf9498d2f1b4e",
+      "sha256_raw": "fdaeea01331da1cd3a72f378a332cafc56146ab93dfdffa068d384a3e751da84",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S2B/donor_recipient_year__ge": {
@@ -4315,8 +4315,8 @@
       ],
       "count": 28200,
       "raw_bytes": 112800,
-      "gzip_bytes": 51462,
-      "sha256_raw": "75fb7a91a99909a9764d12fed0c5c0a56c650934df4dce38f773b662d381a62c",
+      "gzip_bytes": 51454,
+      "sha256_raw": "17e962f014ee2260e9fd77c16bc262e76e84ae60a0e71c02a6dd2462c6756cf7",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S2B/donor_recipient_year__gross": {
@@ -4334,8 +4334,8 @@
       ],
       "count": 28200,
       "raw_bytes": 112800,
-      "gzip_bytes": 50413,
-      "sha256_raw": "5cccfe75d8aa6d289a3720bde88e1f5244cf71698c3c1f7464e446ec8fe8050f",
+      "gzip_bytes": 50414,
+      "sha256_raw": "4116ec6b8713aa51e37a42230a46ec02f30554e095686533350461f06a18d7a0",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S2B/recipient_sector_year__ge": {
@@ -4353,8 +4353,8 @@
       ],
       "count": 11844,
       "raw_bytes": 47376,
-      "gzip_bytes": 38509,
-      "sha256_raw": "6fcd65286fb4322523efa211c87e8ddee91844a5b894e1326e1d0c4a3338ad5c",
+      "gzip_bytes": 38484,
+      "sha256_raw": "80e05b616de75c7565eaa7ef199ec40b219fa959ba0467fa6d1a16aa29a0d6c1",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S2B/recipient_sector_year__gross": {
@@ -4373,7 +4373,7 @@
       "count": 11844,
       "raw_bytes": 47376,
       "gzip_bytes": 38516,
-      "sha256_raw": "e0914f25515ae75de7d523481c03fd4b43d829c3a7b36acc650f154fe1a72966",
+      "sha256_raw": "900f88149078d167a08b41edd0c66ad8a14a1bc07e2db6cc815d73858e1a2085",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S2B/closures__donor_index": {
@@ -4383,12 +4383,12 @@
         "closure"
       ],
       "shape": [
-        4162
+        4165
       ],
-      "count": 4162,
-      "raw_bytes": 8324,
+      "count": 4165,
+      "raw_bytes": 8330,
       "gzip_bytes": 148,
-      "sha256_raw": "1f623adae6bb33317c7083b3476b6bfbf0bdbbd5c06dc57ac138b83ef2fb7953",
+      "sha256_raw": "9ecfd0de2f30534aac2a675b2088ced0e156eb77b157a17cda7e9b7393e648ab",
       "units": "index into the named axis"
     },
     "scenarios/S2B/closures__recipient_index": {
@@ -4398,12 +4398,12 @@
         "closure"
       ],
       "shape": [
-        4162
+        4165
       ],
-      "count": 4162,
-      "raw_bytes": 8324,
+      "count": 4165,
+      "raw_bytes": 8330,
       "gzip_bytes": 1034,
-      "sha256_raw": "b1e6358404d6de5a189dae53f900192c770d485b0674d50182b6c204bcc9d400",
+      "sha256_raw": "54972b2d731c533c5cc735178ef73b9cd793438c85cb6e4bf8b4732e30a638cf",
       "units": "index into the named axis"
     },
     "scenarios/S2B/closures__sector_index": {
@@ -4413,12 +4413,12 @@
         "closure"
       ],
       "shape": [
-        4162
+        4165
       ],
-      "count": 4162,
-      "raw_bytes": 8324,
-      "gzip_bytes": 1127,
-      "sha256_raw": "1c6bfaba8b08c41261b5d91d7331e182cb35b8b30f7a88647e65b39c3eeeb228",
+      "count": 4165,
+      "raw_bytes": 8330,
+      "gzip_bytes": 1141,
+      "sha256_raw": "cb998d58ac78c931cd5907e2a5ec2ae9b87ad858a8cbf76e726a54bc0bc55536",
       "units": "index into the named axis"
     },
     "scenarios/S2B/closures__year_index": {
@@ -4428,12 +4428,12 @@
         "closure"
       ],
       "shape": [
-        4162
+        4165
       ],
-      "count": 4162,
-      "raw_bytes": 8324,
+      "count": 4165,
+      "raw_bytes": 8330,
       "gzip_bytes": 75,
-      "sha256_raw": "211a917a64ebe657044f6b0ec210243e15b63a18f3bd6f9e35cbd8a57d5c97ad",
+      "sha256_raw": "39181b4bc3f16c368d3920ffa41482b1b87fbacd5092bc89023f2633c569203b",
       "units": "index into the named axis"
     },
     "scenarios/S2B/closures__reason": {
@@ -4443,12 +4443,12 @@
         "closure"
       ],
       "shape": [
-        4162
+        4165
       ],
-      "count": 4162,
-      "raw_bytes": 4162,
-      "gzip_bytes": 189,
-      "sha256_raw": "da423221f5ef65d4e9d7c4e354221d82451a595c8057505b3744ff3f1c3c68fe",
+      "count": 4165,
+      "raw_bytes": 4165,
+      "gzip_bytes": 193,
+      "sha256_raw": "dd6575eea5f6876a71c683364156527834ebc699cdd789c4f6f70ae56842a98b",
       "units": "1 = viability, 2 = donor announcement"
     },
     "scenarios/S3A/donor_year__ge": {
@@ -4481,8 +4481,8 @@
       ],
       "count": 200,
       "raw_bytes": 800,
-      "gzip_bytes": 831,
-      "sha256_raw": "6e18c3c91a65715262ede226f4e72324a6d99957c095bdb74b997341f3a8bce7",
+      "gzip_bytes": 830,
+      "sha256_raw": "71f47b80a18431427f12811f850f66d2f31ab2531dec7a88631c353129616fe5",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S3A/donor_sector_year__ge": {
@@ -4501,7 +4501,7 @@
       "count": 4200,
       "raw_bytes": 16800,
       "gzip_bytes": 11815,
-      "sha256_raw": "f9cf305969f2650ae99f7dafb988f84041b8a0217809ca82663de575bcab39e6",
+      "sha256_raw": "862686c9319f9d59740ae3c67bff552045d23dd659128c033cac1a0c66ab8275",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S3A/donor_sector_year__gross": {
@@ -4519,8 +4519,8 @@
       ],
       "count": 4200,
       "raw_bytes": 16800,
-      "gzip_bytes": 11686,
-      "sha256_raw": "ac6db7e7b7429ee05ef85bbee273ea19ced4b1ff132a5ec74a4c082192a34b69",
+      "gzip_bytes": 11689,
+      "sha256_raw": "7fd886e0f98189704039910a3aa6d1bc780b55c31c5e126a0c1a5fe7958c46d6",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S3A/recipient_year__ge": {
@@ -4536,8 +4536,8 @@
       ],
       "count": 564,
       "raw_bytes": 2256,
-      "gzip_bytes": 2141,
-      "sha256_raw": "d0efcbdfdbeff3e4cbac6f5201d22c3fee4e7f23ee0d360466a211d4f9cf71d5",
+      "gzip_bytes": 2139,
+      "sha256_raw": "0d7375e2071b64f1a5827eb3a484a056e1e30924725c25e5ce82a9b0d07382b8",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S3A/recipient_year__gross": {
@@ -4554,7 +4554,7 @@
       "count": 564,
       "raw_bytes": 2256,
       "gzip_bytes": 2145,
-      "sha256_raw": "3e43078e1420e3479a606e60830a20747b7714421f770af6f472e33c8114ac09",
+      "sha256_raw": "bc6a6f7fb256546fe5d76e833d413b0fde06cb0e92dadff8aa3e14dda0239e49",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S3A/sector_year__ge": {
@@ -4571,7 +4571,7 @@
       "count": 84,
       "raw_bytes": 336,
       "gzip_bytes": 379,
-      "sha256_raw": "d22d7e2f25c123751252e08e44100819630b4a737e2f29046133fca162423068",
+      "sha256_raw": "256d8efb8ca4736a5b84eff2eac86d018bb9693b49f3922118f884687bcb79d0",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S3A/sector_year__gross": {
@@ -4588,7 +4588,7 @@
       "count": 84,
       "raw_bytes": 336,
       "gzip_bytes": 382,
-      "sha256_raw": "a7caf7f1dcd96c2626eeafeb03bf3e3a227bedc7e59a88c4821ac3c17a3c9c5a",
+      "sha256_raw": "2970b3a8bed70a56447cab5fde83214218c561dedf6a63120d0303bedaf7a9c0",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S3A/donor_recipient_year__ge": {
@@ -4606,8 +4606,8 @@
       ],
       "count": 28200,
       "raw_bytes": 112800,
-      "gzip_bytes": 49935,
-      "sha256_raw": "2ec231bece98d1b69e0a2b2c768b98df28ac98e720c6389538d989601658d383",
+      "gzip_bytes": 49926,
+      "sha256_raw": "29139eaa9c65b4bf358c6e911e4134a28886351fe0aba8179df3ae05ee6dc68c",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S3A/donor_recipient_year__gross": {
@@ -4625,8 +4625,8 @@
       ],
       "count": 28200,
       "raw_bytes": 112800,
-      "gzip_bytes": 48858,
-      "sha256_raw": "25162a8093cd638a0d20388982998a590417811bf4293859a93e189fa9435680",
+      "gzip_bytes": 48857,
+      "sha256_raw": "25e406412d1d7f93a6706d88c25164f61cd899e610f5ef944e95761520a4209f",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S3A/recipient_sector_year__ge": {
@@ -4644,8 +4644,8 @@
       ],
       "count": 11844,
       "raw_bytes": 47376,
-      "gzip_bytes": 38686,
-      "sha256_raw": "263a9daffee425d85758846a628bd8e705108aa7d5a38175eae7f6eb1fcccee7",
+      "gzip_bytes": 38660,
+      "sha256_raw": "8f73bac76acd6a03c3b1302464cfeda6ada8d979d8fc1bd198788125b0170c1c",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S3A/recipient_sector_year__gross": {
@@ -4663,8 +4663,8 @@
       ],
       "count": 11844,
       "raw_bytes": 47376,
-      "gzip_bytes": 38701,
-      "sha256_raw": "8ce6ef13ce91bd880cde6cdaf6afba7e18d5bf34d54d496989c511c106b69c60",
+      "gzip_bytes": 38703,
+      "sha256_raw": "521f99d1e531f609665b4b4f7d88e8fafae16954f1bb7fb629224fa5eec0c310",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S3A/closures__donor_index": {
@@ -4674,12 +4674,12 @@
         "closure"
       ],
       "shape": [
-        3721
+        3724
       ],
-      "count": 3721,
-      "raw_bytes": 7442,
+      "count": 3724,
+      "raw_bytes": 7448,
       "gzip_bytes": 164,
-      "sha256_raw": "c9b4af085ad26871146c61dd86577a0019ccd8bb0f2ddaa64c3581eaacef9155",
+      "sha256_raw": "0fdb510a16cdfcad71fc7ffadae43a920240c0ce614cafc19712506c07999e82",
       "units": "index into the named axis"
     },
     "scenarios/S3A/closures__recipient_index": {
@@ -4689,12 +4689,12 @@
         "closure"
       ],
       "shape": [
-        3721
+        3724
       ],
-      "count": 3721,
-      "raw_bytes": 7442,
-      "gzip_bytes": 1152,
-      "sha256_raw": "9d51277c9cb9f321f7456edd2fc5afc5619005ce31f8a7c27a60f8262d02b047",
+      "count": 3724,
+      "raw_bytes": 7448,
+      "gzip_bytes": 1157,
+      "sha256_raw": "ae74a877425470e6ed5704204a42ec11b408fbeaff7c1d9476d5c8147a6b9938",
       "units": "index into the named axis"
     },
     "scenarios/S3A/closures__sector_index": {
@@ -4704,12 +4704,12 @@
         "closure"
       ],
       "shape": [
-        3721
+        3724
       ],
-      "count": 3721,
-      "raw_bytes": 7442,
-      "gzip_bytes": 1187,
-      "sha256_raw": "7d7eacfcc3e27e4299f1badfc38bf940f4baf1bcdf075d9b7c8b14d33c635355",
+      "count": 3724,
+      "raw_bytes": 7448,
+      "gzip_bytes": 1201,
+      "sha256_raw": "608f5fc72c1b6ab845a7191ac267598e8ecb2145a1d0e022a21eccd0f0a38ba0",
       "units": "index into the named axis"
     },
     "scenarios/S3A/closures__year_index": {
@@ -4719,12 +4719,12 @@
         "closure"
       ],
       "shape": [
-        3721
+        3724
       ],
-      "count": 3721,
-      "raw_bytes": 7442,
+      "count": 3724,
+      "raw_bytes": 7448,
       "gzip_bytes": 74,
-      "sha256_raw": "9974e367b103e0317888e49862209cda7de1b7022f81d92317d90a9983421ac5",
+      "sha256_raw": "e54abef0d6e1b46c5ce1e8405b808af4205d0759306f30ba5d4aea7dcf2fc6dd",
       "units": "index into the named axis"
     },
     "scenarios/S3A/closures__reason": {
@@ -4734,12 +4734,12 @@
         "closure"
       ],
       "shape": [
-        3721
+        3724
       ],
-      "count": 3721,
-      "raw_bytes": 3721,
-      "gzip_bytes": 200,
-      "sha256_raw": "1133e057c4cc3e57e45a03b1ff906c4f57c67046992a208fe51d75bab217e3ea",
+      "count": 3724,
+      "raw_bytes": 3724,
+      "gzip_bytes": 205,
+      "sha256_raw": "3cfc523b989fd3657c90d2c2fc1374a491e4772142705feaf485dd74d5f29b16",
       "units": "1 = viability, 2 = donor announcement"
     },
     "scenarios/S3B/donor_year__ge": {
@@ -4773,7 +4773,7 @@
       "count": 200,
       "raw_bytes": 800,
       "gzip_bytes": 829,
-      "sha256_raw": "60917037715705db6a6145c9dd4fff4a7f58fec5fb40edf2ba6e4a3665f8b56c",
+      "sha256_raw": "8c219f3fc8516afecbd84a7ff9aa767fa9d9bd457a535bcae6f1844e7ba935f7",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S3B/donor_sector_year__ge": {
@@ -4791,8 +4791,8 @@
       ],
       "count": 4200,
       "raw_bytes": 16800,
-      "gzip_bytes": 11872,
-      "sha256_raw": "80a89dd4f3f328f34ad30dd37d50ec126a2ed42289a5ba749e54148f92f5434c",
+      "gzip_bytes": 11875,
+      "sha256_raw": "54461f7319d5ded1fe84758bb515d272b53d7b896c6d0252e8284afd0b794ba2",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S3B/donor_sector_year__gross": {
@@ -4811,7 +4811,7 @@
       "count": 4200,
       "raw_bytes": 16800,
       "gzip_bytes": 11740,
-      "sha256_raw": "e85a06d9a5552e6784aa82656ed33bb723c54a2b5c2e7348f3a47c61a97686b6",
+      "sha256_raw": "6ae801a7ed520d120e509b35764d4b04b8a359cfd50f31a7d537065732eacdc2",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S3B/recipient_year__ge": {
@@ -4827,8 +4827,8 @@
       ],
       "count": 564,
       "raw_bytes": 2256,
-      "gzip_bytes": 2142,
-      "sha256_raw": "eca8c03ae944c2db988e0585ca7827454a25b4d442e93841a84c73dee0ef89aa",
+      "gzip_bytes": 2137,
+      "sha256_raw": "c8442f0c6997a8338ec68c5e5e58ff50915a71c65889640ce8099cb8b644258b",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S3B/recipient_year__gross": {
@@ -4844,8 +4844,8 @@
       ],
       "count": 564,
       "raw_bytes": 2256,
-      "gzip_bytes": 2143,
-      "sha256_raw": "7f36729b0ff7435f062100e6dcdda442a5fcc6268a2fff7e2f5b403bc0438d4f",
+      "gzip_bytes": 2147,
+      "sha256_raw": "6718ec9318b3b1369dcbf650f47a3ca78f67d093d704971e5b4538af83a7b849",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S3B/sector_year__ge": {
@@ -4862,7 +4862,7 @@
       "count": 84,
       "raw_bytes": 336,
       "gzip_bytes": 379,
-      "sha256_raw": "8ca1ddf9519509f0d907fd7d1a472295ec32649ebd094bf7e436ce3732802991",
+      "sha256_raw": "783dc7cb099dabc9f0e27e5c41e6bb834d82fbb956870156c48f7c1f3020639f",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S3B/sector_year__gross": {
@@ -4879,7 +4879,7 @@
       "count": 84,
       "raw_bytes": 336,
       "gzip_bytes": 382,
-      "sha256_raw": "7901e3dc0d248a4321434f1eec1287a129f021f8c1e79eacd9923ca7bdebd6e2",
+      "sha256_raw": "e30492818492890c3d12c339daae8527897a66d0c55732802d1facc974e0aa36",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S3B/donor_recipient_year__ge": {
@@ -4897,8 +4897,8 @@
       ],
       "count": 28200,
       "raw_bytes": 112800,
-      "gzip_bytes": 51827,
-      "sha256_raw": "fbdfc24d23647893959c1e86b13b47e6021024778983b54852ab3147659c1d97",
+      "gzip_bytes": 51821,
+      "sha256_raw": "095822a0402972a851dac046ee4b50207c17da5d0a9042b72fd245e1e7970aef",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S3B/donor_recipient_year__gross": {
@@ -4916,8 +4916,8 @@
       ],
       "count": 28200,
       "raw_bytes": 112800,
-      "gzip_bytes": 50685,
-      "sha256_raw": "b393c724e095509e7394d11c478129aa0edc15c987c97464e1e13fd2649f420f",
+      "gzip_bytes": 50686,
+      "sha256_raw": "319ab0ebbcd340333cdbf22b811c2ea7507f9c89ed52f36623480ae03ecce1e8",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S3B/recipient_sector_year__ge": {
@@ -4935,8 +4935,8 @@
       ],
       "count": 11844,
       "raw_bytes": 47376,
-      "gzip_bytes": 38621,
-      "sha256_raw": "cef5c51df54de42e5185e617bff8d3fbc06b37d9f3a110f8498387588d74e6a3",
+      "gzip_bytes": 38601,
+      "sha256_raw": "d1b46ad14386102d3ee113823d880a72b2d3d7eb6daec9f9d3794c872f35883e",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S3B/recipient_sector_year__gross": {
@@ -4954,8 +4954,8 @@
       ],
       "count": 11844,
       "raw_bytes": 47376,
-      "gzip_bytes": 38637,
-      "sha256_raw": "f853f78171743f42a8c9f9617ead89d4c3b8480d7b4150e66e6c89351e751a4d",
+      "gzip_bytes": 38643,
+      "sha256_raw": "78008ce4ee0c80cfc0646b9bd1e6b3a7e84b29ab782f5613d30ae79df2a08729",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S3B/closures__donor_index": {
@@ -4965,12 +4965,12 @@
         "closure"
       ],
       "shape": [
-        4446
+        4457
       ],
-      "count": 4446,
-      "raw_bytes": 8892,
+      "count": 4457,
+      "raw_bytes": 8914,
       "gzip_bytes": 146,
-      "sha256_raw": "d8cb6137105d744a82e86e769bfe2c91d722ce8c84b7caa97e1cda394ceab961",
+      "sha256_raw": "901c0638d0e8e22646795054d7419f780d78a29855e6610f6ce29e2eb08247c2",
       "units": "index into the named axis"
     },
     "scenarios/S3B/closures__recipient_index": {
@@ -4980,12 +4980,12 @@
         "closure"
       ],
       "shape": [
-        4446
+        4457
       ],
-      "count": 4446,
-      "raw_bytes": 8892,
-      "gzip_bytes": 860,
-      "sha256_raw": "04e51fafb62234cbcf3764ad348c930a8637f4195467d3b7c24b965170859c27",
+      "count": 4457,
+      "raw_bytes": 8914,
+      "gzip_bytes": 862,
+      "sha256_raw": "ab607bd246e8e3f7b0bb5c8e431630d96c13492002680f65bec40a56bd9d0bb4",
       "units": "index into the named axis"
     },
     "scenarios/S3B/closures__sector_index": {
@@ -4995,12 +4995,12 @@
         "closure"
       ],
       "shape": [
-        4446
+        4457
       ],
-      "count": 4446,
-      "raw_bytes": 8892,
-      "gzip_bytes": 1063,
-      "sha256_raw": "17bf03fbd85ce9d1c28510a1f4872820c3cbfda8dc3b02aa93e1a7e1f7049e10",
+      "count": 4457,
+      "raw_bytes": 8914,
+      "gzip_bytes": 1074,
+      "sha256_raw": "428626f0abb4349d2738ccf013f74f0a0f1f7cedf7ae8e9191c68fcebb1bf41a",
       "units": "index into the named axis"
     },
     "scenarios/S3B/closures__year_index": {
@@ -5010,12 +5010,12 @@
         "closure"
       ],
       "shape": [
-        4446
+        4457
       ],
-      "count": 4446,
-      "raw_bytes": 8892,
-      "gzip_bytes": 76,
-      "sha256_raw": "bab1e0730b24754c15e9b5597ccda9f5ee99ba6e21ab4ed319a6cb7b0fae0a8a",
+      "count": 4457,
+      "raw_bytes": 8914,
+      "gzip_bytes": 77,
+      "sha256_raw": "3698f4d1a06ee72b908baec12ad65facd7e0f838a1bd980de7a6460e4f173be1",
       "units": "index into the named axis"
     },
     "scenarios/S3B/closures__reason": {
@@ -5025,12 +5025,12 @@
         "closure"
       ],
       "shape": [
-        4446
+        4457
       ],
-      "count": 4446,
-      "raw_bytes": 4446,
-      "gzip_bytes": 194,
-      "sha256_raw": "a202589afe0433c1e090cd308a5dce9d8ed4819f6b241812470db53f9a3cbcb5",
+      "count": 4457,
+      "raw_bytes": 4457,
+      "gzip_bytes": 199,
+      "sha256_raw": "958eea613469fe970d4fe785b6240b6b0838488c1ffd17acd633c5bfc7414970",
       "units": "1 = viability, 2 = donor announcement"
     },
     "scenarios/S4/donor_year__ge": {
@@ -5064,7 +5064,7 @@
       "count": 200,
       "raw_bytes": 800,
       "gzip_bytes": 828,
-      "sha256_raw": "0c372060ea2abcd7f46c6dd4c84cc415e3230e369c10790b43103da5653cbdd2",
+      "sha256_raw": "b536eed604a764406e40d13944d53b08bd1ee0c7c265277a48f9ddf34bb6b426",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S4/donor_sector_year__ge": {
@@ -5082,8 +5082,8 @@
       ],
       "count": 4200,
       "raw_bytes": 16800,
-      "gzip_bytes": 11885,
-      "sha256_raw": "0a42109477baa1dd60cc495f04b6f18ebce3a187ccfdd02672080034c7b66597",
+      "gzip_bytes": 11886,
+      "sha256_raw": "88846a956f590c10bc804a52defb2fa3a1781a5e92f695a183b9435ead330405",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S4/donor_sector_year__gross": {
@@ -5101,8 +5101,8 @@
       ],
       "count": 4200,
       "raw_bytes": 16800,
-      "gzip_bytes": 11762,
-      "sha256_raw": "caa1c2e2ed7decb5bc6e1c3949765efe887aaa8c7f93ea971c1b69369deb21ec",
+      "gzip_bytes": 11760,
+      "sha256_raw": "91f2b2493a4a0d8021ec90d8211169e250de4543113f732c8a5669e777ac6a93",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S4/recipient_year__ge": {
@@ -5118,8 +5118,8 @@
       ],
       "count": 564,
       "raw_bytes": 2256,
-      "gzip_bytes": 2148,
-      "sha256_raw": "4cde56c13de46d234e5d995aa8f72eda89e8add71e8a135b7499a4c7cfa5c45d",
+      "gzip_bytes": 2141,
+      "sha256_raw": "8c58ca1b338a17fb1e2372f9cb5935dec87ee29dfa771c313912294b72fcde8a",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S4/recipient_year__gross": {
@@ -5135,8 +5135,8 @@
       ],
       "count": 564,
       "raw_bytes": 2256,
-      "gzip_bytes": 2151,
-      "sha256_raw": "bb57119f169b14b909a4586a84bedae47c84178939b64e3ddc837f801b320346",
+      "gzip_bytes": 2146,
+      "sha256_raw": "17da8b240c9e1923593e40557267661c7ab739357417643efca0fa11ff65d3df",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S4/sector_year__ge": {
@@ -5153,7 +5153,7 @@
       "count": 84,
       "raw_bytes": 336,
       "gzip_bytes": 379,
-      "sha256_raw": "a4165b8f17ec1965259e265dbe661f1bb158439507d77021a008139b998938ce",
+      "sha256_raw": "0838a7c55827ff9efc4d4762c2cadbfa8671c468c295f58353b6d65bfe9a974a",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S4/sector_year__gross": {
@@ -5170,7 +5170,7 @@
       "count": 84,
       "raw_bytes": 336,
       "gzip_bytes": 382,
-      "sha256_raw": "0d07cfadf165ef1753bd9fbe7a6e38cd07a4c7c2ecbc56151b14b7d5a48f2a70",
+      "sha256_raw": "fa151918624b6dd07ff42ffd849b3ebb1c59416043658f80a8b2a82abf3d9e5b",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S4/donor_recipient_year__ge": {
@@ -5188,8 +5188,8 @@
       ],
       "count": 28200,
       "raw_bytes": 112800,
-      "gzip_bytes": 51465,
-      "sha256_raw": "183cb04fd5d7a9c6f28d31d3f5da8c5d68ac6305f620f393702baf803e6f97ef",
+      "gzip_bytes": 51454,
+      "sha256_raw": "5596cb24b546039a281ca5aa04d47feae864cefb09591634048a5b81d060ddf6",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S4/donor_recipient_year__gross": {
@@ -5208,7 +5208,7 @@
       "count": 28200,
       "raw_bytes": 112800,
       "gzip_bytes": 50289,
-      "sha256_raw": "9d4430122003b31f64561fd839f892e3d5e6398a1fbb3ac89f6810aca0dc1411",
+      "sha256_raw": "7a4219b19c45c49e9221b879fef51b994df9b4c54608395939ef228c69144713",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S4/recipient_sector_year__ge": {
@@ -5226,8 +5226,8 @@
       ],
       "count": 11844,
       "raw_bytes": 47376,
-      "gzip_bytes": 38445,
-      "sha256_raw": "a627766a9502aee1246759d4266b9d92d1f2743e52a9d05dcd59b0c0a32a8e44",
+      "gzip_bytes": 38418,
+      "sha256_raw": "7c1f5062ca645a2c9e070c5982ae9267000822d1069ba7d389bdc3dae0674a7d",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S4/recipient_sector_year__gross": {
@@ -5245,8 +5245,8 @@
       ],
       "count": 11844,
       "raw_bytes": 47376,
-      "gzip_bytes": 38446,
-      "sha256_raw": "376ec798672efdc0b494909b6d73fa83017b3e0299b065dde0e3eb1972ff3288",
+      "gzip_bytes": 38455,
+      "sha256_raw": "89a776eccf11deaffb295875654c8f6a055680883a6d9e3e3d2de3caaa227a1c",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S4/closures__donor_index": {
@@ -5256,12 +5256,12 @@
         "closure"
       ],
       "shape": [
-        5607
+        5618
       ],
-      "count": 5607,
-      "raw_bytes": 11214,
+      "count": 5618,
+      "raw_bytes": 11236,
       "gzip_bytes": 158,
-      "sha256_raw": "f277f620f9db996666b4025c4f1bb808cb46b9680f0c925693cad0aa7c0f5f71",
+      "sha256_raw": "c7abf1554e80abf1734d58920bee07b3f938d697736992505fcc120889cd5fec",
       "units": "index into the named axis"
     },
     "scenarios/S4/closures__recipient_index": {
@@ -5271,12 +5271,12 @@
         "closure"
       ],
       "shape": [
-        5607
+        5618
       ],
-      "count": 5607,
-      "raw_bytes": 11214,
-      "gzip_bytes": 1235,
-      "sha256_raw": "9ca4eeaab0e182ca4d75d29b73ba2cb669765dffd75262c71a9b897dff140f05",
+      "count": 5618,
+      "raw_bytes": 11236,
+      "gzip_bytes": 1239,
+      "sha256_raw": "bb1f5534134857400ad53ebe0093343068a007021b557939bd1a2cd09329d4a8",
       "units": "index into the named axis"
     },
     "scenarios/S4/closures__sector_index": {
@@ -5286,12 +5286,12 @@
         "closure"
       ],
       "shape": [
-        5607
+        5618
       ],
-      "count": 5607,
-      "raw_bytes": 11214,
-      "gzip_bytes": 1571,
-      "sha256_raw": "1fbc85a935996dee2c4cbb498f40075dee0420684542139b3a62ee183e5289fa",
+      "count": 5618,
+      "raw_bytes": 11236,
+      "gzip_bytes": 1582,
+      "sha256_raw": "799045ebd7cc83aa9453201465fb2f1acff73c5383503113c076226ec9cbe1a9",
       "units": "index into the named axis"
     },
     "scenarios/S4/closures__year_index": {
@@ -5301,12 +5301,12 @@
         "closure"
       ],
       "shape": [
-        5607
+        5618
       ],
-      "count": 5607,
-      "raw_bytes": 11214,
-      "gzip_bytes": 78,
-      "sha256_raw": "3ac7345b17ac3334445e94b3234f437ffd3b989e45989c0c7c74e6df4d50f7ec",
+      "count": 5618,
+      "raw_bytes": 11236,
+      "gzip_bytes": 79,
+      "sha256_raw": "74c1d69db789797ae68e822d585dbca039c765e10d52d476bd12ddc3982f5451",
       "units": "index into the named axis"
     },
     "scenarios/S4/closures__reason": {
@@ -5316,12 +5316,12 @@
         "closure"
       ],
       "shape": [
-        5607
+        5618
       ],
-      "count": 5607,
-      "raw_bytes": 5607,
-      "gzip_bytes": 198,
-      "sha256_raw": "20ffa86d21e4451ab461359c62d3f361212010f410ee566dfbdd30d52f234639",
+      "count": 5618,
+      "raw_bytes": 5618,
+      "gzip_bytes": 200,
+      "sha256_raw": "a0317497647ed1a1ba540eaf239698f104c82fbc8cb373b5a8d0b495c401e3be",
       "units": "1 = viability, 2 = donor announcement"
     },
     "scenarios/S5/donor_year__ge": {
@@ -5355,7 +5355,7 @@
       "count": 200,
       "raw_bytes": 800,
       "gzip_bytes": 827,
-      "sha256_raw": "47d5d920e8e139f0b53b10596b1317c289103388737138997659f9eed3a7946e",
+      "sha256_raw": "e674ed1ec2cf5fac45464064a2ea390e3c4b642f09cab4ad48f96db699ceadf0",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S5/donor_sector_year__ge": {
@@ -5373,8 +5373,8 @@
       ],
       "count": 4200,
       "raw_bytes": 16800,
-      "gzip_bytes": 11864,
-      "sha256_raw": "e5741de6262d18fb6fb4a735e43df03b96a276de1eefa7c955b0210cca84e15c",
+      "gzip_bytes": 11860,
+      "sha256_raw": "319e4cf27148a6566dddd277928a8f3604ca842b641b3d718de84dd9d3508b94",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S5/donor_sector_year__gross": {
@@ -5392,8 +5392,8 @@
       ],
       "count": 4200,
       "raw_bytes": 16800,
-      "gzip_bytes": 11756,
-      "sha256_raw": "e3b7d66d3522692525160cc2169daa14d50f1bed0693fbdce0f0576376b89470",
+      "gzip_bytes": 11754,
+      "sha256_raw": "2222f718bdf19e5fd3d9d40d985dc80fe5d65010b38a6410ba397ed236f4bfd7",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S5/recipient_year__ge": {
@@ -5410,7 +5410,7 @@
       "count": 564,
       "raw_bytes": 2256,
       "gzip_bytes": 2143,
-      "sha256_raw": "55baa3852f915e42aa7041fcaefed3f4f7c907fe4980e2defe4da59bd1041f36",
+      "sha256_raw": "f63f9fe42d82ed15f22aee4478756009872abfd7e9da5fce1ff3fb1102cc6ac8",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S5/recipient_year__gross": {
@@ -5426,8 +5426,8 @@
       ],
       "count": 564,
       "raw_bytes": 2256,
-      "gzip_bytes": 2147,
-      "sha256_raw": "617bbe873f8e3f193181d72d6271e0cc4405653d730fc0d8a47d69a2fa2cca5c",
+      "gzip_bytes": 2148,
+      "sha256_raw": "56fcc1390128bc93ecc70d714753cb446262bcdc077688bc582831cb8782f1ae",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S5/sector_year__ge": {
@@ -5444,7 +5444,7 @@
       "count": 84,
       "raw_bytes": 336,
       "gzip_bytes": 379,
-      "sha256_raw": "1d5f8ae681ef2715b68ef065c93866d7bf22edf7901a4ad3f6fc6799c1d55a96",
+      "sha256_raw": "c09b3c72f24b3698d1f8e1166a895da85c6c767c3b994f9db8769b537395e4f0",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S5/sector_year__gross": {
@@ -5461,7 +5461,7 @@
       "count": 84,
       "raw_bytes": 336,
       "gzip_bytes": 382,
-      "sha256_raw": "8e8a7a5b236b93421a10f257985dd711b41b21329f7a9e0b792b73cabc893067",
+      "sha256_raw": "ad4a7b40d7cc879e7b4568690630a98c55ad6e60b723c822d878387a17f1bb6c",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S5/donor_recipient_year__ge": {
@@ -5479,8 +5479,8 @@
       ],
       "count": 28200,
       "raw_bytes": 112800,
-      "gzip_bytes": 51416,
-      "sha256_raw": "ade22e90fd798b1e0742219099833fde6f906df3a977b30bf35f9e4da301a43f",
+      "gzip_bytes": 51440,
+      "sha256_raw": "ae9137a842d1396ff3678a7d9e1e6c881e1017d55c65f763e7695de1bf61595f",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S5/donor_recipient_year__gross": {
@@ -5498,8 +5498,8 @@
       ],
       "count": 28200,
       "raw_bytes": 112800,
-      "gzip_bytes": 50104,
-      "sha256_raw": "97130b1b6f3c75c62550c2d4bde150f771d1b9e5b2b43667644a1abdc8794ca2",
+      "gzip_bytes": 50143,
+      "sha256_raw": "d580f45bee76cccc97320363370e4705aeeb75f5a189159358b417faae96acb6",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S5/recipient_sector_year__ge": {
@@ -5517,8 +5517,8 @@
       ],
       "count": 11844,
       "raw_bytes": 47376,
-      "gzip_bytes": 38546,
-      "sha256_raw": "bb467fbd34c323c69f978278d9a05923727ddc306c9feb16661bb69bbf7df1ce",
+      "gzip_bytes": 38512,
+      "sha256_raw": "435aac655ef88031f9b73723b6deb0ee8de6d0e4eb80fe5b5ddf859611bdcca2",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S5/recipient_sector_year__gross": {
@@ -5536,8 +5536,8 @@
       ],
       "count": 11844,
       "raw_bytes": 47376,
-      "gzip_bytes": 38536,
-      "sha256_raw": "1e7d7bfc5082d3d9d72d14166b19b02f9a67367e5cd70cf072bec976278797db",
+      "gzip_bytes": 38531,
+      "sha256_raw": "84d5ec3f632221bdaed3d230a1cb760017cabf548d860af77a93f57d84b2b177",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S5/closures__donor_index": {
@@ -5547,12 +5547,12 @@
         "closure"
       ],
       "shape": [
-        5183
+        5002
       ],
-      "count": 5183,
-      "raw_bytes": 10366,
-      "gzip_bytes": 200,
-      "sha256_raw": "04059e996a0ec3fc6bbd52db6108ccd92368b37a86abc45d8c095e98283ce60d",
+      "count": 5002,
+      "raw_bytes": 10004,
+      "gzip_bytes": 198,
+      "sha256_raw": "b1e6912eceda6b05f388f63b7128f8d285b2329d9da318d4e2a240a07f5fdbfb",
       "units": "index into the named axis"
     },
     "scenarios/S5/closures__recipient_index": {
@@ -5562,12 +5562,12 @@
         "closure"
       ],
       "shape": [
-        5183
+        5002
       ],
-      "count": 5183,
-      "raw_bytes": 10366,
-      "gzip_bytes": 1293,
-      "sha256_raw": "25fe3837f952f5c7a80ab8101bea75358dc50d6087eb7d203f654bfee18c536e",
+      "count": 5002,
+      "raw_bytes": 10004,
+      "gzip_bytes": 1263,
+      "sha256_raw": "b49d68401bfd631edaf9052d981e1a0aebe38554cec37e1ac1754eafd5c72afb",
       "units": "index into the named axis"
     },
     "scenarios/S5/closures__sector_index": {
@@ -5577,12 +5577,12 @@
         "closure"
       ],
       "shape": [
-        5183
+        5002
       ],
-      "count": 5183,
-      "raw_bytes": 10366,
-      "gzip_bytes": 1560,
-      "sha256_raw": "d4b96909e2a36798d158ae699a05ddd5d2de90fa1bcd6b4cb28b2ff697ae5d65",
+      "count": 5002,
+      "raw_bytes": 10004,
+      "gzip_bytes": 1540,
+      "sha256_raw": "8e34469d18353dd791c38b687da9d08f36df4c56db1c129827bf3d04f77eb542",
       "units": "index into the named axis"
     },
     "scenarios/S5/closures__year_index": {
@@ -5592,12 +5592,12 @@
         "closure"
       ],
       "shape": [
-        5183
+        5002
       ],
-      "count": 5183,
-      "raw_bytes": 10366,
+      "count": 5002,
+      "raw_bytes": 10004,
       "gzip_bytes": 77,
-      "sha256_raw": "847e3412801bd03d958a9e1ce30dc298ee505a5c1e1ad70b81a317b5fed2fead",
+      "sha256_raw": "b2f017c971cfa1e43377bfa01c24dfc7a4e8acdc6936a3a830538a56aac14e16",
       "units": "index into the named axis"
     },
     "scenarios/S5/closures__reason": {
@@ -5607,12 +5607,12 @@
         "closure"
       ],
       "shape": [
-        5183
+        5002
       ],
-      "count": 5183,
-      "raw_bytes": 5183,
-      "gzip_bytes": 213,
-      "sha256_raw": "23647fd3d816945ec699eb840ed851d5809f8e8ef33320ea9981d1d3c6eed8c5",
+      "count": 5002,
+      "raw_bytes": 5002,
+      "gzip_bytes": 215,
+      "sha256_raw": "7caa8e1b6c9c7625b5f414dcd8bfd4753350d55e2e63733b8443a82e606fa85c",
       "units": "1 = viability, 2 = donor announcement"
     },
     "scenarios/S6A/donor_year__ge": {
@@ -5645,8 +5645,8 @@
       ],
       "count": 200,
       "raw_bytes": 800,
-      "gzip_bytes": 830,
-      "sha256_raw": "216fe685716eaa525cd8b83f8ff7742868455b5516dd974d3b5173c3935af747",
+      "gzip_bytes": 829,
+      "sha256_raw": "6c0034999005218ca90a0c484c7e94beba55c29b9135aca1a888f368b395c25c",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S6A/donor_sector_year__ge": {
@@ -5664,8 +5664,8 @@
       ],
       "count": 4200,
       "raw_bytes": 16800,
-      "gzip_bytes": 11828,
-      "sha256_raw": "2d3eed1c8fbcba6c23474494f197f5bcc81b71c338fb07dbc755237e9038eda0",
+      "gzip_bytes": 11825,
+      "sha256_raw": "049b628790ec35cd00ddad4b803444678d4db65241414a561a38ad86a17d9e38",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S6A/donor_sector_year__gross": {
@@ -5683,8 +5683,8 @@
       ],
       "count": 4200,
       "raw_bytes": 16800,
-      "gzip_bytes": 11726,
-      "sha256_raw": "bff49a88aaf5e5a1271034ac4e7726b9421e48eb232d4ebb24cb72ce210e9f5c",
+      "gzip_bytes": 11723,
+      "sha256_raw": "81834d387e475ee2d47003430fc58fcd13c3fc18dcf60d3ddecc904ff3ab3d0b",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S6A/recipient_year__ge": {
@@ -5700,8 +5700,8 @@
       ],
       "count": 564,
       "raw_bytes": 2256,
-      "gzip_bytes": 2156,
-      "sha256_raw": "86abd06c082529601acd74bffd4e7b3033eb01aa2a30489a7ebbb90147ec7a28",
+      "gzip_bytes": 2154,
+      "sha256_raw": "239f20462331398b069aeddf0820221fd1e1d1375347611201c942894672cfc1",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S6A/recipient_year__gross": {
@@ -5717,8 +5717,8 @@
       ],
       "count": 564,
       "raw_bytes": 2256,
-      "gzip_bytes": 2153,
-      "sha256_raw": "37b6d65dd561c581320f23f859645ad9c6a2c94eac47a2d6b0834bb6c459fb4b",
+      "gzip_bytes": 2152,
+      "sha256_raw": "87cfb80cc1b3ae8c10dd2584d8bdab22cadbc8e5a007d87fc5c49b5bf494657b",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S6A/sector_year__ge": {
@@ -5735,7 +5735,7 @@
       "count": 84,
       "raw_bytes": 336,
       "gzip_bytes": 379,
-      "sha256_raw": "951ef1fa017730aad4f7a24d3b023733bd3a1d06b2def29c4997147776a382b5",
+      "sha256_raw": "1fa10528981b5cc0b643b660e5bcec432a1a883e2fa6b84554aab025baed8fa7",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S6A/sector_year__gross": {
@@ -5752,7 +5752,7 @@
       "count": 84,
       "raw_bytes": 336,
       "gzip_bytes": 382,
-      "sha256_raw": "e6c9a69e58e9d2ca1596afbd806661414af4e1f12a76aa4359b5ad13bf208cd1",
+      "sha256_raw": "1ce18e92b4192505dde8c371c9919c86b9a7276529bed5c8bc75b93219551eb5",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S6A/donor_recipient_year__ge": {
@@ -5770,8 +5770,8 @@
       ],
       "count": 28200,
       "raw_bytes": 112800,
-      "gzip_bytes": 50519,
-      "sha256_raw": "4bd8da4320069947a17ef8be9dcc92ec8b728aba443692df6856886196594165",
+      "gzip_bytes": 50540,
+      "sha256_raw": "4d45589581395a38dfe257e53afb07cfd6d2289444955cdef38a1c5e643a0f8e",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S6A/donor_recipient_year__gross": {
@@ -5789,8 +5789,8 @@
       ],
       "count": 28200,
       "raw_bytes": 112800,
-      "gzip_bytes": 49370,
-      "sha256_raw": "8ef83cba3067db10e81cb9103fb68486f6fa493ab9f00cf8930727ae1683b1af",
+      "gzip_bytes": 49394,
+      "sha256_raw": "c403db615fbc0161e735d83232848aa3f4f4e1b359bb52638d36c52beca6a323",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S6A/recipient_sector_year__ge": {
@@ -5808,8 +5808,8 @@
       ],
       "count": 11844,
       "raw_bytes": 47376,
-      "gzip_bytes": 38361,
-      "sha256_raw": "93088942e3fbdd87a5487728ada5cc70ebf5ce540e077c939567ae0adb8e2ae9",
+      "gzip_bytes": 38328,
+      "sha256_raw": "ece0a56f12c5717af9b30bad93151383ba558141f730abffdb0101ff141fb4b0",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S6A/recipient_sector_year__gross": {
@@ -5827,8 +5827,8 @@
       ],
       "count": 11844,
       "raw_bytes": 47376,
-      "gzip_bytes": 38397,
-      "sha256_raw": "9a87b2697a71f9a912ea3d52b6707fb54b60b18d65a46f3e4547067c10c81071",
+      "gzip_bytes": 38380,
+      "sha256_raw": "a4ec5a239bf9a9e8d5ca9d19f4658c84323c906b6e85b44dd5c3364274261792",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S6A/closures__donor_index": {
@@ -5838,12 +5838,12 @@
         "closure"
       ],
       "shape": [
-        6264
+        6139
       ],
-      "count": 6264,
-      "raw_bytes": 12528,
-      "gzip_bytes": 215,
-      "sha256_raw": "fc823ebd75453a0b89fb76888957f5044bdcbfef985cf8b03fc7075956b5882f",
+      "count": 6139,
+      "raw_bytes": 12278,
+      "gzip_bytes": 212,
+      "sha256_raw": "96b7b4c21c8fabcffa9500c2b2998094a6694a54728631a364c14e8b187936f7",
       "units": "index into the named axis"
     },
     "scenarios/S6A/closures__recipient_index": {
@@ -5853,12 +5853,12 @@
         "closure"
       ],
       "shape": [
-        6264
+        6139
       ],
-      "count": 6264,
-      "raw_bytes": 12528,
-      "gzip_bytes": 1357,
-      "sha256_raw": "2251c2107ed3f30ae9ccbf0ae99e25542db6b6cb18ba61f4efd5da2c5a92a07b",
+      "count": 6139,
+      "raw_bytes": 12278,
+      "gzip_bytes": 1326,
+      "sha256_raw": "c34796310f1fe3f057b58fac9d126c6577ec4b2009a3b96ca289acc8b229de6d",
       "units": "index into the named axis"
     },
     "scenarios/S6A/closures__sector_index": {
@@ -5868,12 +5868,12 @@
         "closure"
       ],
       "shape": [
-        6264
+        6139
       ],
-      "count": 6264,
-      "raw_bytes": 12528,
-      "gzip_bytes": 1603,
-      "sha256_raw": "3002c612ccffab7c4052d1f0da203c334aa4ac7b444e8102afb48d71cfbc2c12",
+      "count": 6139,
+      "raw_bytes": 12278,
+      "gzip_bytes": 1574,
+      "sha256_raw": "16b37cb5e088f6ebec8c47fe5d81414af7a30d97ed433d4c42fa7f9e12608857",
       "units": "index into the named axis"
     },
     "scenarios/S6A/closures__year_index": {
@@ -5883,12 +5883,12 @@
         "closure"
       ],
       "shape": [
-        6264
+        6139
       ],
-      "count": 6264,
-      "raw_bytes": 12528,
+      "count": 6139,
+      "raw_bytes": 12278,
       "gzip_bytes": 79,
-      "sha256_raw": "db8aee08579cef59da7dce3e7b41196393f053bcba88b6d028f7a115385db74e",
+      "sha256_raw": "e193bf40aaf5ae81eb959e607fc1bf71cabb1b9cae67920b3553b3a87ed4d8c9",
       "units": "index into the named axis"
     },
     "scenarios/S6A/closures__reason": {
@@ -5898,12 +5898,12 @@
         "closure"
       ],
       "shape": [
-        6264
+        6139
       ],
-      "count": 6264,
-      "raw_bytes": 6264,
-      "gzip_bytes": 229,
-      "sha256_raw": "812ba1e81aff887a36484178a48e4a1598f09cd309de80f9b013282d937e1094",
+      "count": 6139,
+      "raw_bytes": 6139,
+      "gzip_bytes": 230,
+      "sha256_raw": "fccd6668db8b2a98f7a5be625a399c9152f5b9f9400c9e03df5f5bd930a7d789",
       "units": "1 = viability, 2 = donor announcement"
     },
     "scenarios/S6B/donor_year__ge": {
@@ -5936,8 +5936,8 @@
       ],
       "count": 200,
       "raw_bytes": 800,
-      "gzip_bytes": 828,
-      "sha256_raw": "13a8ca002aefc44f2690e13dd7300d9814a68ad2e65518227fee84935b559a4c",
+      "gzip_bytes": 826,
+      "sha256_raw": "a7fe66d29b0c0cd910497b61367ad7c04bf9f3cf2411c4b68b22cfb367e5e60d",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S6B/donor_sector_year__ge": {
@@ -5955,8 +5955,8 @@
       ],
       "count": 4200,
       "raw_bytes": 16800,
-      "gzip_bytes": 11823,
-      "sha256_raw": "14242a0d1723fdc3c67542c3df0350f0f2d22b998868f376042efb8d05f722c5",
+      "gzip_bytes": 11825,
+      "sha256_raw": "5441759ff5e3139299f9e2b98467a3ccaf117c535b94502dd550a9f75d1aceef",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S6B/donor_sector_year__gross": {
@@ -5974,8 +5974,8 @@
       ],
       "count": 4200,
       "raw_bytes": 16800,
-      "gzip_bytes": 11693,
-      "sha256_raw": "4cd411a24d6d13a06ee283a8fd876b29b7eb2e87abd4190eb88a59b8a17c2209",
+      "gzip_bytes": 11689,
+      "sha256_raw": "fb178dedd5d639071d0985cceb510cfc8d1aa2163054784cc7c9a5759f4f5a47",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S6B/recipient_year__ge": {
@@ -5991,8 +5991,8 @@
       ],
       "count": 564,
       "raw_bytes": 2256,
-      "gzip_bytes": 2142,
-      "sha256_raw": "9fedad49c2050bc8491a77cd562ae7b9d21232d4a4ccadedc434d8339cd81dbf",
+      "gzip_bytes": 2140,
+      "sha256_raw": "16e7616c92fcbb9ad66b5059c7f9b7495b1c463658f4aecdbab23efed1a4b420",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S6B/recipient_year__gross": {
@@ -6008,8 +6008,8 @@
       ],
       "count": 564,
       "raw_bytes": 2256,
-      "gzip_bytes": 2144,
-      "sha256_raw": "f54a5a85c8a0b2901d1d61454846977c32ace47a92ecc7789bc648ff9d4bc9fd",
+      "gzip_bytes": 2141,
+      "sha256_raw": "5a64638891884b83fe6076837541bac5684c78c976e7062d41a03b8078755a47",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S6B/sector_year__ge": {
@@ -6026,7 +6026,7 @@
       "count": 84,
       "raw_bytes": 336,
       "gzip_bytes": 379,
-      "sha256_raw": "c0bb5b89dc4b1f96ec51ad1bcd482613fa6c214a918e4c89a7adcd082857215e",
+      "sha256_raw": "fd5f0051a3928eb747b57cfa5be34ca3786eab08bc1882e8c8cd1e03cd33462d",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S6B/sector_year__gross": {
@@ -6043,7 +6043,7 @@
       "count": 84,
       "raw_bytes": 336,
       "gzip_bytes": 382,
-      "sha256_raw": "dc476a4e11a6fa4ad123a2d450823a7dd496cf74f39fa148ad5a64910c036b6c",
+      "sha256_raw": "34e5545c4c8c2ec6b1d8de2013e96c82cea67001edca2eb0e56c1e6e1c8f3de2",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S6B/donor_recipient_year__ge": {
@@ -6061,8 +6061,8 @@
       ],
       "count": 28200,
       "raw_bytes": 112800,
-      "gzip_bytes": 50905,
-      "sha256_raw": "8a26c7cdaf37d6753c70dfda052740614c41fb57e31fa8e64e836e2fef222948",
+      "gzip_bytes": 50912,
+      "sha256_raw": "c9709915fb7d1f42c060c817c8a48dde36df5251ad5118c15d2cfafd36fa8844",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S6B/donor_recipient_year__gross": {
@@ -6080,8 +6080,8 @@
       ],
       "count": 28200,
       "raw_bytes": 112800,
-      "gzip_bytes": 50009,
-      "sha256_raw": "24a8dbe936b47babca68e0ca67f51778e3b7a881101789dae7c7de6c804c03fd",
+      "gzip_bytes": 50016,
+      "sha256_raw": "4f0529e615e1022644c23907efddabbf688c207ad3667ad5783fa0b9e0e738e5",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S6B/recipient_sector_year__ge": {
@@ -6099,8 +6099,8 @@
       ],
       "count": 11844,
       "raw_bytes": 47376,
-      "gzip_bytes": 38385,
-      "sha256_raw": "fcde70d096733f6f02c4a68514164f26c28c9552e7f4e3abc332ad32d97d797e",
+      "gzip_bytes": 38349,
+      "sha256_raw": "d11bc8b16063253bdd70bfb92b9af10c12f2eeb98f25604bd903f197cafb180f",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S6B/recipient_sector_year__gross": {
@@ -6119,7 +6119,7 @@
       "count": 11844,
       "raw_bytes": 47376,
       "gzip_bytes": 38396,
-      "sha256_raw": "f53338cd5e086e8678d8f3beabcbfff2ae1397d9ba46f7b1aed7d6c01fb562cf",
+      "sha256_raw": "4dcd0569649b6bd23fe309362c58b19ec29c1d605bd21dae817ce41f64a4867e",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S6B/closures__donor_index": {
@@ -6129,12 +6129,12 @@
         "closure"
       ],
       "shape": [
-        4565
+        4588
       ],
-      "count": 4565,
-      "raw_bytes": 9130,
-      "gzip_bytes": 160,
-      "sha256_raw": "bb42396cb63a51348e3c0bdffe3f1af4404a52364cd5e1aa56fb65f3c5acea34",
+      "count": 4588,
+      "raw_bytes": 9176,
+      "gzip_bytes": 159,
+      "sha256_raw": "df655eac2701cf794ead9d87bb196c4d129d80174ae10b2a91cec0f20a699a19",
       "units": "index into the named axis"
     },
     "scenarios/S6B/closures__recipient_index": {
@@ -6144,12 +6144,12 @@
         "closure"
       ],
       "shape": [
-        4565
+        4588
       ],
-      "count": 4565,
-      "raw_bytes": 9130,
-      "gzip_bytes": 1211,
-      "sha256_raw": "ecbb1ce166017a03aa0a6d5cce9d2eebb760f802ba5ab4ac9111747ec8145644",
+      "count": 4588,
+      "raw_bytes": 9176,
+      "gzip_bytes": 1210,
+      "sha256_raw": "f7f19f2e9055b97808c72d0ea8f4ec3ac0e53b01377f6b70299ae5a699d4a20e",
       "units": "index into the named axis"
     },
     "scenarios/S6B/closures__sector_index": {
@@ -6159,12 +6159,12 @@
         "closure"
       ],
       "shape": [
-        4565
+        4588
       ],
-      "count": 4565,
-      "raw_bytes": 9130,
-      "gzip_bytes": 1476,
-      "sha256_raw": "bbfa5932ba119c04c805f49a4a576d8d9a3bb12b36226ce1556e422f332d1fb5",
+      "count": 4588,
+      "raw_bytes": 9176,
+      "gzip_bytes": 1470,
+      "sha256_raw": "03a03a483e024359338d094f5696dc51d94bee667687940b1c8903db71c74459",
       "units": "index into the named axis"
     },
     "scenarios/S6B/closures__year_index": {
@@ -6174,12 +6174,12 @@
         "closure"
       ],
       "shape": [
-        4565
+        4588
       ],
-      "count": 4565,
-      "raw_bytes": 9130,
-      "gzip_bytes": 77,
-      "sha256_raw": "8ddff0a98bc3e7cff91645c357a3ff94662cf4dbe27446f3a51fe45b9a281db7",
+      "count": 4588,
+      "raw_bytes": 9176,
+      "gzip_bytes": 76,
+      "sha256_raw": "d9849a19013a510ff28ddbf27f5bb34637fee449dcb7915d4b37198c16042ac6",
       "units": "index into the named axis"
     },
     "scenarios/S6B/closures__reason": {
@@ -6189,12 +6189,12 @@
         "closure"
       ],
       "shape": [
-        4565
+        4588
       ],
-      "count": 4565,
-      "raw_bytes": 4565,
-      "gzip_bytes": 214,
-      "sha256_raw": "04fcb17364f2f7b8d141e6de6f7f8fc29f7c10c848d494036176b8ed92b09444",
+      "count": 4588,
+      "raw_bytes": 4588,
+      "gzip_bytes": 215,
+      "sha256_raw": "8c49d45fec611bc81f5afdaebd974387430d1ea02bf435e79332a32bfa9cf60e",
       "units": "1 = viability, 2 = donor announcement"
     },
     "scenarios/S7/donor_year__ge": {
@@ -6227,8 +6227,8 @@
       ],
       "count": 200,
       "raw_bytes": 800,
-      "gzip_bytes": 830,
-      "sha256_raw": "6ab3ed6e42725cbaac4d5cc03b157340cd0c77d8209d7edae4358703098e8b07",
+      "gzip_bytes": 827,
+      "sha256_raw": "729a41adfdb4da0b4a5543f558ddcf0448a4e516f8c4f33e7d9e6e1a33336ede",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S7/donor_sector_year__ge": {
@@ -6246,8 +6246,8 @@
       ],
       "count": 4200,
       "raw_bytes": 16800,
-      "gzip_bytes": 11897,
-      "sha256_raw": "db4a9ddb0e4df0091a68ea25817df27dc54f913c7f39ddcb1045b970f1b61ec2",
+      "gzip_bytes": 11887,
+      "sha256_raw": "fe3401714f06c0fffd1de3d17780d07d9b498d59a9a96c91fee558ca7c482288",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S7/donor_sector_year__gross": {
@@ -6265,8 +6265,8 @@
       ],
       "count": 4200,
       "raw_bytes": 16800,
-      "gzip_bytes": 11792,
-      "sha256_raw": "d2b2209263f58ad0f1cb9f76b319721f9a441ea3d2e9e678f7544e8b90ac5abf",
+      "gzip_bytes": 11788,
+      "sha256_raw": "a21b5ec10dbbacb9eb58a5041f94edcebbc0e73ef56ff0c56072d5519b3b41c4",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S7/recipient_year__ge": {
@@ -6282,8 +6282,8 @@
       ],
       "count": 564,
       "raw_bytes": 2256,
-      "gzip_bytes": 2145,
-      "sha256_raw": "4ca3c95464f20bf569c2be4dfc363d9d75b20d8f4ad8bbacb6bd1df095c17a59",
+      "gzip_bytes": 2140,
+      "sha256_raw": "3b5988fbbbdf6c1c0e27ba5749c7dfa0ce66b3394f5636f7aca93f493601adfc",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S7/recipient_year__gross": {
@@ -6299,8 +6299,8 @@
       ],
       "count": 564,
       "raw_bytes": 2256,
-      "gzip_bytes": 2146,
-      "sha256_raw": "0797e6acbc7822ff755811e7ae6aae6873c1c4bd9f61596faee400f727ea2dc7",
+      "gzip_bytes": 2144,
+      "sha256_raw": "e917d0da8ca023f0b06c35243b8127bc8b0e17d3c7c90beca59ff7f0ca84c3b6",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S7/sector_year__ge": {
@@ -6317,7 +6317,7 @@
       "count": 84,
       "raw_bytes": 336,
       "gzip_bytes": 379,
-      "sha256_raw": "d3f86d41dcd3cfea39718e78e0748627300b00f773e2778c9f5d228514cac7b7",
+      "sha256_raw": "54a8215b83681d965d61b695aabfce3ee3e3044b2d1e0ae99e3b08536771da6b",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S7/sector_year__gross": {
@@ -6334,7 +6334,7 @@
       "count": 84,
       "raw_bytes": 336,
       "gzip_bytes": 382,
-      "sha256_raw": "f18b431aade9ea47aec9286123769f794ed8bca745bf044811dbcb08bdcfa829",
+      "sha256_raw": "ac41ef75d9ac24b7934e78977e6a1a6fc40e9413e9636fe86408391044c12018",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S7/donor_recipient_year__ge": {
@@ -6352,8 +6352,8 @@
       ],
       "count": 28200,
       "raw_bytes": 112800,
-      "gzip_bytes": 52028,
-      "sha256_raw": "6ecea2790bcbcbc63dca40765bf0f4732775da4309194c87e041a2ec89039867",
+      "gzip_bytes": 52014,
+      "sha256_raw": "900d26c9ed40f75397de3a3c73e0aad9b323fcce4d0991731a3fddddbe1c7644",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S7/donor_recipient_year__gross": {
@@ -6371,8 +6371,8 @@
       ],
       "count": 28200,
       "raw_bytes": 112800,
-      "gzip_bytes": 51047,
-      "sha256_raw": "78d1e1e44ab146d1d045537dbb9c78eb4814d65a26a4a34c3c703d1e06865512",
+      "gzip_bytes": 51043,
+      "sha256_raw": "d65be3358aa8fb3ca090ee8bb5cb6d8fc61e07420f1541d85fed5fa1342b4524",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S7/recipient_sector_year__ge": {
@@ -6390,8 +6390,8 @@
       ],
       "count": 11844,
       "raw_bytes": 47376,
-      "gzip_bytes": 38470,
-      "sha256_raw": "80ff80646780d16b6c0a5ad3912341d09029a47941248a44bfeb7d242c28cb12",
+      "gzip_bytes": 38448,
+      "sha256_raw": "c364bae8de3ec4147ee30b143e43c3ab1603b60d9db58e1a6ae4491c42504a2d",
       "units": "US$ million, grant-equivalent, constant 2024 prices"
     },
     "scenarios/S7/recipient_sector_year__gross": {
@@ -6409,8 +6409,8 @@
       ],
       "count": 11844,
       "raw_bytes": 47376,
-      "gzip_bytes": 38491,
-      "sha256_raw": "6ceff7b75bbab705c922ff34ed8d1c4f71ed3d4a61d684350a7a0211e8e97f13",
+      "gzip_bytes": 38505,
+      "sha256_raw": "4f4c774605d583807e60af08de07084454ccc5d01cf3c8757a534adef80c48b0",
       "units": "US$ million, gross, constant 2024 prices"
     },
     "scenarios/S7/closures__donor_index": {
@@ -6420,12 +6420,12 @@
         "closure"
       ],
       "shape": [
-        4322
+        4326
       ],
-      "count": 4322,
-      "raw_bytes": 8644,
+      "count": 4326,
+      "raw_bytes": 8652,
       "gzip_bytes": 154,
-      "sha256_raw": "63484a0866c28ef5dab6dae1679f152a854918ee03e51b3bc9ebd05647b6b8bb",
+      "sha256_raw": "5a2bc54fe346e9e11f5f8cffbd66504149ec022798fb8d511560e4eab49e5491",
       "units": "index into the named axis"
     },
     "scenarios/S7/closures__recipient_index": {
@@ -6435,12 +6435,12 @@
         "closure"
       ],
       "shape": [
-        4322
+        4326
       ],
-      "count": 4322,
-      "raw_bytes": 8644,
-      "gzip_bytes": 1193,
-      "sha256_raw": "b1483c6fe5e8223bbbb3d4e8c77be8dabe5d555d42bf7aeca33b7a14629e8b19",
+      "count": 4326,
+      "raw_bytes": 8652,
+      "gzip_bytes": 1192,
+      "sha256_raw": "452d271e73ca725a1bde70788e294ce6319d8f0ea1aa5368152187f19b9e788a",
       "units": "index into the named axis"
     },
     "scenarios/S7/closures__sector_index": {
@@ -6450,12 +6450,12 @@
         "closure"
       ],
       "shape": [
-        4322
+        4326
       ],
-      "count": 4322,
-      "raw_bytes": 8644,
-      "gzip_bytes": 1410,
-      "sha256_raw": "f4cb7c3eb52f5a0fa3440e4d70673271c8357192d7bbe5c403e2a5e4a20b7595",
+      "count": 4326,
+      "raw_bytes": 8652,
+      "gzip_bytes": 1418,
+      "sha256_raw": "eb9f077c96b136b9dea42d47d9505fdadb4c02c86a6edcd3ae6af47acba048bc",
       "units": "index into the named axis"
     },
     "scenarios/S7/closures__year_index": {
@@ -6465,12 +6465,12 @@
         "closure"
       ],
       "shape": [
-        4322
+        4326
       ],
-      "count": 4322,
-      "raw_bytes": 8644,
+      "count": 4326,
+      "raw_bytes": 8652,
       "gzip_bytes": 75,
-      "sha256_raw": "2e901e7124c655feac070dcbd330e72dbba8f47d827c1093273ab9182015f5e4",
+      "sha256_raw": "d9333a071b2014e93c2a82ea0415f6bde2d8ec83edffd6c5249b11bde9f80f91",
       "units": "index into the named axis"
     },
     "scenarios/S7/closures__reason": {
@@ -6480,12 +6480,12 @@
         "closure"
       ],
       "shape": [
-        4322
+        4326
       ],
-      "count": 4322,
-      "raw_bytes": 4322,
-      "gzip_bytes": 197,
-      "sha256_raw": "ef61e7714b8e38cef0d880d3f4bd7792d1e11e2aefe01da0a15d06460b94ee41",
+      "count": 4326,
+      "raw_bytes": 4326,
+      "gzip_bytes": 205,
+      "sha256_raw": "42f24fff818675fad313cb8449da70fe9aabf8deca0be84a6197becedad14eee",
       "units": "1 = viability, 2 = donor announcement"
     },
     "static/reallocation_vs_s1__scenario_donor_year": {
@@ -6503,8 +6503,8 @@
       ],
       "count": 2000,
       "raw_bytes": 8000,
-      "gzip_bytes": 6728,
-      "sha256_raw": "21a5c0ed0e9f11ba252aa69cdadeb8116f07c6c3712fe6c0ce0c5bda7ec9e2bf",
+      "gzip_bytes": 6730,
+      "sha256_raw": "d4b60320415667a147d80ce01c4f8be2a354f0e8044e5cad691a33921440e4ba",
       "units": "percent of the S1 grant-equivalent donor-year matrix envelope",
       "note": "0.5 * sum over recipient-sector cells of |scenario - S1|, divided by the S1 envelope."
     },
@@ -6599,8 +6599,8 @@
       ],
       "count": 79845,
       "raw_bytes": 319380,
-      "gzip_bytes": 269559,
-      "sha256_raw": "6b71cb59c30d5b991a0bc34ab1bf66c8c0e5651bd87bea68dea86d5219f8adb6",
+      "gzip_bytes": 269312,
+      "sha256_raw": "e28ff1cc26bb692cd9f546999ac9afab77c93fbcf5af3a657a2433c9412e9903",
       "units": "US$ million, grant-equivalent, constant 2024 prices",
       "note": "aligned to cube/support__*; verify support_sha256 first"
     },
@@ -6615,8 +6615,8 @@
       ],
       "count": 79845,
       "raw_bytes": 319380,
-      "gzip_bytes": 267054,
-      "sha256_raw": "e8c9535d0c06fb3d38cca10dd89136636a763d504ff74545a71c2b853ded6872",
+      "gzip_bytes": 267070,
+      "sha256_raw": "727b13eb2bba21f69f98bc44e769eac92d06d3ea328de3525325a316a100b17c",
       "units": "US$ million, gross, constant 2024 prices",
       "note": "aligned to cube/support__*; verify support_sha256 first"
     },
@@ -6631,8 +6631,8 @@
       ],
       "count": 79845,
       "raw_bytes": 319380,
-      "gzip_bytes": 256842,
-      "sha256_raw": "13b77042023f522c6ccecd28aa588041904db89a4b0464d12551144820320b05",
+      "gzip_bytes": 256254,
+      "sha256_raw": "4c5bcbbc1f0dde3b469720644fe8d6bccbf57b2eb67ba20b3deb70c6e018f3c1",
       "units": "US$ million, grant-equivalent, constant 2024 prices",
       "note": "aligned to cube/support__*; verify support_sha256 first"
     },
@@ -6647,8 +6647,8 @@
       ],
       "count": 79845,
       "raw_bytes": 319380,
-      "gzip_bytes": 254408,
-      "sha256_raw": "c492da02b364d0f77885b1ea8e8659ffc6e19b29c2e69cc96527ad75db6e64e7",
+      "gzip_bytes": 254082,
+      "sha256_raw": "a81e0952d8eb5137fe91d791bf718afbb35a2cba1ccac425429a8bc880ca35e8",
       "units": "US$ million, gross, constant 2024 prices",
       "note": "aligned to cube/support__*; verify support_sha256 first"
     },
@@ -6663,8 +6663,8 @@
       ],
       "count": 79845,
       "raw_bytes": 319380,
-      "gzip_bytes": 268102,
-      "sha256_raw": "334689c3e25c2a10f81e7be095d844c96b5f0d153800cca95838b0272973ae6a",
+      "gzip_bytes": 267867,
+      "sha256_raw": "edcf326e26a26533727348aaa8e115b4842516a5d4f8252d7554e8ec7209bf9d",
       "units": "US$ million, grant-equivalent, constant 2024 prices",
       "note": "aligned to cube/support__*; verify support_sha256 first"
     },
@@ -6679,8 +6679,8 @@
       ],
       "count": 79845,
       "raw_bytes": 319380,
-      "gzip_bytes": 265462,
-      "sha256_raw": "37157d09226c98281ca9c5284d0fb89e49244fe0b8bb70fc2461f5c506eae7dc",
+      "gzip_bytes": 265481,
+      "sha256_raw": "6b0f25b67651571f9e0237cfc6e93cd8ee62b0dcb1311bf9e524bde50259aeaa",
       "units": "US$ million, gross, constant 2024 prices",
       "note": "aligned to cube/support__*; verify support_sha256 first"
     },
@@ -6695,8 +6695,8 @@
       ],
       "count": 79845,
       "raw_bytes": 319380,
-      "gzip_bytes": 277095,
-      "sha256_raw": "eb0072ffdd9fd894a30bc32cb17b8b175e9a82d6f9b2b565ad9b15561546ac90",
+      "gzip_bytes": 276818,
+      "sha256_raw": "e910fe93e6d3f57154c2dd3c0358e0f452f2494b1534153b8b0615d925906517",
       "units": "US$ million, grant-equivalent, constant 2024 prices",
       "note": "aligned to cube/support__*; verify support_sha256 first"
     },
@@ -6711,8 +6711,8 @@
       ],
       "count": 79845,
       "raw_bytes": 319380,
-      "gzip_bytes": 274540,
-      "sha256_raw": "e7e2c5ec1d6b303a6d8c40dcc96cb15a3e2bd579dda36a27c314e3e4cd2203f2",
+      "gzip_bytes": 274543,
+      "sha256_raw": "33e34b30787c41c34e9a4143201c695810484b60324acd0c805fd5c12d6fe093",
       "units": "US$ million, gross, constant 2024 prices",
       "note": "aligned to cube/support__*; verify support_sha256 first"
     },
@@ -6727,8 +6727,8 @@
       ],
       "count": 79845,
       "raw_bytes": 319380,
-      "gzip_bytes": 274788,
-      "sha256_raw": "1a8ee3f42f28dbe04e6239d5859204e88cf0728dda6b56070d63012daba6cec8",
+      "gzip_bytes": 274511,
+      "sha256_raw": "f66d7a40e78408d15423128178624fcacbf0c9c5199c914b6dde5981e950fe42",
       "units": "US$ million, grant-equivalent, constant 2024 prices",
       "note": "aligned to cube/support__*; verify support_sha256 first"
     },
@@ -6743,8 +6743,8 @@
       ],
       "count": 79845,
       "raw_bytes": 319380,
-      "gzip_bytes": 271976,
-      "sha256_raw": "c10767da803349e2cbf2f67f9bae21ff20e99f2974120fc529401ece906e38d7",
+      "gzip_bytes": 271966,
+      "sha256_raw": "7f9fe997fa2c6b18063b05baf90b5e94a2f1a2ad8971ed0ae2d58f5bd1cebbb6",
       "units": "US$ million, gross, constant 2024 prices",
       "note": "aligned to cube/support__*; verify support_sha256 first"
     },
@@ -6759,8 +6759,8 @@
       ],
       "count": 79845,
       "raw_bytes": 319380,
-      "gzip_bytes": 258977,
-      "sha256_raw": "ca605b2591f36c0014a969062b961b43df79d090e87ba50b50767806d29d524c",
+      "gzip_bytes": 258713,
+      "sha256_raw": "4516e10444cacac22dd67446c3e0def2ad69e305b5a703354dcca51b63904db1",
       "units": "US$ million, grant-equivalent, constant 2024 prices",
       "note": "aligned to cube/support__*; verify support_sha256 first"
     },
@@ -6775,8 +6775,8 @@
       ],
       "count": 79845,
       "raw_bytes": 319380,
-      "gzip_bytes": 256342,
-      "sha256_raw": "af2cba8bac8532b908321a30b3841db9d11cf0efc24f613efb60f19eb6cfd3f3",
+      "gzip_bytes": 256341,
+      "sha256_raw": "dc9f74b89ee2dc6de015df6f98fe98eb3feafa4171886ac508474c452b3457bc",
       "units": "US$ million, gross, constant 2024 prices",
       "note": "aligned to cube/support__*; verify support_sha256 first"
     },
@@ -6791,8 +6791,8 @@
       ],
       "count": 79845,
       "raw_bytes": 319380,
-      "gzip_bytes": 271925,
-      "sha256_raw": "c3f581e171797632a19be5f6083d1f14c8e3a5e7256e63dc9e283ad20d7db1a7",
+      "gzip_bytes": 271888,
+      "sha256_raw": "c9e6664b484e1da5a363bf7e6ac02801072f25810494f5ab5b51ed72aa40d48d",
       "units": "US$ million, grant-equivalent, constant 2024 prices",
       "note": "aligned to cube/support__*; verify support_sha256 first"
     },
@@ -6807,8 +6807,8 @@
       ],
       "count": 79845,
       "raw_bytes": 319380,
-      "gzip_bytes": 269050,
-      "sha256_raw": "06116088040840fe6c8024c281ddf0fda7fecd4226b292e8d5536082540e4cc5",
+      "gzip_bytes": 269262,
+      "sha256_raw": "5820dcef9dc02a5f10da84d0540b8db4ddb57d14bf4f928289b675548f1f7880",
       "units": "US$ million, gross, constant 2024 prices",
       "note": "aligned to cube/support__*; verify support_sha256 first"
     },
@@ -6823,8 +6823,8 @@
       ],
       "count": 79845,
       "raw_bytes": 319380,
-      "gzip_bytes": 269052,
-      "sha256_raw": "5819b48bd8def840f78b0799e5c6a09fa1ec730ebf69ac2c137fd0ae5efd3085",
+      "gzip_bytes": 268965,
+      "sha256_raw": "a7a15ce06a1d55f71136ee4d41ad8d3cf590a1948ecf57c33738502b7e6bbf48",
       "units": "US$ million, grant-equivalent, constant 2024 prices",
       "note": "aligned to cube/support__*; verify support_sha256 first"
     },
@@ -6839,8 +6839,8 @@
       ],
       "count": 79845,
       "raw_bytes": 319380,
-      "gzip_bytes": 266301,
-      "sha256_raw": "6b823a7618f4bcec0f000c88cbc1cf1972f147f55d25e5de4556154cea6afc54",
+      "gzip_bytes": 266458,
+      "sha256_raw": "19c1f8b323e82e6d1a54cabd17c557244a0663f7a6617a6f4b6e04cbecafde1f",
       "units": "US$ million, gross, constant 2024 prices",
       "note": "aligned to cube/support__*; verify support_sha256 first"
     },
@@ -6855,8 +6855,8 @@
       ],
       "count": 79845,
       "raw_bytes": 319380,
-      "gzip_bytes": 263308,
-      "sha256_raw": "07262ca6d383f0cce5f197dde964f0de0243861710e70f1ca2d2d0a1e7040b05",
+      "gzip_bytes": 262622,
+      "sha256_raw": "a9344c70af60680d4a83a8ea6e42ab4139cc8eac8837d3b69ceae651d58534a3",
       "units": "US$ million, grant-equivalent, constant 2024 prices",
       "note": "aligned to cube/support__*; verify support_sha256 first"
     },
@@ -6871,8 +6871,8 @@
       ],
       "count": 79845,
       "raw_bytes": 319380,
-      "gzip_bytes": 261397,
-      "sha256_raw": "e9c392463f8301a7e414b6a140bd09af99228409280a5a3b2fe1c2b3953f43f0",
+      "gzip_bytes": 260981,
+      "sha256_raw": "5333e39b3266f07a563dc94f682f4c8d1887f2b2b2c4c21d073a823c09c05506",
       "units": "US$ million, gross, constant 2024 prices",
       "note": "aligned to cube/support__*; verify support_sha256 first"
     },
@@ -6887,8 +6887,8 @@
       ],
       "count": 79845,
       "raw_bytes": 319380,
-      "gzip_bytes": 272911,
-      "sha256_raw": "f712666095c142f0fb7f7ca8d751d26e5b293060abd41669b2149d27629f85be",
+      "gzip_bytes": 272670,
+      "sha256_raw": "6b56912cb390a83a230277bc57075e860c7d558f1ca160ec16d10c1c59a0a87c",
       "units": "US$ million, grant-equivalent, constant 2024 prices",
       "note": "aligned to cube/support__*; verify support_sha256 first"
     },
@@ -6903,8 +6903,8 @@
       ],
       "count": 79845,
       "raw_bytes": 319380,
-      "gzip_bytes": 270817,
-      "sha256_raw": "36eaa67c9fdbfd16bcf10df522f2eb578aca8cb0dbaf628719f9937a5126cbad",
+      "gzip_bytes": 270833,
+      "sha256_raw": "86339c70013abc3169085eaf20a9b6d972b92d8c2205f448db8f159b7a2cfff3",
       "units": "US$ million, gross, constant 2024 prices",
       "note": "aligned to cube/support__*; verify support_sha256 first"
     },
@@ -6921,8 +6921,8 @@
       ],
       "count": 7050,
       "raw_bytes": 28200,
-      "gzip_bytes": 14842,
-      "sha256_raw": "23f95fd134cfcab4fbd4ba4025b40745dd282f04785ec7754d3469e7248e3742",
+      "gzip_bytes": 14844,
+      "sha256_raw": "0a0bbde2e7186b4a76deb911d8a215798a41ecc2c441e341e64a0069547a4327",
       "units": "US$ million, grant-equivalent, 2024 observed, constant 2024 prices"
     },
     "tool/baseline_recipient_gross": {
@@ -6938,8 +6938,8 @@
       ],
       "count": 7050,
       "raw_bytes": 28200,
-      "gzip_bytes": 14845,
-      "sha256_raw": "90dd4cf1a6415031c8400eb98150dbd51ac051b6eb8e72b3a77e1ac527dfb2b7",
+      "gzip_bytes": 14847,
+      "sha256_raw": "2d19c44a3857681fa19c25baaec39a5b9eef66fdc9d70ffc01f4a735e3ac1d7d",
       "units": "US$ million, gross, 2024 observed, constant 2024 prices"
     },
     "tool/country_floor_gross": {
@@ -6955,8 +6955,8 @@
       ],
       "count": 7050,
       "raw_bytes": 28200,
-      "gzip_bytes": 12838,
-      "sha256_raw": "ef87f6f1b8976767c1d74a0659039c00a237d4454c2646c7c6c7fe6a8ce599d2",
+      "gzip_bytes": 12842,
+      "sha256_raw": "bdf1f607111c004ff2f22fb1b5ae2b5c491d92f3dfa296afa6a325e1b5876cc8",
       "units": "US$ million, gross, constant 2024 prices",
       "note": "max(0.05*baseline, min(abs_floor_country_gross, 0.30*baseline))"
     },
@@ -7024,8 +7024,8 @@
       ],
       "count": 3840,
       "raw_bytes": 15360,
-      "gzip_bytes": 5499,
-      "sha256_raw": "272f6f5b85e745e2b574a06ce0562466f08a4b6a3e0fd2839a3c96d5dfd8f47a",
+      "gzip_bytes": 5502,
+      "sha256_raw": "1a5d7dcd29fa8b18f68ec617de38da20bf33c6c30d9c728b02a1a5f21374ceda",
       "units": "US$ million, grant-equivalent, constant 2024 prices",
       "note": "Audited projected value; the tool holds these fixed."
     },

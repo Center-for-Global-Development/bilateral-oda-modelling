@@ -426,6 +426,11 @@
     imputedSectors: 'Sector shares are imputed from the donor’s 2024 sector mix.',
     peersFixed: 'Other donors are held at the selected allocation rule.',
     baselineYear: '2024 is observed, not modelled, so it is the same under every allocation rule.',
+    /* Shown only when the selection can isolate the United Kingdom against
+       Afghanistan. The UK reports that programme with no sector at all, so it
+       would otherwise be dropped from a matrix whose grain is donor x recipient
+       x sector, and the UK would read as giving Afghanistan nothing in 2024. */
+    ukAfghanistan: 'The United Kingdom reports its Afghanistan programme without a sector, so its 2024 split across sectors is imputed from the UK’s own sector mix. The total is as reported.',
     /* Used by the figures whose measure is defined against 2024, or whose whole
        subject is variation between allocation rules. Both are degenerate at
        2024 — zero loss, or ten identical columns — so those figures offer the
