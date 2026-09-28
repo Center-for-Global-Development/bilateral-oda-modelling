@@ -766,9 +766,9 @@
       "name": "Romania",
       "dac_member": 0,
       "eu_institution": 0,
-      "model_status": "static_contextual",
-      "is_cutting_donor": 0,
-      "static_envelope": 1,
+      "model_status": "active_projected",
+      "is_cutting_donor": 1,
+      "static_envelope": 0,
       "gni_applicable": true,
       "include_in_sovereign_effort_total": true,
       "focus_donor": true

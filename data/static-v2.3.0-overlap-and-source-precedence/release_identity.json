@@ -1,5 +1,5 @@
 {
-  "content_root_sha256": "0f42470e045656649141ff930b4fde3525561ae7c9ca707123c49a6d8498db6d",
+  "content_root_sha256": "74dc3bc89ec1d6af1dec0fb7cfb1b938e86d8a82b48bff12f260487f4625a50b",
   "components": {
     "schema_version": "1.1.0",
     "model_build": "static-v2.3.0-overlap-and-source-precedence",
@@ -240,13 +240,13 @@
     },
     "release_input_manifest_sha256": "c360f6db3a0a512062dd792621b3c90813ecb513cfe2e5e2badad85b8a9a59a3",
     "release_script_sha256": "bc2f77fe136652da88a4d8f22f5e1dcb1bedf0012b494b9b096a0dc6a4313c83",
-    "emitter_sha256": "85f393a775d4591f9f11866b644304d0ed501e9ed7b2f067d9a3414557902931",
+    "emitter_sha256": "92c23259d08032f9ba99de5cad49df31474256af8b8456e404889a114c75ec67",
     "environment": {
       "python": "3.14.4",
       "numpy": "2.4.4",
       "pandas": "3.0.3"
     }
   },
-  "built_at_utc": "2026-09-15T16:09:35+00:00",
+  "built_at_utc": "2026-09-25T20:30:31+00:00",
   "note": "content_root_sha256 covers the components below and nothing else. It excludes built_at_utc so identical rebuilds match. Any change to the schema, model build, axes, a blob, the release inputs, the release script, the emitter or the environment changes it."
 }

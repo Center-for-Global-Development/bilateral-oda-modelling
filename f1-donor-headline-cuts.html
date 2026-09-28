@@ -60,18 +60,19 @@
   state.subscribe(st=>scaleBox.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.scale===st.scale))));
   document.getElementById('controls').append(sort,UI.controlGroup('Scale',scaleBox,{id:'scaleToggle'}));
   /* The All / DAC / Non-DAC filter has been removed, because after two
-     corrections it could no longer divide anything. The 17 statically-held
-     donors are gone from this figure (see allRows below), and they were exactly
-     the 17 non-DAC countries; EU Institutions, the only other provider outside
-     the DAC in the payload's own classification, is in fact a DAC member and is
-     now treated as one. Every donor this figure can show is therefore a DAC
-     member: "All" and "DAC" would have selected the same 33 donors and
-     "Non-DAC" would have selected none. */
+     corrections it could no longer divide anything. The statically-held
+     donors are gone from this figure (see allRows below), and they are all
+     non-DAC; EU Institutions, the only other provider outside the DAC in the
+     payload's own classification, is in fact a DAC member and is treated as one.
+     Since the 25 Sep 2026 payload the figure also shows Romania, a projected
+     non-DAC provider, so a filter would split 33 DAC donors from one non-DAC
+     donor — not worth a control. */
   UI.pagerRow(document.querySelector('.panel')).append(UI.pager(state,()=>Math.ceil(ordered().length/pageSize)));
   document.getElementById('ratioSort').addEventListener('click',()=>{const s=state.get();state.set({sort:'ratio',direction:s.sort==='ratio'&&s.direction==='asc'?'desc':'asc'});});
   document.getElementById('yearLegend').append(...years.map((y,i)=>{const dot=element('span',{className:'year-dot'});dot.style.background=colours[i];return element('span',{className:'year-key'},[dot,element('span',{text:String(y)})]);}));
-  /* The 17 statically-held donors are excluded. Their envelopes are not
-     projected at all: each one's 2024 ODA/GNI ratio is carried forward, so the
+  /* The 16 statically-held donors are excluded. Their envelopes are not
+     projected from announcements: each is held at its latest observed ODA/GNI
+     effort (2025 for twelve, 2024 for four), so the
      "change by 2028" this figure ranks is an artefact of GNI growth rather than
      any modelled decision, and they crowded out donors whose change is real.
      Read off `static_envelope` rather than a hard-coded list of codes, so a
