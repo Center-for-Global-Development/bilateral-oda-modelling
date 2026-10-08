@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The most underprioritised countries are extremely underprioritised</title>
-<link rel="stylesheet" href="shared/cgd-figure.css?v=20260902b">
-<link rel="stylesheet" href="shared/cgd-responsive.css?v=20260902b">
-<link rel="stylesheet" href="shared/oda-figure.css?v=20260902b">
+<link rel="stylesheet" href="shared/cgd-figure.css?v=20261008a">
+<link rel="stylesheet" href="shared/cgd-responsive.css?v=20261008a">
+<link rel="stylesheet" href="shared/oda-figure.css?v=20261008a">
 <style>
   .table-shell { position: relative; border: 1px solid var(--cgd-border); background: #fff; }
   .table-scroll { overflow-x: auto; overscroll-behavior-inline: contain; }
@@ -100,7 +100,7 @@
       <p class="viz-sub" id="vizSub"></p>
     </div>
     <button class="fullscreen-btn desktop-only" id="fullscreenBtn" type="button"
-            aria-label="View fullscreen" title="View fullscreen">
+            aria-label="View fullscreen">
       <svg class="icon-expand" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <svg class="icon-compress" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
@@ -135,12 +135,12 @@
   <div id="notes"></div>
 </main>
 
-<script src="shared/dom.js?v=20260902b"></script>
-<script src="shared/chart-core.js?v=20260902b"></script>
-<script src="shared/set-config.js?v=20260902b"></script>
-<script src="shared/oda-payload.js?v=20260902b"></script>
-<script src="shared/oda-model.js?v=20260902b"></script>
-<script src="shared/oda-ui.js?v=20260902b"></script>
+<script src="shared/dom.js?v=20261008a"></script>
+<script src="shared/chart-core.js?v=20261008a"></script>
+<script src="shared/set-config.js?v=20261008a"></script>
+<script src="shared/oda-payload.js?v=20261008a"></script>
+<script src="shared/oda-model.js?v=20261008a"></script>
+<script src="shared/oda-ui.js?v=20261008a"></script>
 <script>
 (async () => {
   'use strict';
@@ -189,7 +189,7 @@
   }
 
   const desktopPrimary = document.getElementById('desktopPrimary');
-  desktopPrimary.append(UI.yearControl(state, payload.axes.year),
+  desktopPrimary.append(UI.yearControl(state, M.displayYears(payload)),
     UI.measureToggle(state, s => (currentMetric(s) === 'oda' || currentMetric(s) === 'oda_pc' ||
                                   currentMetric(s) === 'cut') ? 'usd' : 'pct'));
   const layerControl = segmented('layer', ['ratio', 'oda'], ['Prioritisation ratio', 'ODA'], 'Metric family');
@@ -212,7 +212,7 @@
   const yearOut = element('output', { text: '2028' });
   const next = element('button', { text: '›', attributes: { type: 'button', 'aria-label': 'Next year' } });
   mobileYear.append(prev, yearOut, next);
-  function moveYear(delta) { const ys = payload.axes.year, i = ys.indexOf(state.get().year);
+  function moveYear(delta) { const ys = M.displayYears(payload), i = ys.indexOf(state.get().year);
     state.set({ year: ys[Math.max(0, Math.min(ys.length - 1, i + delta))] }); }
   prev.addEventListener('click', () => moveYear(-1)); next.addEventListener('click', () => moveYear(1));
   document.getElementById('mobileMeasure').append(UI.controlGroup('Measure',
@@ -250,8 +250,8 @@
   state.subscribe(s => {
     objectiveControl.hidden = s.layer !== 'ratio'; odaMetricControl.hidden = s.layer !== 'oda';
     mobileShow.value = currentMetric(s); threshold.checked = s.threshold;
-    yearOut.textContent = s.year; const i = payload.axes.year.indexOf(s.year);
-    prev.disabled = i === 0; next.disabled = i === payload.axes.year.length - 1;
+    yearOut.textContent = s.year; const ys = M.displayYears(payload), i = ys.indexOf(s.year);
+    prev.disabled = i === 0; next.disabled = i === ys.length - 1;
   });
 
   function blobNames(s) {
@@ -263,7 +263,7 @@
   function need(iso, objective) { const v = payload.at(`tool/need_${objective}`, { recipient: iso });
     return Number.isFinite(v) && v > 0 ? v : null; }
   function oda(iso, scenario, year, measure) {
-    return payload.at(`scenarios/${scenario}/recipient_year__${measure}`, { recipient: iso, year });
+    return M.valueAt(payload, 'recipient', { scenario, measure, year }, { recipient: iso });
   }
   function baseline(iso, measure) { return payload.at(`static/baseline_${measure}__recipient`, { recipient: iso }); }
 
@@ -351,7 +351,7 @@
 
   function allDomain(s, metric) {
     let values = [], ranges = [];
-    for (const year of payload.axes.year) {
+    for (const year of M.displayYears(payload)) {
       const model = buildRows({ ...s, year });
       model.rows.forEach(r => { values.push(...r.values.filter(Number.isFinite));
         if (Number.isFinite(r.average)) values.push(r.average); if (Number.isFinite(r.range)) ranges.push(r.range); });
@@ -464,12 +464,17 @@
       for(const row of bodyRows){ if(row.summary){ const v=row.values.filter(Number.isFinite); row.average=v.length?v.reduce((a,b)=>a+b,0)/v.length:null; row.range=v.length?Math.max(...v)-Math.min(...v):null; }
         const tr=element('tr',{className:row.summary?'summary-row':''});
         if(row.iso)tr.dataset.iso=row.iso;
-        for(const col of order){ if(col==='recipient'){ const th=element('th',{className:'recipient'}), name=element(mobile?'button':'span',{className:'recipient-name',text:row.name,attributes:{title:row.name,...(mobile?{type:'button'}:{})}});
+        for(const col of order){ if(col==='recipient'){ const th=element('th',{className:'recipient'}), name=element(mobile?'button':'span',{className:'recipient-name',text:row.name,attributes:{...(mobile?{type:'button'}:{})}});
+            if(row.summary)UI.hoverTip(name,'Median across this group\u2019s recipients, for each allocation rule.');else UI.truncationTip(name,row.name);
             if(mobile) name.addEventListener('click',()=>name.classList.toggle('expanded')); th.append(name); tr.append(th); }
           else if(col==='average') tr.append(makeValueCell(row.average,model.metric,domain,'summary-start'));
           else if(col==='range') tr.append(makeValueCell(row.range,model.metric,domain,'range',true));
           else tr.append(makeValueCell(row.values[scenarios.indexOf(col)],model.metric,domain,col===scenarios[0]?'scen-start':'',false,
             row.iso?{iso:row.iso,name:row.name,scenario:col,s}:null)); }
+        /* A collapsed group shows medians, not one recipient's values: say so. */
+        if(row.summary)[...tr.children].forEach((cell,i)=>{const col=order[i];if(col==='recipient')return;
+          cell.setAttribute('tabindex','0');
+          UI.hoverTip(cell,col==='average'?'Mean of the ten scenario medians.':col==='range'?'Highest minus lowest of the ten scenario medians.':'Median across this group\u2019s recipients.');});
         tbody.append(tr); }
     }
     return shell;
@@ -522,12 +527,15 @@
       const grouping=`grouped by ${s.objective} prioritisation`;
       document.getElementById('vizSub').textContent=`${metricLabel(model.metric)} in ${s.year}, across ten allocation rules.`;
       document.getElementById('tagline').textContent=`${M.MEASURE_LABEL[s.measure]} measure; ${grouping}.`;
-      UI.renderNotes('notes',{visible:[`${model.rows.length} of ${RECIPIENTS.length} recipients shown.`],notes:[
+      UI.renderNotes('notes',{visible:[
+        model.rows.length < RECIPIENTS.length ? `${model.rows.length} of ${RECIPIENTS.length} recipients shown.` : '',
+        M.isBaselineYear(s.year) ? '2024 is the observed baseline, so all ten allocation rules show the same value and Range is zero.' : ''
+      ].filter(Boolean),notes:[
         'The prioritisation ratio compares each recipient\u2019s bilateral ODA per unit of need with the global mean for the same year and objective; 100% is the global mean.',
         'Average is the mean across the ten allocation rules; Range is the highest minus the lowest.',
         'Prioritisation ratios are clipped above 400%, and ODA per poor person above US$1,000, so outliers do not wash out the colour scale.',
       'ODA per poor person is left blank for recipients with fewer than 100,000 people in extreme poverty, where the ratio divides an allocation by too few people to mean anything.',
-        UI.STANDARD_NOTES.projectionYears, UI.STANDARD_NOTES.prices
+        '2025–2028 are projections; 2024 is observed.', UI.STANDARD_NOTES.prices
       ]});
       
       window.CGD_READY = true;
@@ -540,6 +548,6 @@
   window.ODA_F17={state,buildRows:()=>buildRows(state.get())};
 })();
 </script>
-<script src="shared/cgd-embed.js?v=20260902b"></script>
+<script src="shared/cgd-embed.js?v=20261008a"></script>
 </body>
 </html>

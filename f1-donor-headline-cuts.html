@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Two thirds of donors are cutting ODA, and totals fall by a quarter by 2028</title>
-<link rel="stylesheet" href="shared/cgd-figure.css?v=20260902b"><link rel="stylesheet" href="shared/cgd-responsive.css?v=20260902b"><link rel="stylesheet" href="shared/oda-figure.css?v=20260902b">
+<link rel="stylesheet" href="shared/cgd-figure.css?v=20261008a"><link rel="stylesheet" href="shared/cgd-responsive.css?v=20261008a"><link rel="stylesheet" href="shared/oda-figure.css?v=20261008a">
 <style>
   .rank-head,.donor-row{display:grid;grid-template-columns:minmax(112px,190px) minmax(140px,1fr) 62px;gap:8px;align-items:center}
   .rank-head{font-size:12px;font-weight:600;color:var(--cgd-dark-gray);padding:4px 5px;border-bottom:1px solid var(--cgd-border)}
@@ -20,7 +20,7 @@
 </head>
 <body><main id="vizRoot" class="viz-wrapper">
   <div class="header-row"><div class="title-block"><h1 id="vizTitle">Two thirds of donors are cutting ODA, and totals fall by a quarter by 2028</h1><p class="viz-sub">Total ODA grant-equivalent, 2024–2028</p></div>
-    <button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="View fullscreen" title="View fullscreen"><svg class="icon-expand" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5" stroke="currentColor" stroke-width="1.8"/></svg><svg class="icon-compress" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5" stroke="currentColor" stroke-width="1.8"/></svg></button>
+    <button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="View fullscreen"><svg class="icon-expand" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5" stroke="currentColor" stroke-width="1.8"/></svg><svg class="icon-compress" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5" stroke="currentColor" stroke-width="1.8"/></svg></button>
   </div>
   <div class="controls" id="controls"></div>
   <section class="panel"><div class="panel-header"><span></span><div class="year-legend" id="yearLegend" aria-label="Year colour legend"></div></div>
@@ -28,7 +28,7 @@
   </section>
   <div id="notes"></div><div class="tooltip" id="tooltip" hidden></div>
 </main>
-<script src="shared/dom.js?v=20260902b"></script><script src="shared/chart-core.js?v=20260902b"></script><script src="shared/set-config.js?v=20260902b"></script><script src="shared/oda-payload.js?v=20260902b"></script><script src="shared/oda-model.js?v=20260902b"></script><script src="shared/oda-ui.js?v=20260902b"></script>
+<script src="shared/dom.js?v=20261008a"></script><script src="shared/chart-core.js?v=20261008a"></script><script src="shared/set-config.js?v=20261008a"></script><script src="shared/oda-payload.js?v=20261008a"></script><script src="shared/oda-model.js?v=20261008a"></script><script src="shared/oda-ui.js?v=20261008a"></script>
 <script>
 (async()=>{'use strict';
   window.CGD_READY = false;
@@ -111,7 +111,7 @@
        baseline, and a small year-on-year change reads as a staircase. Same row
        space as the dot strip. */
     const BAR=narrow?4.4:5.2,GAP=narrow?1.4:1.4,TOP=(36-(5*BAR+4*GAP))/2;
-    for(const row of shown){const wrap=element('div',{className:'donor-row'}),name=element('div',{className:'donor-name',text:row.name,attributes:{title:row.name}}),plot=element('div',{className:'donor-plot'}),svg=svgEl('svg',{'aria-label':row.name+', total ODA 2024 to 2028'});
+    for(const row of shown){const wrap=element('div',{className:'donor-row'}),name=UI.truncationTip(element('div',{className:'donor-name',text:row.name}),row.name),plot=element('div',{className:'donor-plot'}),svg=svgEl('svg',{'aria-label':row.name+', total ODA 2024 to 2028'});
       /* Gridlines dropped from the axis into every row, so a bar end can be read
          against a value without tracking it down to the bottom of the table. */
       ticks.forEach(t=>{if(t>0)svg.append(svgEl('line',{x1:x(t)+'%',x2:x(t)+'%',y1:1,y2:35,stroke:'#E7EEF0','stroke-width':1}));});
@@ -140,4 +140,4 @@
   
   document.getElementById('fullscreenBtn').addEventListener('click',()=>document.fullscreenElement?document.exitFullscreen():root.requestFullscreen?.());render();window.ODA_F1={state,rows:allRows};
 })();
-</script><script src="shared/cgd-embed.js?v=20260902b"></script></body></html>
+</script><script src="shared/cgd-embed.js?v=20261008a"></script></body></html>

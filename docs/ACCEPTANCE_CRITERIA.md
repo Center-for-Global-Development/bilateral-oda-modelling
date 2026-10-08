@@ -71,16 +71,22 @@ running paragraph. See *Notes* in `README.md`.
 - [ ] Every figure carries constant 2024 US$. The unallocable-ODA note is
       carried only where a figure's denominator or coverage makes it material,
       not on all seventeen.
-- [ ] Counts, never rosters: a note gives the NUMBER of affected recipients and
-      never a comma-separated list of their names.
+- [ ] Counts, not long rosters: a note gives the NUMBER of affected recipients.
+      A short list (up to about five names) is allowed where the names matter to
+      the reader, as in F6's "Excluded outliers: …". *Relaxed 8 October 2026 on
+      CGD instruction.*
 - [ ] No fact that already appears in the figure's own summary line.
 - [ ] Conditional statements that explain an otherwise-broken-looking state
       surface on the face of the figure, in their own paragraph above the notes.
 - [ ] The notes OPEN with `Source: CGD modelling.` and no figure varies it. The
       release name does not appear on the face of a figure.
-- [ ] No `title` attribute or SVG `<title>` carries information a reader needs:
-      it is delayed, invisible on touch, and limited to one line. Use the
-      figure's own tooltip panel or `ODAUI.hoverTip`.
+- [ ] No `title` attribute, SVG `<title>` or `<option title>` is used as a
+      tooltip anywhere, including the fullscreen button: it is delayed,
+      invisible on touch, and limited to one line. Use the figure's own tooltip
+      panel or the quick tip (`ODAUI.hoverTip`; `ODAUI.truncationTip` for a name
+      behind an ellipsis, shown only when it is cut off). The parent page's
+      `<iframe title>` is the only `title` and is an accessible name, not a
+      tooltip. *Made the standard on 8 October 2026 on CGD instruction.*
 - [ ] A count that introduces a clause agrees with its verb. Use
       `ODAModel.countPhrase`, not an inline plural.
 - [ ] Every reference into `shared/` carries a `?v=` stamp, and the stamp is
@@ -339,7 +345,7 @@ Reference: Figure 7 of the CGD aid-cuts blog.
 - [ ] The drill-down is `ODAUI.orphanDrilldown`, shared verbatim with F15, and the sub-dialog stacks on its parent so closing it returns to the ranked list.
 - [ ] Sub-popup on a pair: one dot per 2024-funding donor on the same 0–100% track, sized by US$ lost, ranked by size of change, top 10 with paging. Closing it returns to the list on the page the reader left.
 - [ ] The count is **cumulative**: a pair is counted from the first year it crosses the threshold and stays counted thereafter.
-- [ ] Footnote reports how many pairs rise back above the threshold in a later year but remain counted, rather than asserting in the abstract that this is rare.
+- [ ] The notes state the cumulative rule. The number of pairs that later recover above the threshold is not reported (owner decision, 8 October 2026).
 
 ### F11. Changing concentration of reliance on the top bilateral donor
 
@@ -453,8 +459,8 @@ Governing spec: `SCOPE.md`, "Coordination tool".
 **Accepted when — notes**
 
 - [ ] Visible on the face, in the summary paragraph: the held amount ("US$X of <donor>'s US$Y projected envelope is held for Ukraine and cannot move"); and, only when it applies, the no-discretionary-allocation state.
-- [ ] In the notes paragraph: policy commitments other than Ukraine are deliberately not applied and the tool may recommend funding a country the donor has announced exit from; the sector split is imputed from the observed 2024 mix and the tool does not choose sectors; the tool's viability threshold is the country floor while published figures use the cell floor; peers are projected then held fixed and never re-optimised; plus the standard items.
-- [ ] Title is a question. The word "optimal" does not appear. A persistent one-line note states this is not a recommendation. No composite score is ever displayed.
+- [ ] In the notes paragraph: policy commitments other than Ukraine are deliberately not applied and the tool may recommend funding a country the donor has announced exit from; the sector split is imputed from the observed 2024 mix and the tool does not choose sectors; peers are projected then held fixed and never re-optimised; plus the standard items.
+- [ ] Title is a question, and the subtitle frames the tool as exploration ("Explore how donors' bilateral ODA allocations change when different recipient interests are prioritised."); together these do the work of a not-a-recommendation line, so no separate disclaimer is added. The word "optimal" does not appear. No composite score is ever displayed. The country-floor vs cell-floor distinction stays in the methodology, not the notes (too technical for the face of the figure; 8 October 2026).
 
 **Out of scope — must not be added**
 
@@ -473,7 +479,7 @@ Governing spec: `SCOPE.md`, "Coordination tool".
 - [ ] Year control 2024–2028, starting 2028.
 - [ ] Korea, Dem. People's Rep. is excluded entirely, without a note.
 - [ ] Grouped by average prioritisation ratio: significantly underprioritised (<50%), underprioritised (50–100%), overprioritised (>100%), plus "not classified" for recipients with no need mass, hidden when empty.
-- [ ] Groups collapsible; underprioritised and overprioritised collapsed by default. A collapsed group shows its count and a summary row of the ten scenario means.
+- [ ] Groups collapsible; underprioritised and overprioritised collapsed by default. A collapsed group shows its count and a summary row labelled "<group> median": each scenario column is the median across the group's recipients, Average is the mean of those ten medians, and Range is their spread. Quick tips on the row say so. *Median accepted over mean on 8 October 2026: the ratios are too skewed for a group mean to be representative.*
 - [ ] When the metric is an ODA measure, grouping uses the last-used objective's average ratio, named in the group header and the tagline, defaulting to poverty.
 - [ ] Row movement between groups as the year changes is animated.
 - [ ] Sorting: within group, by the Average column descending; column headers click-to-sort.
@@ -483,14 +489,14 @@ Governing spec: `SCOPE.md`, "Coordination tool".
 - [ ] Ratio = (bilateral ODA per person in extreme poverty in recipient r) divided by (total bilateral ODA divided by total people in extreme poverty across all recipients), generalising to humanitarian and fiscal as ODA per unit of need mass over the same global mean.
 - [ ] ODA measures: US$ ODA; US$ ODA per person in extreme poverty; US$ ODA cut vs 2024; % ODA cut vs 2024.
 - [ ] Colour: sequential for US$ ODA and per-person ODA; diverging centred on zero for both cut measures; diverging centred on 100% for the ratio.
-- [ ] For the displayed metric, a **single** colour domain spans the ten scenario columns, the Average column, and all four projection years. Never per column, never per year.
+- [ ] For the displayed metric, a **single** colour domain spans the ten scenario columns, the Average column, and every selectable year, 2024 included. Never per column, never per year.
 - [ ] Range column has its own sequential scale with a visual separator.
 - [ ] Ratios above 999% display as ">999%" and the ratio colour scale is winsorised. Marshall Islands reaches roughly 1,857,000%.
 - [ ] Sticky recipient column with horizontal scroll; the sticky header cells are opaque and stacked so no scrolled heading shows behind them.
 
 **Accepted when — 2024 and the benchmark**
 
-- [ ] At 2024 all ten columns are identical and Range is zero. A footnote states this is the observed baseline, not a fault.
+- [ ] At 2024 all ten columns are identical and Range is zero, and a live line says this is the observed baseline. *2024 added 8 October 2026.*
 - [ ] Footnote states the ratio is relative to each year's own average, which falls from about US$118 to US$91 per person in extreme poverty between 2024 and 2028, so a constant ratio means a constant share rather than constant funding.
 
 **Accepted when — mobile**
@@ -519,11 +525,10 @@ Governing spec: `SCOPE.md`, "Coordination tool".
 ### Known gaps: shipped code that does not yet meet a criterion
 
 Found in the 7 October 2026 reconciliation. Each is a code fix or an owner
-decision; none has been resolved by relaxing the criterion above.
+decision; none has been resolved by relaxing the criterion above. Resolved
+on 8 October: F14's notes now name the selected year; F17 offers 2024; F6's
+short outlier list and F16's framing were accepted as they stand; every native
+`title` tooltip was replaced by the quick tip; F10's recovered-pairs sentence
+and F17's group medians were settled by the owner.
 
-- [ ] **Native `title` carrying reader information** (0.4): the scenario option descriptions (`oda-ui.js`, `<option title>`); F12 main-chart dots (SVG `<title>` is their only tooltip); F13's "Reallocated, %" definition; F3's legend note; F2's final-column header; F16's triangle corner names.
-- [ ] **Roster, not count** (0.4): F6's advanced-option phrase lists the excluded recipients by name. (The owner asked for "Excluded outliers: Marshall Islands, Micronesia" on 1 September; decide whether that instruction is the exception to 0.4.)
-- [ ] **F10 recovered pairs**: `recoveredCount` is computed but never rendered, so the F10 notes criterion is unmet.
-- [ ] **F14 notes** hard-code "2028 value" although the year is selectable.
-- [ ] **F16** has no persistent "this is not a recommendation" line, and the country-floor vs cell-floor note is absent from its notes paragraph.
-- [ ] **F17** offers 2025–2028 only (the brief and criterion include 2024, with its observed-baseline and benchmark footnotes, which are also absent); collapsed groups summarise with the median, not the mean; the ratio colour is clipped at 400% and there is no ">999%" display cap. Confirm the intended behaviour, then fix code or criterion.
+- [ ] **F17**: the benchmark note gives "the global mean for the same year" but not the US$118 → US$91 figures. The ratio colour is clipped at 400% (accepted by the owner, 8 October 2026); there is no ">999%" display cap.

@@ -300,8 +300,9 @@ entry must be a complete sentence ending in its own full stop.
 
 Two rules keep them that way:
 
-* **No rosters.** A note reports a COUNT, never a comma-separated list of every
-  affected recipient. `denominatorNote` and `incomeGroupNote` used to end with
+* **No long rosters.** A note reports a COUNT, not a comma-separated list of every
+  affected recipient. A short list (up to about five names) is allowed where the
+  names matter, as in F6's "Excluded outliers: …". `denominatorNote` and `incomeGroupNote` used to end with
   thirteen country names in one sentence, and F5 carried three such lists at
   once. The count is what tells a reader how much of the picture is missing; a
   reader who needs to know which ones can select them.
@@ -380,12 +381,24 @@ set. It replaced the last native `title` attributes in the figures.
 
 ## No native tooltips
 
-**Nothing in this set uses a `title` attribute or an SVG `<title>` to carry
-information a reader needs.** Browsers delay `title` by about a second, it never
-appears on touch at all, and it cannot be styled or given more than one line.
-Every figure now uses either its own `.tooltip` panel or the shared
-`UI.hoverTip`, both of which appear immediately, work on tap and on keyboard
-focus, and can hold several lines.
+**Nothing in this set uses a `title` attribute, an SVG `<title>` or an
+`<option title>` as a tooltip**, the fullscreen button included. Browsers delay
+`title` by about a second, it never appears on touch at all, and it cannot be
+styled or given more than one line. Every figure uses either its own `.tooltip`
+panel or the shared quick tip, both of which appear immediately, work on tap and
+on keyboard focus, and can hold several lines:
+
+* `UI.hoverTip(el, text)` for explanations of marks, headers, legend keys and
+  controls. The fullscreen button is wired automatically from its `aria-label`.
+* `UI.truncationTip(el, fullName)` for a name behind an ellipsis: it shows only
+  when the name is actually cut off.
+* The scenario select describes the **selected** rule in its quick tip.
+* A disabled control's reason is printed on the face of the figure, because a
+  disabled control receives no hover or focus.
+
+The tip renders inside the fullscreen element when the figure is fullscreen.
+The only `title` left is the one on each `<iframe>` in `preview.html`, which is
+the frame's accessible name.
 
 This mattered more than it sounds. F10's stacked bands had no tooltip of any
 kind — a reader could see a shape and a colour but could not read a single

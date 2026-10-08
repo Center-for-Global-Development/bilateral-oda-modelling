@@ -88,15 +88,16 @@
       const info = M.scenarioInfo(scenario);
       select.append(element('option', {
         text: `${info.label} — ${info.name}`,
-        attributes: { value: scenario, title: info.tip }
+        attributes: { value: scenario }
       }));
     }
     select.value = state.get().scenario;
+    hoverTip(select, () => M.scenarioInfo(select.value).tip);
 
     /* No live hint line under the selector. The option text already carries
-       "S2A — Sector prioritisation by donor portfolio", and the per-option title
-       carries the longer description, which satisfies the general rules' scenario
-       tooltip. A restated sentence below every scenario control cost a line of
+       "S2A — Sector prioritisation by donor portfolio", and the quick tip on the
+       select carries the selected rule's longer description (an <option title>
+       never shows on touch and is delayed elsewhere). A restated sentence below every scenario control cost a line of
        vertical space on every figure and told the reader nothing the option had
        not already said. */
     select.addEventListener('change', () => state.set({ scenario: select.value }));
@@ -264,11 +265,14 @@
   let tipNode = null;
 
   function tipElement() {
-    if (!tipNode || !tipNode.isConnected) {
+    if (!tipNode) {
       tipNode = element('div', { className: 'oda-hovertip', attributes: { role: 'tooltip' } });
       tipNode.hidden = true;
-      document.body.append(tipNode);
     }
+    /* Inside the fullscreen element when there is one: anything outside it is
+       not painted while the figure is fullscreen. */
+    const host = document.fullscreenElement || document.body;
+    if (tipNode.parentNode !== host) host.append(tipNode);
     return tipNode;
   }
 
@@ -306,6 +310,34 @@
     el.addEventListener('pointerleave', hideHoverTip);
     el.addEventListener('blur', hideHoverTip);
     return el;
+  }
+
+  /** True when an element's text is cut off (ellipsis or line clamp). */
+  function isTruncated(el) {
+    return el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1;
+  }
+
+  /**
+   * The full text of a label, as a quick tip, shown only when the label is cut
+   * off. Replaces `title` on truncated names: the tip appears at once, on tap
+   * and on focus, and says nothing when the whole name is already visible.
+   */
+  function truncationTip(el, fullText) {
+    return hoverTip(el, () => (isTruncated(el) ? fullText : ''));
+  }
+
+  /* Every figure's icon-only fullscreen button describes itself through the
+     quick tip (from its aria-label), not a native `title`. */
+  function wireFullscreenTip() {
+    const button = document.getElementById('fullscreenBtn');
+    if (!button || button.dataset.tip) return;
+    button.dataset.tip = 'wired';
+    hoverTip(button, () => button.getAttribute('aria-label'));
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wireFullscreenTip);
+  } else {
+    wireFullscreenTip();
   }
 
   /* --- filter legend --------------------------------------------------------
@@ -750,7 +782,6 @@
     const head = onClick
       ? element('button', { className: 'oda-rank-label', text: labelText, attributes: { type: 'button' } })
       : element('span', { className: 'oda-rank-label', text: labelText });
-    head.setAttribute('title', labelText);
     hoverTip(head, labelText);
     if (onClick) head.addEventListener('click', onClick);
     return element('div', { className: 'oda-rank-row' }, [head, track, cut]);
@@ -878,7 +909,7 @@
     pagerActions,
     createState, selfSync, controlGroup, scenarioSelect, measureToggle, yearControl,
     sortSelect, applySort, pager, notes, SOURCE, STANDARD_NOTES, attachDismiss,
-    hoverTip, hideHoverTip, helpBadge, filterLegend, hiddenSet, renderNotes,
+    hoverTip, hideHoverTip, truncationTip, isTruncated, helpBadge, filterLegend, hiddenSet, renderNotes,
     modal, trapFocus, pagerRow, pagedList, rankRow, trackAxis, orphanDrilldown
   };
 })();

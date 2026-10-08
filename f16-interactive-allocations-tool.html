@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>How would different development objectives change allocation choices?</title>
-  <link rel="stylesheet" href="shared/cgd-figure.css?v=20260902b">
-  <link rel="stylesheet" href="shared/cgd-responsive.css?v=20260902b">
-  <link rel="stylesheet" href="shared/oda-figure.css?v=20260902b">
+  <link rel="stylesheet" href="shared/cgd-figure.css?v=20261008a">
+  <link rel="stylesheet" href="shared/cgd-responsive.css?v=20261008a">
+  <link rel="stylesheet" href="shared/oda-figure.css?v=20261008a">
   <style>
     .disclaimer{margin:0 0 6px;color:var(--cgd-dark-gray);font-size:11.5px;line-height:1.35}
     .visible-note{margin:7px 0;color:var(--cgd-dark-gray);font-size:11.5px;line-height:1.35}
@@ -133,7 +133,7 @@
       <h1>How would different development objectives change allocation choices?</h1>
       <p class="viz-sub">Explore how donors’ bilateral ODA allocations change when different recipient interests are prioritised.</p>
     </div>
-    <button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="View fullscreen" title="View fullscreen"><svg class="icon-expand" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5" stroke="currentColor" stroke-width="1.8"/></svg><svg class="icon-compress" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5" stroke="currentColor" stroke-width="1.8"/></svg></button>
+    <button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="View fullscreen"><svg class="icon-expand" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5" stroke="currentColor" stroke-width="1.8"/></svg><svg class="icon-compress" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5" stroke="currentColor" stroke-width="1.8"/></svg></button>
   </div>
   <div class="controls oda-controls-wide" id="controls"></div>
   <section class="objective-block" aria-labelledby="objectiveHeading">
@@ -196,12 +196,12 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js" integrity="sha384-CjloA8y00+1SDAUkjs099PVfnY2KmDC2BZnws9kh8D/lX1s46w6EPhpXdqMfjK6i" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="shared/dom.js?v=20260902b"></script>
-<script src="shared/chart-core.js?v=20260902b"></script>
-<script src="shared/set-config.js?v=20260902b"></script>
-<script src="shared/oda-payload.js?v=20260902b"></script>
-<script src="shared/oda-model.js?v=20260902b"></script>
-<script src="shared/oda-ui.js?v=20260902b"></script>
+<script src="shared/dom.js?v=20261008a"></script>
+<script src="shared/chart-core.js?v=20261008a"></script>
+<script src="shared/set-config.js?v=20261008a"></script>
+<script src="shared/oda-payload.js?v=20261008a"></script>
+<script src="shared/oda-model.js?v=20261008a"></script>
+<script src="shared/oda-ui.js?v=20261008a"></script>
 <script>
 (async()=>{
   'use strict';
@@ -414,7 +414,7 @@
       ['F',346,250,'end','Fiscal vulnerability']];
     corners.forEach(([letter,cx,cy,anchor,full])=>svg.append('text').attr('class','triangle-label')
       .attr('x',cx).attr('y',cy).attr('text-anchor',anchor).text(letter)
-      .append('title').text(full));
+      .each(function(){UI.hoverTip(this,full);}));
     const point=svg.append('circle').attr('class','triangle-point').attr('r',13);
     const overlay=svg.append('path').attr('d',`M${A}L${B}L${D}Z`).attr('fill','transparent').style('cursor','crosshair');
     function weightsAt(event){
@@ -435,7 +435,7 @@
   function syncObjective(){
     const w=currentWeights(),buttons=document.querySelectorAll('[data-objective]');
     const unavailable=[];
-    buttons.forEach(b=>{const k=b.dataset.objective,blocked=gapsFor(state.get().donor,k).needsImputation;b.setAttribute('aria-pressed',String(w[k]>1-EPS));b.disabled=blocked.length>0;b.title=blocked.length?`${OBJECTIVES[k]} needs an imputation for ${blocked.map(r=>payload.recipientName(r)).join(', ')}.`:'';if(blocked.length)unavailable.push(`${OBJECTIVES[k]} (${blocked.map(r=>payload.recipientName(r)).join(', ')})`) });
+    buttons.forEach(b=>{const k=b.dataset.objective,blocked=gapsFor(state.get().donor,k).needsImputation;b.setAttribute('aria-pressed',String(w[k]>1-EPS));b.disabled=blocked.length>0;if(blocked.length)unavailable.push(`${OBJECTIVES[k]} (${blocked.map(r=>payload.recipientName(r)).join(', ')})`) });
     document.getElementById('objectiveAvailability').textContent=unavailable.length?`Blocked for this donor: ${unavailable.join('; ')}. The methodology's least-developed-country imputation is not reproducible in the browser.`:'';
     const advanced=document.querySelector('[aria-controls="blendPanel"]');
     if(advanced)advanced.setAttribute('aria-pressed',String(advancedOpen&&!Object.keys(w).some(k=>w[k]>1-EPS)));
@@ -1283,6 +1283,6 @@
   window.ODA_F16={state,rows:()=>rows,comparison:()=>comparison,derive,solve,coverage,missingIssue,setWeights};
 })();
 </script>
-<script src="shared/cgd-embed.js?v=20260902b"></script>
+<script src="shared/cgd-embed.js?v=20261008a"></script>
 </body>
 </html>
