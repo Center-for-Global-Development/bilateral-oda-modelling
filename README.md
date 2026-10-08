@@ -219,15 +219,14 @@ income, residual grey for not classified. A poorest-darkest ramp of one hue is
 correct in principle and unreadable in practice — it put four teals on F9's
 bubbles.
 
-Three rules hold:
+Two rules hold:
 
 * **The residual grey `#DFE0E2` is reserved.** `Other`, `Other cutting donors`
   and `Not classified` take it; no real series ever may.
-* **A minimum perceptual distance is enforced** between colours used together. A
-  pinned colour that is too close to one already taken gives up its pin and takes
-  a ramp colour: within-chart legibility outranks cross-chart stability.
-* **Income groups are exempt**, because they are a sequential ramp where adjacent
-  steps are meant to be close. Detected automatically from the key set.
+* **A minimum perceptual distance is enforced** between colours used together,
+  income groups included. A pinned colour that is too close to one already taken
+  gives up its pin and takes a ramp colour: within-chart legibility outranks
+  cross-chart stability.
 
 Income groups, all 21 CRS sectors and the 20 largest providers are pinned, so
 they do not drift between figures. One diverging ramp is used for loss/gain
@@ -235,7 +234,7 @@ throughout: neutral `#F3F6F7`, loss `#D15553`, gain `#006970`.
 
 ## Controls
 
-Six conventions, all enforced in `oda-figure.css` rather than per figure:
+Seven conventions, all enforced in `oda-figure.css` rather than per figure:
 
 * **Three dropdown widths only.** Standard 144px; wide 240px, opted into with
   `.oda-select-wide`; and 274px for the allocation-rule select alone
@@ -556,7 +555,7 @@ sides of the comparison to share a base, and until this revision they did not.
 | Recommendation built from | The **2024 observed portfolio** | The **projection** for the selected year |
 | y axis | 2024-derived recommendation ÷ projection | Change from the projection, which is what the label always claimed |
 | Held for the focus donor | All 96 pinned corridors | **Ukraine only** |
-| Amount reallocated | The gap between the 2024 total and the envelope — an accident of each donor's history | A stated share of the movable envelope, set by the reader, default 100% |
+| Amount reallocated | The gap between the 2024 total and the envelope — an accident of each donor's history | A stated share of the movable envelope, set by the reader, default 50% (changed from 100% on 3 September 2026) |
 | Basis for the allocation | Winsorised 0–1 objective score | Unmet peer-funding gap, in dollars |
 
 Peers are untouched: `coverage()` still reads
