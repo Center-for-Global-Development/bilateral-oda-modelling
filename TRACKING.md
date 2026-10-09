@@ -1073,6 +1073,11 @@ Proposed changes for the owner to accept or reject, one commit each:
   increase, gold only for emphasis, 2024 in muted grey-teal against the
   projection in dark teal, income groups as one ordered teal ramp, green for
   recipient-need rules.
+* **F13 removed from `preview.html`.** Its headline ('the US could reallocate
+  up to 38%') is the gap between allocation rules applied to one fixed
+  envelope, an artefact of the rules rather than a choice anyone faces. File
+  kept.
+* **F12 sorted by 2024 bilateral ODA**, largest recipients first.
 * **F8 replaced by F8b** in `preview.html` (largest donor per recipient, 2024
   vs selected year, shown as Figure 8). The original F8 showed one recipient at
   a time, and nobody pages through 141 recipients. Its file is kept.
