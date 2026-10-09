@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Lost bilateral ODA is marginal for most economies but severe for a few</title>
-<link rel="stylesheet" href="shared/cgd-figure.css?v=20261009c">
-<link rel="stylesheet" href="shared/cgd-responsive.css?v=20261009c">
-<link rel="stylesheet" href="shared/oda-figure.css?v=20261009c">
+<title>Low-income countries lose about 1% of GNI in bilateral aid, ten times more than upper-middle-income countries</title>
+<link rel="stylesheet" href="shared/cgd-figure.css?v=20261009d">
+<link rel="stylesheet" href="shared/cgd-responsive.css?v=20261009d">
+<link rel="stylesheet" href="shared/oda-figure.css?v=20261009d">
 <style>
   .scatter-wrap { width: 100%; min-height: 300px; }
   .short-control { flex: 0 1 210px; }
@@ -16,6 +16,8 @@
   .advanced-panel[hidden] { display: none; }
   .advanced-panel { display: flex; align-items: center; gap: 6px; font-size: 11.6px;
                     color: var(--cgd-dark-gray); }
+  /* The population size key wraps under the income legend on narrow screens. */
+  #vizRoot .panel-header{flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -23,7 +25,7 @@
 
   <div class="header-row">
     <div class="title-block">
-      <h1 id="vizTitle">Lost bilateral ODA is marginal for most economies but severe for a few</h1>
+      <h1 id="vizTitle">Low-income countries lose about 1% of GNI in bilateral aid, ten times more than upper-middle-income countries</h1>
       <p class="viz-sub" id="vizSub"></p>
     </div>
     <button class="fullscreen-btn" id="fullscreenBtn" type="button"
@@ -59,12 +61,12 @@
   <div class="tooltip" id="tooltip" hidden></div>
 </div>
 
-<script src="shared/dom.js?v=20261009c"></script>
-<script src="shared/chart-core.js?v=20261009c"></script>
-<script src="shared/set-config.js?v=20261009c"></script>
-<script src="shared/oda-payload.js?v=20261009c"></script>
-<script src="shared/oda-model.js?v=20261009c"></script>
-<script src="shared/oda-ui.js?v=20261009c"></script>
+<script src="shared/dom.js?v=20261009d"></script>
+<script src="shared/chart-core.js?v=20261009d"></script>
+<script src="shared/set-config.js?v=20261009d"></script>
+<script src="shared/oda-payload.js?v=20261009d"></script>
+<script src="shared/oda-model.js?v=20261009d"></script>
+<script src="shared/oda-ui.js?v=20261009d"></script>
 <script>
 (async () => {
   'use strict';
@@ -157,13 +159,17 @@
       const meta = payload.recipientMeta[iso] || {};
       const d = M.denominator(payload, iso, denom.key);
       const pop = M.denominator(payload, iso, 'population');
+      const gni = M.denominator(payload, iso, 'gni');
 
       const row = { iso, name: payload.recipientName(iso), lost, base,
                     income: M.incomeGroup(payload, iso),
-                    population: pop.available ? pop.value : null };
+                    population: pop.available ? pop.value : null,
+                    gnipc: gni.available && pop.available && pop.value > 0 ? gni.value / pop.value : null };
 
       if (s.excludeMicro && pop.available && pop.value < 1e6) { microExcluded.push(row); continue; }
-      if (!d.available) { noDenominator.push(row); continue; }
+      /* The x axis is GNI per capita, so a recipient without GNI cannot be placed
+         whichever denominator the y axis uses. */
+      if (!d.available || !(row.gnipc > 0)) { noDenominator.push(row); continue; }
       /* A recipient projected to receive MORE cannot sit on a log axis. It is not
          missing data, so it is counted and named rather than dropped. */
       if (lost <= 0) { gained.push(row); continue; }
@@ -181,6 +187,7 @@
   let pinned = null;
 
   /* Widen a log domain slightly so marks never sit on the plot boundary. */
+  const Y_FLOOR = 1e-4; // 0.01% of the denominator: the bottom of the y axis
   function padLog(min, max) {
     const lo = Math.log10(min), hi = Math.log10(max);
     const pad = Math.max(0.06, (hi - lo) * 0.04);
@@ -248,28 +255,36 @@
        any point below that floor outside the plot area, where it collides with
        the axis title — a defect the machine audits cannot see, because the mark
        is still inside the SVG viewBox. */
-    const xs = rows.map(r => r.lost), ys = rows.map(r => r.share);
+    const xs = rows.map(r => r.gnipc), ys = rows.map(r => r.share);
     const [xMin, xMax] = padLog(Math.min(...xs), Math.max(...xs));
-    const [yMin, yMax] = padLog(Math.min(...ys), Math.max(...ys));
+    /* The y axis stops at 0.01% of the denominator. Below that a loss is
+       negligible, and spreading those points over two more decades gave a third
+       of the chart to them. They are drawn ON the floor line (never below the
+       domain, which collided with the axis title) and counted in the notes. */
+    const [padMin, yMax] = padLog(Math.min(...ys), Math.max(...ys));
+    const yMin = Math.max(padMin, Y_FLOOR / 1.25);
+    const yOf = share => y(Math.max(share, Y_FLOOR));
     const x = logScale(xMin, xMax, margin.left, margin.left + plotW);
     const y = logScale(yMin, yMax, margin.top + plotH, margin.top);
 
     /* gridlines + ticks, thinned to the house target for the width */
     const xTicks = C.thinTicks(niceLogTicks(xMin, xMax), layout.name === 'compact' ? 3 : 5);
-    const yTicks = C.thinTicks(niceLogTicks(yMin, yMax), layout.name === 'compact' ? 3 : 5);
+    /* Every decade, unthinned: thinning dropped 0.1% and left the decades
+       unevenly labelled. Vertical labels have the room. */
+    const yTicks = niceLogTicks(Math.max(yMin, Y_FLOOR), yMax);
 
     for (const t of yTicks) {
       svg.append(svgEl('line', { class: 'grid-line', x1: margin.left, x2: margin.left + plotW,
                                  y1: y(t), y2: y(t) }));
       const label = svgEl('text', { class: 'axis', x: margin.left - 6, y: y(t) + 3,
                                     'text-anchor': 'end' });
-      label.textContent = formatShareTick(t);
+      label.textContent = (t <= Y_FLOOR * 1.0001 && rows.some(r => r.share < Y_FLOOR)) ? `≤${formatShareTick(t)}` : formatShareTick(t);
       svg.append(label);
     }
     for (const t of xTicks) {
       const label = svgEl('text', { class: 'axis', x: x(t), y: margin.top + plotH + 15,
                                     'text-anchor': 'middle' });
-      label.textContent = t >= 1000 ? `${t / 1000}bn` : `${t}m`;
+      label.textContent = t >= 1000 ? `US$${t / 1000}k` : `US$${t}`;
       svg.append(label);
       /* A centred tick label at the end of the axis hangs half its width past the
          plot, and at compact widths margin.right is narrower than that half-width,
@@ -292,7 +307,7 @@
 
     const xTitle = svgEl('text', { class: 'axis-title', x: margin.left + plotW / 2,
                                    y: height - 6, 'text-anchor': 'middle' });
-    xTitle.textContent = 'Bilateral ODA lost vs 2024, US$ (log scale)';
+    xTitle.textContent = 'GNI per capita, US$ (log scale)';
     svg.append(xTitle);
 
     const yTitle = svgEl('text', { class: 'axis-title', x: 10, y: margin.top - 6 });
@@ -301,16 +316,21 @@
 
     /* marks. Colour is set via style, never the fill attribute, so a CSS .point
        rule cannot silently win (skill §C-15). */
-    const radius = layout.name === 'compact' ? 3.4 : 4.2;
-    for (const row of rows.slice().sort((a, b) => b.lost - a.lost)) {
+    /* Bubble area is proportional to population, so a microstate with a huge
+       loss relative to GNI no longer carries the same visual weight as Nigeria.
+       Largest drawn first, so small bubbles stay on top and reachable. */
+    const radius = bubbleRadius(rows, layout);
+    for (const row of rows.slice().sort((a, b) => (b.population || 0) - (a.population || 0))) {
       const dot = svgEl('circle', {
-        class: 'point', cx: x(row.lost), cy: y(row.share), r: radius,
+        class: 'point', cx: x(row.gnipc), cy: yOf(row.share), r: radius(row),
         tabindex: '0', role: 'img',
         'aria-label': `${row.name}: ${M.usd(row.lost)} lost, ` +
                       `${M.percent(row.share, { decimals: 1 })} of ${denom.label}`
       });
       dot.style.fill = window.CGDSet.colourFor(row.income);
-      dot.style.fillOpacity = '0.85';
+      dot.style.fillOpacity = '0.6';
+      dot.style.stroke = '#fff';
+      dot.style.strokeWidth = '0.8';
       dot.addEventListener('pointerenter', () => showTooltip(row, denom));
       dot.addEventListener('pointerleave', () => { if (!pinned) hideTooltip(); });
       dot.addEventListener('focus', () => showTooltip(row, denom));
@@ -325,8 +345,38 @@
     }
 
     renderLegend(allRows, s);
+    renderSizeKey(radius);
     updateNotes(model, s);
     window.CGD_READY = true;
+  }
+
+  function bubbleRadius(rows, layout) {
+    const rMin = 2.5, rMax = layout.name === 'compact' ? 16 : 24;
+    const maxPop = Math.max(1, ...rows.map(r => r.population || 0));
+    const fn = row => rMin + (rMax - rMin) * Math.sqrt((row.population || 0) / maxPop);
+    fn.of = pop => rMin + (rMax - rMin) * Math.sqrt(pop / maxPop);
+    return fn;
+  }
+
+  /* A three-circle key beside the income legend: 10m, 100m and 1bn people. */
+  function renderSizeKey(radius) {
+    const legend = document.getElementById('incomeLegend');
+    legend.parentElement.querySelector(':scope > .size-key')?.remove();
+    const sizes = [[1e7, '10m'], [1e8, '100m'], [1e9, '1bn']];
+    const rs = sizes.map(([p]) => radius.of(p)), h = Math.ceil(2 * Math.max(...rs)) + 2;
+    let xPos = 2;
+    const svg = svgEl('svg', { width: 0, height: h, 'aria-hidden': 'true' });
+    sizes.forEach(([, label], i) => {
+      const r = rs[i];
+      svg.append(svgEl('circle', { cx: xPos + r, cy: h - r - 1, r, fill: 'none', stroke: 'var(--cgd-dark-gray)', 'stroke-width': 1 }));
+      const t = svgEl('text', { x: xPos + 2 * r + 4, y: h - 3, class: 'axis' }); t.textContent = label; svg.append(t);
+      xPos += 2 * r + 4 + label.length * 7 + 12;
+    });
+    svg.setAttribute('width', xPos);
+    const key = element('div', { className: 'size-key' }, [element('span', { text: 'Circle size: population' }), svg]);
+    Object.assign(key.style, { display: 'flex', alignItems: 'flex-end', gap: '8px', flexBasis: '100%',
+                               fontSize: '11.5px', color: 'var(--cgd-dark-gray)', marginTop: '6px' });
+    legend.after(key);
   }
 
   /* The income-group legend is also the income-group filter. */
@@ -347,6 +397,7 @@
     tooltip.replaceChildren(
       element('strong', { text: row.name }),
       element('div', { text: `${M.usd(row.lost)} lost vs 2024` }),
+      element('div', { text: `GNI per capita: US$${Math.round(row.gnipc).toLocaleString('en-GB')}` }),
       element('div', { text: `${M.percent(row.share, { decimals: 1 })} of ${denom.label}` }),
       element('div', { text: `2024 ${M.MEASURE_LABEL[state.get().measure].toLowerCase()} ` +
         `bilateral ODA: ${M.usd(row.base)}` }),
@@ -372,12 +423,13 @@
       `recipient's ${denom.label}.`;
 
     const excluded = [];
-    if (noDenominator.length) excluded.push(`${noDenominator.length} have no ${denom.label}`);
+    if (noDenominator.length) excluded.push(`${noDenominator.length} have no ${denom.label}${denom.key === 'gni' ? '' : ' or GNI'}`);
     if (gained.length) excluded.push(`${gained.length} have no loss to plot`);
     if (microExcluded.length) excluded.push(`${microExcluded.length} excluded as microstates`);
     UI.renderNotes('notes',{visible:[`${rows.length} of ${total} recipients shown` +
       (excluded.length ? ` (${excluded.join('; ')}).` : '.')],notes: [
-        'Both axes are logarithmic; losses span more than four orders of magnitude.',
+        'Both axes are logarithmic; losses span more than four orders of magnitude. Circle area is proportional to population.',
+        rows.some(r => r.share < Y_FLOOR) ? `${rows.filter(r => r.share < Y_FLOOR).length} recipients losing less than 0.01% of ${denom.label} are drawn on the bottom line.` : '',
         'Some small states lose an amount worth a very large share of GNI; the advanced option removes those with populations under 1 million.',
         UI.STANDARD_NOTES.prices
       ].filter(Boolean).filter(Boolean)});
@@ -440,6 +492,6 @@
   window.ODA_F5 = { state, buildRows: () => buildRows(state.get()) };
 })();
 </script>
-<script src="shared/cgd-embed.js?v=20261009c"></script>
+<script src="shared/cgd-embed.js?v=20261009d"></script>
 </body>
 </html>

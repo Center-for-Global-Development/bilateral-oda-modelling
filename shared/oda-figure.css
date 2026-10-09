@@ -546,3 +546,14 @@
 .viz-wrapper .oda-topbar .segmented > button { flex: 0 0 auto; }
 /* Figure number on the title line, preview page only. */
 .viz-wrapper h1 .oda-fig-num { color: var(--cgd-dark-gray); font-weight: 600; }
+
+/* Phones: the top-row label sits above its control, and a select takes the full
+   row rather than overflowing it. */
+@media (max-width: 520px) {
+  .viz-wrapper .oda-topbar .control-group:has(> .plain-select) { flex: 1 1 100%; flex-wrap: wrap; gap: 2px; }
+  .viz-wrapper .oda-topbar .control-group:has(> .plain-select) > .control-label { flex-basis: 100%; }
+  .viz-wrapper .oda-topbar .plain-select { field-sizing: fixed; width: 100%; padding-left: 0; }
+}
+
+/* A controls row left empty once its only control moves to the top row draws nothing. */
+.viz-wrapper .controls:empty { display: none; }
