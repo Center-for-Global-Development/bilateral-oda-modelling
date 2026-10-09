@@ -236,7 +236,11 @@
         margin-top: 5px;
       }
     }
-  </style>
+      .rules-intro { margin: 18px 0 8px; padding: 14px 16px; border: 1px solid #DCE3E5; border-radius: 10px; background: #F7F9FA; }
+    .rules-intro h2 { margin: 0 0 6px; font-size: 16px; }
+    .rules-intro p, .rules-intro li { font-size: 14px; line-height: 1.5; }
+    .rules-intro ul { margin: 6px 0 8px; padding-left: 18px; }
+</style>
 </head>
 <body>
 <main>
@@ -247,6 +251,22 @@
       <em>Modelling bilateral ODA flows to 2028</em>, hosted by the Center for Global Development. View the
       <a href="https://github.com/Center-for-Global-Development/bilateral-oda-modelling">source repository on GitHub</a>.
     </p>
+      <section class="rules-intro" aria-labelledby="rulesIntroHeading">
+        <h2 id="rulesIntroHeading">About the allocation rules</h2>
+        <p>Donors have announced how much they will cut, but not where. The model fills that gap with
+        <strong>allocation rules</strong>: different assumptions about what a donor protects when its budget
+        shrinks. None is a forecast; together they show how much the answer depends on donor behaviour.
+        Four rules carry the main story:</p>
+        <ul>
+          <li><strong>S1 &middot; Even cuts.</strong> Every donor cuts all its programmes by the same proportion. The baseline.</li>
+          <li><strong>S3B &middot; Country comparative advantage.</strong> Donors protect the countries where they provide a large share of all bilateral aid.</li>
+          <li><strong>S2B &middot; Sector comparative advantage.</strong> Donors protect the sectors where they provide a large share of all bilateral aid.</li>
+          <li><strong>S7 &middot; Poverty need.</strong> Donors protect countries with many people in extreme poverty but little aid.</li>
+        </ul>
+        <p>The other six rules (S2A, S3A, S4, S5, S6A, S6B) are variants: protecting a donor&rsquo;s own largest
+        programmes, recipient&ndash;sector pairs, macroeconomically vulnerable or high humanitarian-risk countries,
+        or humanitarian spending. Each figure&rsquo;s allocation-rule menu describes them.</p>
+      </section>
 
     <div class="serve-note">
       <p>
@@ -262,17 +282,17 @@
       <h2>Figures</h2>
       <ol>
         <li><a href="#figure-1">F1 &mdash; Two thirds of donors are cutting ODA, and totals fall by a quarter by 2028</a></li>
-        <li><a href="#figure-2">F2 &mdash; Barely half of 2024 bilateral ODA can be traced to a recipient and sector</a></li>
+        <li><a href="#figure-2">F2 &mdash; A third of bilateral ODA isn’t assigned to any country or region</a></li>
         <li><a href="#figure-3">F3 &mdash; Almost nine in ten recipients lose bilateral aid by 2028, typically about a fifth of it</a></li>
         <li><a href="#figure-4">F4 &mdash; Government and civil society loses over half its bilateral aid by 2028, and reproductive health over a third</a></li>
-        <li><a href="#figure-5">F5 &mdash; Lost bilateral ODA is marginal for most economies but severe for a few</a></li>
+        <li><a href="#figure-5">F5 &mdash; Low-income countries lose about 1% of GNI in bilateral aid, ten times more than upper-middle-income countries</a></li>
         <li><a href="#figure-6">F6 &mdash; US cuts account for almost two thirds of recipients’ aid losses</a></li>
         <li><a href="#figure-7">F7 &mdash; Governance falls from 16% to 9% of bilateral aid as budget support’s share grows</a></li>
         <li><a href="#figure-8">F8 &mdash; One in five recipients ends up with a new largest donor</a></li>
         <li><a href="#figure-8b">F8b (alternative) &mdash; The EU overtakes the US as the most common largest bilateral donor by 2028</a></li>
         <li><a href="#figure-9">F9 &mdash; A third of recipients get less aid than their share of poverty</a></li>
         <li><a href="#figure-11">F11 &mdash; Most recipients lean on a single donor, and still will</a></li>
-        <li><a href="#figure-12">F12 &mdash; For two in five recipients, the choice of allocation rule swings 2028 aid by 25 percentage points or more</a></li>
+        <li><a href="#figure-12">F12 &mdash; For half of recipients, the choice of allocation rule moves 2028 aid by 10 percentage points or more</a></li>
         <li><a href="#figure-13">F13 &mdash; Depending on its priorities, the US could reallocate up to 38% of its bilateral aid</a></li>
         <li><a href="#figure-14">F14 &mdash; Only three of ten allocation rules raise the least developed countries’ share of bilateral aid</a></li>
         <li><a href="#figure-15">F15 &mdash; Between one in eight and three in ten recipient–sector pairs lose half their aid by 2028, depending on donor behaviour</a></li>
@@ -284,11 +304,11 @@
 
   <section class="visual" id="figure-1">
     <div class="visual-header">
-      <a class="open-link" href="f1-donor-headline-cuts.html?v=20261009e" target="_blank" rel="noopener">Open standalone</a>
+      <a class="open-link" href="f1-donor-headline-cuts.html?v=20261009f" target="_blank" rel="noopener">Open standalone</a>
     </div>
     <iframe
       class="auto-height-frame"
-      src="f1-donor-headline-cuts.html?v=20261009e&fig=1"
+      src="f1-donor-headline-cuts.html?v=20261009f&fig=1"
       height="1240"
       data-figure="F1"
       data-min-height="320"
@@ -302,11 +322,11 @@
 
   <section class="visual" id="figure-2">
     <div class="visual-header">
-      <a class="open-link" href="f2-traceable-oda.html?v=20261009e" target="_blank" rel="noopener">Open standalone</a>
+      <a class="open-link" href="f2-traceable-oda.html?v=20261009f" target="_blank" rel="noopener">Open standalone</a>
     </div>
     <iframe
       class="auto-height-frame"
-      src="f2-traceable-oda.html?v=20261009e&fig=2"
+      src="f2-traceable-oda.html?v=20261009f&fig=2"
       height="1100"
       data-figure="F2"
       data-min-height="320"
@@ -320,11 +340,11 @@
 
   <section class="visual" id="figure-3">
     <div class="visual-header">
-      <a class="open-link" href="f3-flows-and-losses-map.html?v=20261009e" target="_blank" rel="noopener">Open standalone</a>
+      <a class="open-link" href="f3-flows-and-losses-map.html?v=20261009f" target="_blank" rel="noopener">Open standalone</a>
     </div>
     <iframe
       class="auto-height-frame"
-      src="f3-flows-and-losses-map.html?v=20261009e&fig=3"
+      src="f3-flows-and-losses-map.html?v=20261009f&fig=3"
       height="900"
       data-figure="F3"
       data-min-height="520"
@@ -338,11 +358,11 @@
 
   <section class="visual" id="figure-4">
     <div class="visual-header">
-      <a class="open-link" href="f4-recipient-sector-losses.html?v=20261009e" target="_blank" rel="noopener">Open standalone</a>
+      <a class="open-link" href="f4-recipient-sector-losses.html?v=20261009f" target="_blank" rel="noopener">Open standalone</a>
     </div>
     <iframe
       class="auto-height-frame"
-      src="f4-recipient-sector-losses.html?v=20261009e&fig=4"
+      src="f4-recipient-sector-losses.html?v=20261009f&fig=4"
       height="860"
       data-figure="F4"
       data-min-height="320"
@@ -356,11 +376,11 @@
 
   <section class="visual" id="figure-5">
     <div class="visual-header">
-      <a class="open-link" href="f5-fiscal-loss.html?v=20261009e" target="_blank" rel="noopener">Open standalone</a>
+      <a class="open-link" href="f5-fiscal-loss.html?v=20261009f" target="_blank" rel="noopener">Open standalone</a>
     </div>
     <iframe
       class="auto-height-frame"
-      src="f5-fiscal-loss.html?v=20261009e&fig=5"
+      src="f5-fiscal-loss.html?v=20261009f&fig=5"
       height="820"
       data-figure="F5"
       data-min-height="320"
@@ -374,11 +394,11 @@
 
   <section class="visual" id="figure-6">
     <div class="visual-header">
-      <a class="open-link" href="f6-donor-attributed-losses.html?v=20261009e" target="_blank" rel="noopener">Open standalone</a>
+      <a class="open-link" href="f6-donor-attributed-losses.html?v=20261009f" target="_blank" rel="noopener">Open standalone</a>
     </div>
     <iframe
       class="auto-height-frame"
-      src="f6-donor-attributed-losses.html?v=20261009e&fig=6"
+      src="f6-donor-attributed-losses.html?v=20261009f&fig=6"
       height="880"
       data-figure="F6"
       data-min-height="320"
@@ -392,11 +412,11 @@
 
   <section class="visual" id="figure-7">
     <div class="visual-header">
-      <a class="open-link" href="f7-oda-treemap.html?v=20261009e" target="_blank" rel="noopener">Open standalone</a>
+      <a class="open-link" href="f7-oda-treemap.html?v=20261009f" target="_blank" rel="noopener">Open standalone</a>
     </div>
     <iframe
       class="auto-height-frame"
-      src="f7-oda-treemap.html?v=20261009e&fig=7"
+      src="f7-oda-treemap.html?v=20261009f&fig=7"
       height="980"
       data-figure="F7"
       data-min-height="320"
@@ -410,11 +430,11 @@
 
   <section class="visual" id="figure-8">
     <div class="visual-header">
-      <a class="open-link" href="f8-donor-oda-over-time.html?v=20261009e" target="_blank" rel="noopener">Open standalone</a>
+      <a class="open-link" href="f8-donor-oda-over-time.html?v=20261009f" target="_blank" rel="noopener">Open standalone</a>
     </div>
     <iframe
       class="auto-height-frame"
-      src="f8-donor-oda-over-time.html?v=20261009e&fig=8"
+      src="f8-donor-oda-over-time.html?v=20261009f&fig=8"
       height="800"
       data-figure="F8"
       data-min-height="320"
@@ -428,11 +448,11 @@
 
   <section class="visual" id="figure-8b">
     <div class="visual-header">
-      <a class="open-link" href="f8b-largest-donor.html?v=20261009e" target="_blank" rel="noopener">Open standalone</a>
+      <a class="open-link" href="f8b-largest-donor.html?v=20261009f" target="_blank" rel="noopener">Open standalone</a>
     </div>
     <iframe
       class="auto-height-frame"
-      src="f8b-largest-donor.html?v=20261009e&fig=8b"
+      src="f8b-largest-donor.html?v=20261009f&fig=8b"
       height="800"
       data-figure="F8b"
       data-min-height="320"
@@ -446,11 +466,11 @@
 
   <section class="visual" id="figure-9">
     <div class="visual-header">
-      <a class="open-link" href="f9-poverty-share-allocation.html?v=20261009e" target="_blank" rel="noopener">Open standalone</a>
+      <a class="open-link" href="f9-poverty-share-allocation.html?v=20261009f" target="_blank" rel="noopener">Open standalone</a>
     </div>
     <iframe
       class="auto-height-frame"
-      src="f9-poverty-share-allocation.html?v=20261009e&fig=9"
+      src="f9-poverty-share-allocation.html?v=20261009f&fig=9"
       height="880"
       data-figure="F9"
       data-min-height="320"
@@ -465,11 +485,11 @@
 
   <section class="visual" id="figure-11">
     <div class="visual-header">
-      <a class="open-link" href="f11-top-donor-reliance.html?v=20261009e" target="_blank" rel="noopener">Open standalone</a>
+      <a class="open-link" href="f11-top-donor-reliance.html?v=20261009f" target="_blank" rel="noopener">Open standalone</a>
     </div>
     <iframe
       class="auto-height-frame"
-      src="f11-top-donor-reliance.html?v=20261009e&fig=11"
+      src="f11-top-donor-reliance.html?v=20261009f&fig=11"
       height="800"
       data-figure="F11"
       data-min-height="320"
@@ -483,11 +503,11 @@
 
   <section class="visual" id="figure-12">
     <div class="visual-header">
-      <a class="open-link" href="f12-recipient-losses-across-scenarios.html?v=20261009e" target="_blank" rel="noopener">Open standalone</a>
+      <a class="open-link" href="f12-recipient-losses-across-scenarios.html?v=20261009f" target="_blank" rel="noopener">Open standalone</a>
     </div>
     <iframe
       class="auto-height-frame"
-      src="f12-recipient-losses-across-scenarios.html?v=20261009e&fig=12"
+      src="f12-recipient-losses-across-scenarios.html?v=20261009f&fig=12"
       height="860"
       data-figure="F12"
       data-min-height="320"
@@ -501,11 +521,11 @@
 
   <section class="visual" id="figure-13">
     <div class="visual-header">
-      <a class="open-link" href="f13-donor-flows-by-scenario.html?v=20261009e" target="_blank" rel="noopener">Open standalone</a>
+      <a class="open-link" href="f13-donor-flows-by-scenario.html?v=20261009f" target="_blank" rel="noopener">Open standalone</a>
     </div>
     <iframe
       class="auto-height-frame"
-      src="f13-donor-flows-by-scenario.html?v=20261009e&fig=13"
+      src="f13-donor-flows-by-scenario.html?v=20261009f&fig=13"
       height="760"
       data-figure="F13"
       data-min-height="320"
@@ -519,11 +539,11 @@
 
   <section class="visual" id="figure-14">
     <div class="visual-header">
-      <a class="open-link" href="f14-priority-flows-across-scenarios.html?v=20261009e" target="_blank" rel="noopener">Open standalone</a>
+      <a class="open-link" href="f14-priority-flows-across-scenarios.html?v=20261009f" target="_blank" rel="noopener">Open standalone</a>
     </div>
     <iframe
       class="auto-height-frame"
-      src="f14-priority-flows-across-scenarios.html?v=20261009e&fig=14"
+      src="f14-priority-flows-across-scenarios.html?v=20261009f&fig=14"
       height="640"
       data-figure="F14"
       data-min-height="320"
@@ -537,11 +557,11 @@
 
   <section class="visual" id="figure-15">
     <div class="visual-header">
-      <a class="open-link" href="f15-orphaning-across-scenarios.html?v=20261009e" target="_blank" rel="noopener">Open standalone</a>
+      <a class="open-link" href="f15-orphaning-across-scenarios.html?v=20261009f" target="_blank" rel="noopener">Open standalone</a>
     </div>
     <iframe
       class="auto-height-frame"
-      src="f15-orphaning-across-scenarios.html?v=20261009e&fig=15"
+      src="f15-orphaning-across-scenarios.html?v=20261009f&fig=15"
       height="900"
       data-figure="F15"
       data-min-height="320"
@@ -555,11 +575,11 @@
 
   <section class="visual" id="figure-16">
     <div class="visual-header">
-      <a class="open-link" href="f16-interactive-allocations-tool.html?v=20261009e" target="_blank" rel="noopener">Open standalone</a>
+      <a class="open-link" href="f16-interactive-allocations-tool.html?v=20261009f" target="_blank" rel="noopener">Open standalone</a>
     </div>
     <iframe
       class="auto-height-frame"
-      src="f16-interactive-allocations-tool.html?v=20261009e&fig=16"
+      src="f16-interactive-allocations-tool.html?v=20261009f&fig=16"
       height="1000"
       data-figure="F16"
       data-min-height="420"
@@ -573,11 +593,11 @@
 
   <section class="visual" id="figure-17">
     <div class="visual-header">
-      <a class="open-link" href="f17-recipient-scenarios-table.html?v=20261009e" target="_blank" rel="noopener">Open standalone</a>
+      <a class="open-link" href="f17-recipient-scenarios-table.html?v=20261009f" target="_blank" rel="noopener">Open standalone</a>
     </div>
     <iframe
       class="auto-height-frame"
-      src="f17-recipient-scenarios-table.html?v=20261009e&fig=17"
+      src="f17-recipient-scenarios-table.html?v=20261009f&fig=17"
       height="1520"
       data-figure="F17"
       data-min-height="420"
