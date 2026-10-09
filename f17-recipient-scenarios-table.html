@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>25 countries get less than half the aid their poverty warrants under almost every allocation rule</title>
-<link rel="stylesheet" href="shared/cgd-figure.css?v=20261009h">
-<link rel="stylesheet" href="shared/cgd-responsive.css?v=20261009h">
-<link rel="stylesheet" href="shared/oda-figure.css?v=20261009h">
+<title>25 countries get less than half the aid their poverty warrants under all four allocation rules</title>
+<link rel="stylesheet" href="shared/cgd-figure.css?v=20261009i">
+<link rel="stylesheet" href="shared/cgd-responsive.css?v=20261009i">
+<link rel="stylesheet" href="shared/oda-figure.css?v=20261009i">
 <style>
   .table-shell { position: relative; border: 1px solid var(--cgd-border); background: #fff; }
   .table-scroll { overflow-x: auto; overscroll-behavior-inline: contain; }
@@ -96,7 +96,7 @@
 <main id="vizRoot" class="viz-wrapper" data-oda-top="Allocation weighting">
   <div class="header-row">
     <div class="title-block">
-      <h1 id="vizTitle">25 countries get less than half the aid their poverty warrants under almost every allocation rule</h1>
+      <h1 id="vizTitle">25 countries get less than half the aid their poverty warrants under all four allocation rules</h1>
       <p class="viz-sub" id="vizSub"></p>
     </div>
     <button class="fullscreen-btn desktop-only" id="fullscreenBtn" type="button"
@@ -135,12 +135,12 @@
   </section><div id="notes"></div>
 </main>
 
-<script src="shared/dom.js?v=20261009h"></script>
-<script src="shared/chart-core.js?v=20261009h"></script>
-<script src="shared/set-config.js?v=20261009h"></script>
-<script src="shared/oda-payload.js?v=20261009h"></script>
-<script src="shared/oda-model.js?v=20261009h"></script>
-<script src="shared/oda-ui.js?v=20261009h"></script>
+<script src="shared/dom.js?v=20261009i"></script>
+<script src="shared/chart-core.js?v=20261009i"></script>
+<script src="shared/set-config.js?v=20261009i"></script>
+<script src="shared/oda-payload.js?v=20261009i"></script>
+<script src="shared/oda-model.js?v=20261009i"></script>
+<script src="shared/oda-ui.js?v=20261009i"></script>
 <script>
 (async () => {
   'use strict';
@@ -153,7 +153,7 @@
   try { payload = await P.load(); }
   catch (error) { P.renderFailState(tableArea, error); window.CGD_READY = true; return; }
 
-  const scenarios = Object.keys(M.SCENARIOS);
+  const scenarios = M.HEADLINE;
   const objectives = ['poverty', 'humanitarian', 'fiscal'];
   const metricOptions = [
     ['ratio_poverty', 'Prioritisation ratio — poverty'],
@@ -525,14 +525,14 @@
     const s=state.get(); try { await payload.blobs(blobNames(s)); if(version!==renderVersion)return;
       const model=buildRows(s), domain=allDomain(s,model.metric); lastModel=model;lastDomain=domain; renderCurrent();
       const grouping=`grouped by ${s.objective} prioritisation`;
-      document.getElementById('vizSub').textContent=`${metricLabel(model.metric)}, by recipient, ${s.year}, under each of the ten allocation rules`;
+      document.getElementById('vizSub').textContent=`${metricLabel(model.metric)}, by recipient, ${s.year}, under each of the four headline allocation rules`;
       document.getElementById('tagline').textContent=`${M.MEASURE_LABEL[s.measure]} measure; ${grouping}.`;
       UI.renderNotes('notes',{visible:[
         model.rows.length < RECIPIENTS.length ? `${model.rows.length} of ${RECIPIENTS.length} recipients shown.` : '',
-        M.isBaselineYear(s.year) ? '2024 is the observed baseline, so all ten allocation rules show the same value and Range is zero.' : ''
+        M.isBaselineYear(s.year) ? '2024 is the observed baseline, so all four allocation rules show the same value and Range is zero.' : ''
       ].filter(Boolean),notes:[
         'The prioritisation ratio compares each recipient\u2019s bilateral ODA per unit of need with the global mean for the same year and objective; 100% is the global mean.',
-        'Average is the mean across the ten allocation rules; Range is the highest minus the lowest.',
+        'Average is the mean across the four allocation rules; Range is the highest minus the lowest.',
         'Prioritisation ratios are clipped above 400%, and ODA per poor person above US$1,000, so outliers do not wash out the colour scale.',
       'ODA per poor person is left blank for recipients with fewer than 100,000 people in extreme poverty, where the ratio divides an allocation by too few people to mean anything.',
         '2025–2028 are projections; 2024 is observed.', UI.STANDARD_NOTES.prices
@@ -548,6 +548,6 @@
   window.ODA_F17={state,buildRows:()=>buildRows(state.get())};
 })();
 </script>
-<script src="shared/cgd-embed.js?v=20261009h"></script>
+<script src="shared/cgd-embed.js?v=20261009i"></script>
 </body>
 </html>

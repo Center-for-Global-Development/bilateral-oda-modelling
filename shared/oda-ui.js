@@ -84,7 +84,7 @@
        in the set, so this control has its own tier rather than sharing the wide
        one and clipping. */
     const select = element('select', { className: 'plain-select oda-select-rule' });
-    for (const scenario of Object.keys(M.SCENARIOS)) {
+    for (const scenario of M.HEADLINE) {
       const info = M.scenarioInfo(scenario);
       select.append(element('option', {
         text: `${info.label} — ${info.name}`,

@@ -453,15 +453,15 @@
      rules apart only by their codes. Dropping the shared prefix is what makes
      the distinguishing half of the name visible. */
   const SCENARIOS = {
-    S1:  { label: 'S1',  short: 'Even proportional cuts', family: 'donor',     name: 'Even proportional allocations',
+    S1:  { label: 'S1',  short: 'Even cuts', family: 'donor',     name: 'Even cuts',
            tip: 'Donors distribute cuts or increases proportionately across all existing donor-recipient-sector cells.' },
     S2A: { label: 'S2A', short: 'Sectors by donor portfolio', family: 'donor',     name: 'Sector prioritisation by donor portfolio',
            tip: 'Donors protect sectors that make up a large share of their own bilateral portfolio.' },
-    S2B: { label: 'S2B', short: 'Sectors by global contribution', family: 'donor',     name: 'Sector prioritisation by relative contribution',
+    S2B: { label: 'S2B', short: 'Sector comparative advantage', family: 'donor',     name: 'Sector comparative advantage',
            tip: 'Donors protect sectors for which they provide a large share of total modelled bilateral ODA globally.' },
     S3A: { label: 'S3A', short: 'Largest country programmes', family: 'donor',     name: 'Prioritisation of largest country programmes',
            tip: 'Donors protect countries that account for a large share of their own bilateral portfolio.' },
-    S3B: { label: 'S3B', short: 'Most important country programmes', family: 'donor',     name: 'Prioritisation by importance of country programmes',
+    S3B: { label: 'S3B', short: 'Country comparative advantage', family: 'donor',     name: 'Country comparative advantage',
            tip: 'Donors protect recipients to which they provide a large share of total modelled bilateral ODA.' },
     S4:  { label: 'S4',  short: 'Comparative advantage', family: 'donor',     name: 'Prioritisation of comparative advantage',
            tip: 'Donors protect recipient-sector pairs to which they contribute a large share of support.' },
@@ -471,9 +471,15 @@
            tip: 'Donors protect recipients facing high humanitarian risk, measured by the INFORM Risk Index.' },
     S6B: { label: 'S6B', short: 'Humanitarian sector spend', family: 'recipient', name: 'Prioritisation of humanitarian sector spend',
            tip: 'Donors protect humanitarian and emergency-response spending wherever it occurs.' },
-    S7:  { label: 'S7',  short: 'Under-covered poverty', family: 'recipient', name: 'Prioritisation of under-covered poverty',
+    S7:  { label: 'S7',  short: 'Poverty need', family: 'recipient', name: 'Poverty need',
            tip: 'Donors protect recipients whose share of the world’s extreme poor exceeds the share of projected bilateral ODA they receive.' }
   };
+
+  /* The four headline allocation rules (review of 9 October 2026): even cuts,
+     donor comparative advantage by country and by sector, and poverty need.
+     Figures offer only these; the other six stay in SCENARIOS for the paper's
+     sensitivity analysis and for F12's 'All ten' view. */
+  const HEADLINE = ['S1', 'S3B', 'S2B', 'S7'];
 
   function scenarioInfo(id) {
     return SCENARIOS[id] || { label: id, short: id, family: 'donor', name: id, tip: '' };
@@ -507,6 +513,6 @@
     INCOME_GROUPS, NOT_CLASSIFIED, incomeGroup, recipientsWithoutIncomeGroup, incomeGroupNote,
     isDacMember, dacLabel, sectorsAlphabetical, sectorShortName,
     usd, percent, count, countPhrase, trimZeros, MISSING_TEXT,
-    SCENARIOS, SCENARIO_ORDER, scenarioInfo, scenarioRank, measureApplies, MEASURE_LABEL, MEASURE_LABEL_SHORT
+    SCENARIOS, HEADLINE, SCENARIO_ORDER, scenarioInfo, scenarioRank, measureApplies, MEASURE_LABEL, MEASURE_LABEL_SHORT
   };
 })();
