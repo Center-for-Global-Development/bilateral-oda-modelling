@@ -500,3 +500,48 @@
    4px bubble. */
 .viz-wrapper .point.oda-highlighted { stroke: var(--cgd-teal-black, #1A272A); stroke-width: 2.6; stroke-dasharray: none; }
 .viz-wrapper svg.oda-has-highlight .point:not(.oda-highlighted) { opacity: .3; }
+
+/* =============================================================================
+   Discreet controls (review request, 9 October 2026).
+
+   Controls sit under the chart and should read as quiet settings, not as a form
+   competing with the data: no shaded panel or border, a hairline rule to
+   separate them from the chart, muted labels, and selected states shown as a
+   light teal tint rather than a solid fill. This is the one deliberate override
+   of the house control look in this file; colours still come from house tokens.
+   ========================================================================== */
+.viz-wrapper .controls,
+.viz-wrapper .objective-block {
+  background: transparent; border: 0; border-radius: 0;
+  border-top: 1px solid var(--border); padding: 8px 0 2px; margin-bottom: 4px;
+  width: auto;
+}
+.viz-wrapper .controls + .controls,
+.viz-wrapper .controls + .objective-block,
+.viz-wrapper .desktop-controls + .mobile-controls { border-top: 0; padding-top: 2px; }
+.viz-wrapper .control-label,
+.viz-wrapper .control-group label {
+  color: var(--cgd-dark-gray); font-size: 10.8px; font-weight: 500; margin-bottom: 3px;
+}
+.viz-wrapper .plain-select { background-color: transparent; font-size: 11.6px; }
+.viz-wrapper .segmented { background: transparent; }
+.viz-wrapper .segmented button { color: var(--cgd-dark-gray); font-size: 12px; font-weight: 500; }
+.viz-wrapper .segmented button[aria-pressed="true"],
+.viz-wrapper .segmented button.active {
+  background: #E3EEF0; color: var(--cgd-teal); font-weight: 600;
+}
+
+/* The one primary control, promoted under the title (see oda-ui.js). Quiet: no
+   panel, label inline and muted, control at its natural width. */
+.viz-wrapper .oda-topbar { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; margin: 2px 0 8px; }
+.viz-wrapper .oda-topbar:empty { display: none; }
+.viz-wrapper .oda-topbar .control-group { display: flex; align-items: center; gap: 6px; min-width: 0; flex: 0 1 auto; }
+.viz-wrapper .oda-topbar .control-label,
+.viz-wrapper .oda-topbar .control-group > label { margin: 0; white-space: nowrap; }
+.viz-wrapper .oda-topbar .control-group { flex-basis: auto; }
+.viz-wrapper .oda-topbar .plain-select { width: auto; field-sizing: content; max-width: 100%; border-color: transparent; padding-left: 4px; color: var(--cgd-teal); font-weight: 600; }
+.viz-wrapper .oda-topbar .plain-select:hover,
+.viz-wrapper .oda-topbar .plain-select:focus-visible { border-color: var(--border); }
+.viz-wrapper .oda-topbar .segmented { width: auto; }
+/* Figure number on the title line, preview page only. */
+.viz-wrapper h1 .oda-fig-num { color: var(--cgd-dark-gray); font-weight: 600; }

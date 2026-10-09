@@ -913,3 +913,58 @@
     modal, trapFocus, pagerRow, pagedList, rankRow, trackAxis, orphanDrilldown
   };
 })();
+
+/* =============================================================================
+   Page-level layout, run once per figure (review request, 9 October 2026).
+
+   1. Top control. A figure names its one primary control on the root element,
+      data-oda-top="<control label>". That control group is moved, as a real DOM
+      move, into a slim row under the title, so tab order matches what readers
+      see. Every other control stays under the chart. A MutationObserver handles
+      controls built late or rebuilt by a render.
+   2. Figure number. The preview page passes ?fig=N, and the number is put on
+      the same line as the figure's own title. A standalone or embedded figure,
+      with no ?fig, is unchanged.
+   ========================================================================== */
+(function () {
+  'use strict';
+  function labelOf(group) {
+    const label = group.querySelector(':scope > .control-label, :scope > label');
+    return label ? label.textContent.trim() : '';
+  }
+  function topBar(root) {
+    let bar = root.querySelector(':scope > .oda-topbar');
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.className = 'oda-topbar';
+      const header = root.querySelector(':scope > .header-row');
+      if (header) header.after(bar); else root.prepend(bar);
+    }
+    return bar;
+  }
+  function promote(root, wanted) {
+    for (const group of root.querySelectorAll('.control-group')) {
+      if (group.closest('.oda-topbar') || labelOf(group) !== wanted) continue;
+      topBar(root).append(group);
+    }
+  }
+  function figureNumber() {
+    const n = new URLSearchParams(window.location.search).get('fig');
+    const h1 = document.querySelector('.viz-wrapper h1');
+    if (!n || !/^\d{1,2}$/.test(n) || !h1 || h1.querySelector('.oda-fig-num')) return;
+    const tag = document.createElement('span');
+    tag.className = 'oda-fig-num';
+    tag.textContent = `Figure ${n}. `;
+    h1.prepend(tag);
+  }
+  function init() {
+    figureNumber();
+    const root = document.querySelector('[data-oda-top]');
+    if (!root) return;
+    const wanted = root.getAttribute('data-oda-top');
+    promote(root, wanted);
+    new MutationObserver(() => promote(root, wanted)).observe(root, { childList: true, subtree: true });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
