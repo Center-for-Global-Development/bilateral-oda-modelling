@@ -1057,6 +1057,22 @@ tool need vectors. The sparse cube is never fetched.
   medians; medians remain interpretable when small need denominators create very
   large ratio outliers.
 
+## Review on branch `lee-review` (9 October 2026)
+
+Proposed changes for the owner to accept or reject, one commit each:
+
+* **F10 removed from `preview.html`.** Its unit (a count of recipient-sector
+  pairs) puts a US$50k programme on a par with a country's whole health
+  portfolio, and it repeats F15. The file is kept. Suggested replacement: F15
+  measured as the share of 2024 ODA in pairs losing at least half.
+* **F8b added** as an alternative to F8 (largest donor per recipient, 2024 vs
+  selected year). F8 is unchanged.
+* F4 rebuilt as sector bars with Ukraine split out; F5 plotted against GNI per
+  capita with population-sized bubbles; F6 sorted by recipient size with a %/US$
+  toggle; takeaway titles and descriptive subtitles; controls under the chart,
+  with one primary control on a slim top row (`data-oda-top`).
+* Figure numbers are unchanged pending a final figure list.
+
 ## Open decisions
 
 | Decision | Owner | Note |
