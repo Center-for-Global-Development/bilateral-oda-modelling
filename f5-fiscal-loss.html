@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Low-income countries lose about 1% of GNI in bilateral aid, ten times more than upper-middle-income countries</title>
-<link rel="stylesheet" href="shared/cgd-figure.css?v=20261009d">
-<link rel="stylesheet" href="shared/cgd-responsive.css?v=20261009d">
-<link rel="stylesheet" href="shared/oda-figure.css?v=20261009d">
+<link rel="stylesheet" href="shared/cgd-figure.css?v=20261009e">
+<link rel="stylesheet" href="shared/cgd-responsive.css?v=20261009e">
+<link rel="stylesheet" href="shared/oda-figure.css?v=20261009e">
 <style>
   .scatter-wrap { width: 100%; min-height: 300px; }
   .short-control { flex: 0 1 210px; }
@@ -61,12 +61,12 @@
   <div class="tooltip" id="tooltip" hidden></div>
 </div>
 
-<script src="shared/dom.js?v=20261009d"></script>
-<script src="shared/chart-core.js?v=20261009d"></script>
-<script src="shared/set-config.js?v=20261009d"></script>
-<script src="shared/oda-payload.js?v=20261009d"></script>
-<script src="shared/oda-model.js?v=20261009d"></script>
-<script src="shared/oda-ui.js?v=20261009d"></script>
+<script src="shared/dom.js?v=20261009e"></script>
+<script src="shared/chart-core.js?v=20261009e"></script>
+<script src="shared/set-config.js?v=20261009e"></script>
+<script src="shared/oda-payload.js?v=20261009e"></script>
+<script src="shared/oda-model.js?v=20261009e"></script>
+<script src="shared/oda-ui.js?v=20261009e"></script>
 <script>
 (async () => {
   'use strict';
@@ -310,7 +310,7 @@
     xTitle.textContent = 'GNI per capita, US$ (log scale)';
     svg.append(xTitle);
 
-    const yTitle = svgEl('text', { class: 'axis-title', x: 10, y: margin.top - 6 });
+    const yTitle = svgEl('text', { class: 'axis-title', x: 10, y: Math.max(13, margin.top - 6) });
     yTitle.textContent = `${denom.axis} (log)`;
     svg.append(yTitle);
 
@@ -358,24 +358,21 @@
     return fn;
   }
 
-  /* A three-circle key beside the income legend: 10m, 100m and 1bn people. */
+  /* A three-circle key under the income legend: 10m, 100m and 1bn people. Plain
+     HTML rather than SVG, so the circles and labels size with the text. */
   function renderSizeKey(radius) {
     const legend = document.getElementById('incomeLegend');
     legend.parentElement.querySelector(':scope > .size-key')?.remove();
-    const sizes = [[1e7, '10m'], [1e8, '100m'], [1e9, '1bn']];
-    const rs = sizes.map(([p]) => radius.of(p)), h = Math.ceil(2 * Math.max(...rs)) + 2;
-    let xPos = 2;
-    const svg = svgEl('svg', { width: 0, height: h, 'aria-hidden': 'true' });
-    sizes.forEach(([, label], i) => {
-      const r = rs[i];
-      svg.append(svgEl('circle', { cx: xPos + r, cy: h - r - 1, r, fill: 'none', stroke: 'var(--cgd-dark-gray)', 'stroke-width': 1 }));
-      const t = svgEl('text', { x: xPos + 2 * r + 4, y: h - 3, class: 'axis' }); t.textContent = label; svg.append(t);
-      xPos += 2 * r + 4 + label.length * 7 + 12;
-    });
-    svg.setAttribute('width', xPos);
-    const key = element('div', { className: 'size-key' }, [element('span', { text: 'Circle size: population' }), svg]);
-    Object.assign(key.style, { display: 'flex', alignItems: 'flex-end', gap: '8px', flexBasis: '100%',
+    const key = element('div', { className: 'size-key' }, [element('span', { text: 'Circle size: population' })]);
+    Object.assign(key.style, { display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', gap: '4px 12px', flexBasis: '100%',
                                fontSize: '11.5px', color: 'var(--cgd-dark-gray)', marginTop: '6px' });
+    for (const [pop, label] of [[1e7, '10m'], [1e8, '100m'], [1e9, '1bn']]) {
+      const d = 2 * radius.of(pop), circle = element('span');
+      Object.assign(circle.style, { width: `${d}px`, height: `${d}px`, borderRadius: '50%', border: '1px solid var(--cgd-dark-gray)', display: 'inline-block' });
+      const item = element('span', {}, [circle, element('span', { text: label })]);
+      Object.assign(item.style, { display: 'inline-flex', alignItems: 'flex-end', gap: '4px' });
+      key.append(item);
+    }
     legend.after(key);
   }
 
@@ -492,6 +489,6 @@
   window.ODA_F5 = { state, buildRows: () => buildRows(state.get()) };
 })();
 </script>
-<script src="shared/cgd-embed.js?v=20261009d"></script>
+<script src="shared/cgd-embed.js?v=20261009e"></script>
 </body>
 </html>

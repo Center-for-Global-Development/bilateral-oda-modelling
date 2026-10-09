@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en" data-cgd-interactive-name="oda-f8b-largest-donor">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>The EU overtakes the US as the most common largest bilateral donor by 2028</title>
+<link rel="stylesheet" href="shared/cgd-figure.css?v=20261009e"><link rel="stylesheet" href="shared/cgd-responsive.css?v=20261009e"><link rel="stylesheet" href="shared/oda-figure.css?v=20261009e">
+<style>
+  /* Dumbbell rows: donor | 2024 dot -> selected-year dot | change. One grid for
+     the heading, rows and axis so the columns line up. */
+  .db-head,.db-row,.db-axis{display:grid;grid-template-columns:minmax(110px,170px) minmax(160px,1fr) 70px;gap:8px;align-items:center}
+  .db-head{font-size:11px;font-weight:600;color:var(--cgd-dark-gray);padding:4px 5px;border-bottom:1px solid var(--cgd-border)}
+  .db-head span:last-child,.db-change{text-align:right}
+  .db-row{min-height:30px;padding:1px 5px;border-bottom:1px solid var(--cgd-light-gray);cursor:pointer}
+  .db-row:hover,.db-row:focus-visible,.db-row[aria-expanded="true"]{background:var(--cgd-offwhite)}
+  .db-name{font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-decoration:underline;text-decoration-color:var(--cgd-border);text-underline-offset:3px}
+  .db-plot svg{display:block;width:100%;height:22px;overflow:visible}
+  .db-change{font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+  .db-axis{padding:0 5px}.db-axis svg{display:block;width:100%;height:22px;overflow:visible}
+  .db-detail{padding:8px 10px 10px;border-bottom:1px solid var(--cgd-light-gray);background:var(--cgd-offwhite);font-size:12px;line-height:1.45}
+  .db-detail h3{margin:0 0 4px;font-size:12px;color:var(--cgd-teal)}
+  .db-detail p{margin:0 0 6px}
+  .db-detail .muted{color:var(--cgd-dark-gray)}
+  .legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11.5px}.legend-item{display:inline-flex;align-items:center;gap:5px}
+  .tooltip{position:absolute;z-index:20;max-width:280px}
+  @media(max-width:520px){.db-head,.db-row,.db-axis{grid-template-columns:88px minmax(110px,1fr) 44px;gap:4px}.db-name,.db-change{font-size:11px}}
+</style></head>
+<body><main id="vizRoot" class="viz-wrapper" data-oda-top="Allocation rule"><div class="header-row"><div class="title-block"><h1 id="vizTitle">The EU overtakes the US as the most common largest bilateral donor by 2028</h1><p class="viz-sub" id="vizSub"></p></div>
+<button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="View fullscreen"><svg class="icon-expand" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5" stroke="currentColor" stroke-width="1.8"/></svg><svg class="icon-compress" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5" stroke="currentColor" stroke-width="1.8"/></svg></button></div>
+<section class="panel"><div class="panel-header"><div class="legend" id="legend"></div></div><div class="chart-area" id="chartArea"><div class="db-head"><span>Donor</span><span id="plotHeading">Recipients where it is the largest bilateral donor</span><span>Change</span></div><div id="rows" role="list"></div><div class="db-axis"><span></span><svg id="axisSvg" aria-hidden="true"></svg><span></span></div></div></section>
+<div class="controls" id="controls"></div><div id="notes"></div><div class="tooltip" id="tooltip" hidden></div></main>
+<script src="shared/dom.js?v=20261009e"></script><script src="shared/chart-core.js?v=20261009e"></script><script src="shared/set-config.js?v=20261009e"></script><script src="shared/oda-payload.js?v=20261009e"></script><script src="shared/oda-model.js?v=20261009e"></script><script src="shared/oda-ui.js?v=20261009e"></script>
+<script>
+/* F8b (alternative to F8) — who is the largest bilateral donor where.
+
+   For each donor, the number of recipients where it gives the most bilateral
+   ODA in 2024 and in the selected year. Selecting a donor lists the recipients
+   it gains and loses. F8 shows one recipient at a time, so its finding (one in
+   five recipients changes largest donor) needed a reader to page through 141
+   countries; this states it in one view (review of 9 October 2026). */
+(async () => {
+  'use strict';
+  window.CGD_READY = false;
+  const { element, svgEl } = window.CGDDom, P = window.ODAPayload, M = window.ODAModel, UI = window.ODAUI;
+  const root = document.getElementById('vizRoot'), chartArea = document.getElementById('chartArea');
+  let payload;
+  try { payload = await P.load(); } catch (error) { P.renderFailState(chartArea, error); window.CGD_READY = true; return; }
+
+  const BASE = '#FFB52E', NOW = '#004E5A', UP = '#006970', DOWN = '#D15553';
+  const years = M.displayYears(payload);
+  const state = UI.createState({ scenario: 'S1', measure: 'gross', year: 2028, open: '' }, { onChange: scheduleRender });
+
+  function setVizSub(s) {
+    document.getElementById('vizSub').textContent =
+      `Number of recipients where each donor gives the most gross bilateral ODA, 2024 and ${s.year}, under ${M.scenarioInfo(s.scenario).name.toLowerCase()}`;
+  }
+  state.subscribe(setVizSub); setVizSub(state.get());
+  document.getElementById('controls').append(UI.scenarioSelect(state), UI.yearControl(state, years));
+
+  async function ensure(s) { await payload.blobs(M.seriesBlobNames('donor_recipient', s)); }
+
+  /* The largest donor to each recipient in 2024 and in the selected year. A
+     recipient with no bilateral ODA in either year has no largest donor. */
+  function leaders(s) {
+    const out = [];
+    for (const iso of payload.axes.recipient) {
+      let top0 = null, v0 = 0, top1 = null, v1 = 0, tot0 = 0, tot1 = 0;
+      for (const d of payload.axes.donor) {
+        const a = M.valueAt(payload, 'donor_recipient', { ...s, year: 2024 }, { donor: d, recipient: iso });
+        const b = M.valueAt(payload, 'donor_recipient', s, { donor: d, recipient: iso });
+        if (a > v0) { v0 = a; top0 = d; } if (b > v1) { v1 = b; top1 = d; }
+        tot0 += a > 0 ? a : 0; tot1 += b > 0 ? b : 0;
+      }
+      if (top0 && top1) out.push({ iso, name: payload.recipientName(iso), top0, top1, share0: v0 / tot0, share1: v1 / tot1 });
+    }
+    return out;
+  }
+
+  function donorRows(list) {
+    const by = new Map();
+    const get = d => by.get(d) || by.set(d, { code: d, name: payload.donorName(d), n0: 0, n1: 0, gained: [], lost: [], kept: [] }).get(d);
+    for (const r of list) {
+      get(r.top0).n0 += 1; get(r.top1).n1 += 1;
+      if (r.top0 === r.top1) get(r.top1).kept.push(r);
+      else { get(r.top1).gained.push(r); get(r.top0).lost.push(r); }
+    }
+    return [...by.values()].sort((a, b) => b.n1 - a.n1 || b.n0 - a.n0 || a.name.localeCompare(b.name));
+  }
+
+  const tooltip = document.getElementById('tooltip');
+  function showTip(d, target, s) {
+    tooltip.replaceChildren(element('strong', { text: d.name }),
+      element('div', { text: `Largest donor in ${d.n0} recipient${d.n0 === 1 ? '' : 's'} in 2024` }),
+      element('div', { text: `${d.n1} in ${s.year} (gains ${d.gained.length}, loses ${d.lost.length})` }));
+    tooltip.hidden = false;
+    const b = target.getBoundingClientRect(), rb = root.getBoundingClientRect();
+    tooltip.style.left = `${Math.min(rb.width - tooltip.offsetWidth - 8, Math.max(8, b.left - rb.left + 8))}px`;
+    tooltip.style.top = `${b.bottom - rb.top + 4}px`;
+  }
+
+  const names = rs => rs.map(r => r.name).sort((a, b) => a.localeCompare(b));
+  function detail(d, s) {
+    const box = element('div', { className: 'db-detail' });
+    const fromTo = (rs, key) => {
+      const groups = new Map();
+      for (const r of rs) { const k = payload.donorName(r[key]); groups.set(k, [...(groups.get(k) || []), r]); }
+      return [...groups.entries()].sort((a, b) => b[1].length - a[1].length)
+        .map(([k, v]) => `${names(v).join(', ')} (${key === 'top0' ? 'from' : 'to'} ${k})`).join('; ');
+    };
+    box.append(element('h3', { text: `${d.name}: ${d.n0} → ${d.n1}` }));
+    if (d.gained.length) box.append(element('p', { text: `Becomes largest donor in ${d.gained.length}: ${fromTo(d.gained, 'top0')}.` }));
+    if (d.lost.length) box.append(element('p', { text: `Loses top spot in ${d.lost.length}: ${fromTo(d.lost, 'top1')}.` }));
+    if (d.kept.length) box.append(element('p', { className: 'muted', text: `Stays largest in ${d.kept.length}: ${names(d.kept).join(', ')}.` }));
+    return box;
+  }
+
+  function render() {
+    const s = state.get(), list = leaders(s), donors = donorRows(list), host = document.getElementById('rows');
+    host.replaceChildren(); tooltip.hidden = true;
+    const max = Math.max(1, ...donors.map(d => Math.max(d.n0, d.n1)));
+    const step = (max > 40 ? 10 : 5) * (window.innerWidth <= 520 ? 2 : 1), hi = Math.ceil(max / step) * step, pos = v => v / hi * 100;
+    for (const d of donors) {
+      const row = element('div', { className: 'db-row', attributes: { role: 'listitem', tabindex: '0', 'aria-expanded': String(s.open === d.code),
+        'aria-label': `${d.name}: largest donor in ${d.n0} recipients in 2024 and ${d.n1} in ${s.year}. Select for the list.` } });
+      const svg = svgEl('svg', { 'aria-hidden': 'true' });
+      const x0 = pos(d.n0), x1 = pos(d.n1), colour = d.n1 > d.n0 ? UP : d.n1 < d.n0 ? DOWN : 'var(--cgd-dark-gray)';
+      if (d.n0 !== d.n1) svg.append(svgEl('line', { x1: `${x0}%`, x2: `${x1}%`, y1: 11, y2: 11, stroke: colour, 'stroke-width': 2.5 }));
+      svg.append(svgEl('circle', { cx: `${x0}%`, cy: 11, r: 5, fill: BASE, stroke: '#fff', 'stroke-width': 1.5 }));
+      svg.append(svgEl('circle', { cx: `${x1}%`, cy: 11, r: 5.5, fill: NOW, stroke: '#fff', 'stroke-width': 1.5 }));
+      const change = d.n1 - d.n0;
+      const ch = element('div', { className: 'db-change', text: change > 0 ? `+${change}` : change < 0 ? `−${-change}` : '0' });
+      ch.style.color = colour;
+      row.append(element('div', { className: 'db-name', text: d.name }), element('div', { className: 'db-plot' }, [svg]), ch);
+      const toggle = () => { tooltip.hidden = true; state.set({ open: s.open === d.code ? '' : d.code }); };
+      row.addEventListener('click', toggle);
+      row.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+      row.addEventListener('pointerenter', () => showTip(d, row, s));
+      row.addEventListener('pointerleave', () => { tooltip.hidden = true; });
+      host.append(row);
+      if (s.open === d.code) host.append(detail(d, s));
+    }
+    const axis = document.getElementById('axisSvg'); axis.replaceChildren();
+    for (let v = 0; v <= hi; v += step) {
+      const t = svgEl('text', { x: `${pos(v)}%`, y: 14, 'text-anchor': v === 0 ? 'start' : v === hi ? 'end' : 'middle', class: 'axis' });
+      t.textContent = String(v); axis.append(t);
+    }
+    const legend = document.getElementById('legend'); legend.replaceChildren();
+    for (const [label, colour] of [['2024', BASE], [String(s.year), NOW]]) {
+      const dot = element('span'); Object.assign(dot.style, { width: '10px', height: '10px', borderRadius: '50%', background: colour, display: 'inline-block' });
+      legend.append(element('span', { className: 'legend-item' }, [dot, element('span', { text: label })]));
+    }
+    const changed = list.filter(r => r.top0 !== r.top1).length;
+    UI.renderNotes('notes', { visible: [
+      `${changed} of ${list.length} recipients have a different largest donor in ${s.year} than in 2024. Select a donor to see which.`],
+      notes: ['The largest donor is the one giving the most gross bilateral ODA to the recipient in that year; ties are vanishingly rare in the modelled values.',
+              'Recipients with no bilateral ODA in either year are not counted.', UI.STANDARD_NOTES.prices] });
+    window.CGD_READY = true;
+  }
+
+  let frame = null, version = 0;
+  function scheduleRender() {
+    if (frame) cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(async () => {
+      frame = null; const v = ++version;
+      try { await ensure(state.get()); if (v === version) render(); }
+      catch (error) { if (v === version) P.renderFailState(chartArea, error); window.CGD_READY = true; }
+    });
+  }
+  try { await ensure(state.get()); } catch (error) { P.renderFailState(chartArea, error); window.CGD_READY = true; return; }
+  render();
+  document.getElementById('fullscreenBtn').addEventListener('click', () => document.fullscreenElement ? document.exitFullscreen() : root.requestFullscreen?.());
+  window.ODA_F8B = { state, leaders: () => leaders(state.get()) };
+})();
+</script><script src="shared/cgd-embed.js?v=20261009e"></script></body></html>

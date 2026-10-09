@@ -959,7 +959,7 @@
   function figureNumber() {
     const n = new URLSearchParams(window.location.search).get('fig');
     const h1 = document.querySelector('.viz-wrapper h1');
-    if (!n || !/^\d{1,2}$/.test(n) || !h1 || h1.querySelector('.oda-fig-num')) return;
+    if (!n || !/^\d{1,2}[a-z]?$/.test(n) || !h1 || h1.querySelector('.oda-fig-num')) return;
     const tag = document.createElement('span');
     tag.className = 'oda-fig-num';
     tag.textContent = `Figure ${n}. `;
