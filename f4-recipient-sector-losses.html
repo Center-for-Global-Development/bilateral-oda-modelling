@@ -45,7 +45,11 @@
   let payload;
   try { payload = await P.load(); } catch (error) { P.renderFailState(chartArea, error); window.CGD_READY = true; return; }
 
-  const LOSS = '#D15553', GAIN = '#006970', SMALL = '#B8C4C8';
+  const LOSS = '#D15553', GAIN = '#006970', SMALL = '#B8C4C8', UKR = '#FFB52E';
+  /* Ukraine is split out of the all-recipient bars: it received most of 2024's
+     government-and-civil-society and general-budget-support ODA, so without
+     the split those bars read as a global pattern when they are mostly one country. */
+  const UKRAINE = 'UKR';
   /* Below this 2024 baseline a sector's % change is driven by a handful of
      projects, so it is drawn in grey, kept out of the axis domain and counted
      in the notes. The bar is lower for one recipient than for all of them. */
@@ -83,7 +87,7 @@
     UI.controlGroup('Show', unitBox), UI.controlGroup('Recipient', recipientSelect, { id: 'recipientSelect' }));
 
   const grainOf = s => s.recipient === 'ALL' ? 'sector' : 'recipient_sector';
-  async function ensure(s) { await payload.blobs(M.seriesBlobNames(grainOf(s), s)); }
+  async function ensure(s) { await payload.blobs([...M.seriesBlobNames(grainOf(s), s), ...M.seriesBlobNames('recipient_sector', s)]); }
 
   function rows(s) {
     const grain = grainOf(s), out = [];
@@ -93,7 +97,14 @@
       const now = M.valueAt(payload, grain, s, coords);
       if (!(base > 0) || !Number.isFinite(now)) continue;
       const lost = base - now;
-      out.push({ sec, name: payload.sectorName(sec), base, now, lost, share: lost / base, small: base < smallBase(s) });
+      let ukrLost = 0;
+      if (s.recipient === 'ALL') {
+        const ub = M.valueAt(payload, 'recipient_sector', { ...s, year: 2024 }, { recipient: UKRAINE, sector: sec });
+        const un = M.valueAt(payload, 'recipient_sector', s, { recipient: UKRAINE, sector: sec });
+        if (Number.isFinite(ub) && Number.isFinite(un)) ukrLost = ub - un;
+      }
+      out.push({ sec, name: payload.sectorName(sec), base, now, lost, share: lost / base, ukrLost,
+                 small: base < smallBase(s) });
     }
     const key = r => s.unit === 'pct' ? r.share : r.lost;
     return out.sort((a, b) => key(b) - key(a) || a.name.localeCompare(b.name));
@@ -107,7 +118,9 @@
       element('div', { text: `2024: ${M.usd(r.base)}` }),
       element('div', { text: `${s.year}: ${M.usd(r.now)}` }),
       element('div', { text: r.lost >= 0 ? `Lost: ${M.usd(r.lost)} (${M.percent(r.share, { decimals: 1 })})`
-                                         : `Gained: ${M.usd(-r.lost)} (+${M.percent(-r.share, { decimals: 1 })})` }));
+                                         : `Gained: ${M.usd(-r.lost)} (+${M.percent(-r.share, { decimals: 1 })})` }),
+      ...(s.recipient === 'ALL' && Math.abs(r.ukrLost) > 0.05 ? [element('div', { text:
+        `of which Ukraine: ${r.ukrLost >= 0 ? '' : '+'}${M.usd(Math.abs(r.ukrLost))} (${M.percent(r.ukrLost / r.base, { decimals: 1 })} of the sector's 2024 total)` })] : []));
     tooltip.hidden = false;
     const b = target.getBoundingClientRect(), rb = root.getBoundingClientRect();
     tooltip.style.left = `${Math.min(rb.width - tooltip.offsetWidth - 8, Math.max(8, b.left - rb.left + 8))}px`;
@@ -137,7 +150,18 @@
       const row = element('div', { className: `sector-row${r.small ? ' small' : ''}`, attributes: { role: 'listitem' } });
       const svg = svgEl('svg', { 'aria-hidden': 'true' });
       svg.append(svgEl('line', { x1: `${pos(0)}%`, x2: `${pos(0)}%`, y1: 0, y2: 20, class: 'zero-line' }));
-      svg.append(svgEl('rect', { x: `${x0}%`, width: `${Math.max(x1 - x0, 0.3)}%`, y: 4, height: 12, rx: 2, fill }));
+      /* Ukraine's part of the change, then everyone else's, stacked away from
+         zero on each side (a segment can be a gain while the other is a cut). */
+      const unit = s.unit === 'pct' ? r.base : 1;
+      const parts = s.recipient === 'ALL' ? [['ukr', r.ukrLost / unit], ['rest', (r.lost - r.ukrLost) / unit]] : [['rest', v]];
+      let accPos = 0, accNeg = 0;
+      for (const [kind, pv] of parts) {
+        if (Math.abs(pv) < 1e-12) continue;
+        const from = pv >= 0 ? accPos : accNeg + pv, to = pv >= 0 ? accPos + pv : accNeg;
+        if (pv >= 0) accPos += pv; else accNeg += pv;
+        const colour = r.small ? SMALL : kind === 'ukr' ? UKR : pv >= 0 ? LOSS : GAIN;
+        svg.append(svgEl('rect', { x: `${pos(from)}%`, width: `${Math.max(pos(to) - pos(from), 0.3)}%`, y: 4, height: 12, rx: 2, fill: colour }));
+      }
       const name = element('div', { className: 'sector-name', text: M.sectorShortName(payload, r.sec) });
       const value = element('div', { className: 'sector-value', text: fmtValue(r, s) });
       row.append(name, element('div', { className: 'sector-bar' }, [svg]), value);
@@ -156,7 +180,7 @@
     if (small) visible.push(`${small} sector${small > 1 ? 's' : ''} with under US$${smallBase(s)}m in 2024 ${small > 1 ? 'are' : 'is'} shown in grey; ${small > 1 ? 'their' : 'its'} % change rests on few projects.`);
     if (missing) visible.push(`${missing} sector${missing > 1 ? 's' : ''} with no 2024 bilateral ODA ${s.recipient === 'ALL' ? '' : 'to this recipient '}${missing > 1 ? 'are' : 'is'} not shown.`);
     UI.renderNotes('notes', { visible, notes: [
-      s.recipient === 'ALL' ? 'All-recipient totals include bilateral ODA allocated to a sector but not to a single recipient country.' : 'Sector totals for one recipient include only ODA allocated to that country.',
+      s.recipient === 'ALL' ? 'Ukraine’s part of each sector’s change is shown in gold; it accounts for most of the fall in government and civil society. All-recipient totals include bilateral ODA allocated to a sector but not to a single recipient country.' : 'Sector totals for one recipient include only ODA allocated to that country.',
       'Gross ODA. The model converts between gross and grant-equivalent at a fixed ratio per recipient and sector, so % cuts are almost identical on either measure.',
       UI.STANDARD_NOTES.prices] });
     window.CGD_READY = true;
@@ -180,7 +204,11 @@
   }
   function drawLegend(data, s) {
     const legend = document.getElementById('legend'); legend.replaceChildren();
-    const keys = [['Cut', LOSS, data.some(r => !r.small && r.lost >= 0)], ['Increase', GAIN, data.some(r => !r.small && r.lost < 0)], [`Under US$${smallBase(s)}m in 2024`, SMALL, data.some(r => r.small)]];
+    const all = s.recipient === 'ALL';
+    const keys = [[all ? 'Cut, other recipients' : 'Cut', LOSS, data.some(r => !r.small && r.lost - (all ? r.ukrLost : 0) > 0)],
+                  ['Ukraine', UKR, all && data.some(r => !r.small && Math.abs(r.ukrLost) > 0.05)],
+                  ['Increase', GAIN, data.some(r => !r.small && r.lost - (all ? r.ukrLost : 0) < 0)],
+                  [`Under US$${smallBase(s)}m in 2024`, SMALL, data.some(r => r.small)]];
     for (const [label, colour, present] of keys) {
       if (!present) continue;
       const sw = element('span', { className: 'swatch' }); sw.style.background = colour;
