@@ -32,9 +32,16 @@
      Ordered for adjacent contrast, all drawn from the CGD brand tokens in
      cgd-figure.css. RESIDUAL is deliberately absent. Used only as a FALLBACK for
      entities that are not pinned below. */
-  const CATEGORICAL = ['#0B4C5B', '#FFB52C', '#2D99B5', '#00896C', '#D15553',
-                       '#85A5AD', '#1A272A', '#C98F0A', '#6FBACB', '#006970',
-                       '#394649', '#3FA98F', '#FEE8BF', '#8A5E00', '#BFDEE0'];
+  /* Project colour scheme (review of 9 October 2026): every colour has ONE job.
+       red  #D15553  a cut or loss            blue #2D99B5  an increase or gain
+       gold #FFB52C  emphasis: the one thing a figure singles out (e.g. Ukraine)
+       2024 baseline #85A5AD vs projection #0B4C5B; residual grey #DFE0E2
+       income groups: one teal ramp, darkest = low income (they are ordered)
+       rule families: donor-behaviour #0B4C5B vs recipient-need #00896C
+     So bright gold and loss red are kept OUT of every categorical ramp below. */
+  const CATEGORICAL = ['#0B4C5B', '#2D99B5', '#C98F0A', '#00896C', '#85A5AD',
+                       '#1A272A', '#6FBACB', '#006970', '#394649', '#3FA98F',
+                       '#8A5E00', '#BFDEE0', '#5C8794', '#F0D9A3'];
 
   /* ---- 2. Pinned entity -> colour ----
      Every entity that carries colour in more than one figure is pinned here, so
@@ -59,10 +66,12 @@
        income is deliberately the muted teal-grey: those recipients are marginal
        here and should not shout. 'Not classified' takes the residual grey,
        because a missing income group is not a low value. */
-    'Low income':                 '#FFB52C',
-    'Lower middle income':        '#0B4C5B',
-    'Upper middle income':        '#2D99B5',
-    'High income':                '#85A5AD',
+    /* An ordered ramp, one hue: low income darkest, so the group the figures
+       are about carries the most weight and the order reads from the colour. */
+    'Low income':                 '#0B4C5B',
+    'Lower middle income':        '#1F7A90',
+    'Upper middle income':        '#3E9DB4',
+    'High income':                '#7FBFCE',
     'Not classified':             RESIDUAL,
 
     /* Residual categories. */
@@ -93,22 +102,24 @@
     '331': '#7BC4B1',
     '332': '#B6DFD3',
 
-    '410': '#8A5E00',
-    '430': '#C98F0A',
-    '510': '#FFB52C',
-    '520': '#FFD27A',
-    '530': '#FEE8BF',
+    '410': '#5C8794',
+    '430': '#9CB3B9',
+    '510': '#C98F0A',
+    '520': '#E0B65A',
+    '530': '#F0D9A3',
 
-    '700': '#D15553',
+    '700': '#8A5E00',
 
     /* Providers (F6, F8). Pinned in rough order of 2024 bilateral ODA and of how
        often they appear in a top-N, so the biggest cutters are furthest apart.
        None may equal RESIDUAL: F6 stacks named donors against "Other cutting
        donors" and the two must never be confusable. */
-    'USA': '#0B4C5B', 'GBR': '#FFB52C', 'DEU': '#2D99B5', 'FRA': '#D15553',
-    '4EU001': '#00896C', 'JPN': '#1A272A', 'CAN': '#85A5AD', 'NLD': '#C98F0A',
-    'SWE': '#6FBACB', 'NOR': '#8A5E00', 'AUS': '#394649', 'ITA': '#3FA98F',
-    'ESP': '#E08A8A', 'KOR': '#006970', 'CHE': '#BFDEE0', 'DNK': '#FEE8BF',
+    /* The five most frequent named cutters (US, Germany, UK, EU, Canada) are
+       validated as an adjacent set for colour-vision deficiency. */
+    'USA': '#0B4C5B', 'GBR': '#C98F0A', 'DEU': '#2D99B5', 'FRA': '#8A5E00',
+    '4EU001': '#00896C', 'JPN': '#5C6E72', 'CAN': '#85A5AD', 'NLD': '#E0B65A',
+    'SWE': '#6FBACB', 'NOR': '#9CB3B9', 'AUS': '#394649', 'ITA': '#3FA98F',
+    'ESP': '#7FBFCE', 'KOR': '#006970', 'CHE': '#BFDEE0', 'DNK': '#F0D9A3',
     'TUR': '#5C6E72', 'SAU': '#B6DFD3', 'ARE': '#7BC4B1', 'BEL': '#C2CBCD'
   };
 

@@ -1065,6 +1065,14 @@ Proposed changes for the owner to accept or reject, one commit each:
   pairs) puts a US$50k programme on a par with a country's whole health
   portfolio, and it repeats F15. The file is kept. Suggested replacement: F15
   measured as the share of 2024 ODA in pairs losing at least half.
+* **F15 removed from `preview.html`** too. Calling a recipient-sector that loses
+  half its bilateral ODA 'orphaned' presumes the loss is bad. Concentrating
+  donors in fewer sectors may well be good, and part of the count comes from
+  the model's own viability floor. The file is kept.
+* **One colour scheme** (`shared/set-config.js`): red for a cut, blue for an
+  increase, gold only for emphasis, 2024 in muted grey-teal against the
+  projection in dark teal, income groups as one ordered teal ramp, green for
+  recipient-need rules.
 * **F8b added** as an alternative to F8 (largest donor per recipient, 2024 vs
   selected year). F8 is unchanged.
 * F4 rebuilt as sector bars with Ukraine split out; F5 plotted against GNI per
