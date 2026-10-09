@@ -942,11 +942,19 @@
     }
     return bar;
   }
+  /* `wanted` may name several controls, separated by '|', in the order they
+     should appear on the top row. */
   function promote(root, wanted) {
+    const order = wanted.split('|').map(x => x.trim()).filter(Boolean);
+    const bar = () => topBar(root);
     for (const group of root.querySelectorAll('.control-group')) {
-      if (group.closest('.oda-topbar') || labelOf(group) !== wanted) continue;
-      topBar(root).append(group);
+      if (group.closest('.oda-topbar') || !order.includes(labelOf(group))) continue;
+      bar().append(group);
     }
+    const top = root.querySelector(':scope > .oda-topbar');
+    if (!top) return;
+    const groups = [...top.children].sort((a, b) => order.indexOf(labelOf(a)) - order.indexOf(labelOf(b)));
+    if (groups.some((g, i) => g !== top.children[i])) top.append(...groups);
   }
   function figureNumber() {
     const n = new URLSearchParams(window.location.search).get('fig');

@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Two thirds of donors are cutting ODA, and totals fall by a quarter by 2028</title>
-<link rel="stylesheet" href="shared/cgd-figure.css?v=20261009a"><link rel="stylesheet" href="shared/cgd-responsive.css?v=20261009a"><link rel="stylesheet" href="shared/oda-figure.css?v=20261009a">
+<link rel="stylesheet" href="shared/cgd-figure.css?v=20261009c"><link rel="stylesheet" href="shared/cgd-responsive.css?v=20261009c"><link rel="stylesheet" href="shared/oda-figure.css?v=20261009c">
 <style>
   .rank-head,.donor-row{display:grid;grid-template-columns:minmax(112px,190px) minmax(140px,1fr) 62px;gap:8px;align-items:center}
   .rank-head{font-size:12px;font-weight:600;color:var(--cgd-dark-gray);padding:4px 5px;border-bottom:1px solid var(--cgd-border)}
-  .rank-head button{border:0;padding:6px 0;background:transparent;color:inherit;font:inherit;font-size:11px;line-height:1.1;text-decoration:underline;cursor:pointer;text-align:right;white-space:nowrap}
+  .rank-head button{border:0;padding:6px 0;background:transparent;color:inherit;font:inherit;font-size:11px;line-height:1.1;text-decoration:underline;cursor:pointer;text-align:right;white-space:normal;justify-self:end}
   .donor-row{min-height:40px;padding:2px 5px;border-bottom:1px solid var(--cgd-light-gray)}
   .donor-name{font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .donor-plot svg{display:block;width:100%;height:36px}.ratio{text-align:right;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
@@ -18,17 +18,17 @@
   @media(max-width:520px){.rank-head,.donor-row,.axis-wrap{grid-template-columns:80px minmax(94px,1fr) 50px;gap:3px}.donor-name,.ratio{font-size:11px}.rank-head{font-size:11px}.donor-row{padding-inline:2px}}
 </style>
 </head>
-<body><main id="vizRoot" class="viz-wrapper" data-oda-top="Scale">
+<body><main id="vizRoot" class="viz-wrapper" data-oda-top="Sort by|Scale">
   <div class="header-row"><div class="title-block"><h1 id="vizTitle">Two thirds of donors are cutting ODA, and totals fall by a quarter by 2028</h1><p class="viz-sub">Total ODA (grant-equivalent, constant 2024 US$), 2024–2028, for the 34 donors whose budgets are projected from announced changes</p></div>
     <button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="View fullscreen"><svg class="icon-expand" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5" stroke="currentColor" stroke-width="1.8"/></svg><svg class="icon-compress" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5" stroke="currentColor" stroke-width="1.8"/></svg></button>
   </div>
   
   <section class="panel"><div class="panel-header"><span></span><div class="year-legend" id="yearLegend" aria-label="Year colour legend"></div></div>
-    <div class="chart-area" id="chartArea"><div class="rank-head"><span>Donor</span><span id="axisHeading">ODA, US$ billion</span><button id="ratioSort" type="button" aria-label="Sort by 2028 ODA as a percentage of 2024 ODA">2028 as % 2024</button></div><div id="rows"></div><div class="axis-wrap"><span></span><svg id="axisSvg" aria-hidden="true"></svg><span></span></div></div>
+    <div class="chart-area" id="chartArea"><div class="rank-head"><span>Donor</span><span id="axisHeading">ODA, US$ billion</span><button id="ratioSort" type="button" aria-label="Sort by 2028 ODA as a percentage of 2024 ODA">2028 as % of 2024</button></div><div id="rows"></div><div class="axis-wrap"><span></span><svg id="axisSvg" aria-hidden="true"></svg><span></span></div></div>
   </section>
   <div class="controls" id="controls"></div><div id="notes"></div><div class="tooltip" id="tooltip" hidden></div>
 </main>
-<script src="shared/dom.js?v=20261009a"></script><script src="shared/chart-core.js?v=20261009a"></script><script src="shared/set-config.js?v=20261009a"></script><script src="shared/oda-payload.js?v=20261009a"></script><script src="shared/oda-model.js?v=20261009a"></script><script src="shared/oda-ui.js?v=20261009a"></script>
+<script src="shared/dom.js?v=20261009c"></script><script src="shared/chart-core.js?v=20261009c"></script><script src="shared/set-config.js?v=20261009c"></script><script src="shared/oda-payload.js?v=20261009c"></script><script src="shared/oda-model.js?v=20261009c"></script><script src="shared/oda-ui.js?v=20261009c"></script>
 <script>
 (async()=>{'use strict';
   window.CGD_READY = false;
@@ -47,7 +47,9 @@
     step=(n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10)*mag,out=[];
     for(let g=0;g*step<=span*1.00001&&g<40;g++)out.push(g*step);return out;}
   const state=UI.createState({sort:'difference',direction:'desc',page:0,scale:'usd'},{dependents:{sort:['page'],direction:['page']},onChange:render});
-  const sort=UI.sortSelect(state,[{value:'difference',label:'Largest absolute change'},{value:'ratio',label:'2028 as % of 2024'}]);
+  const sort=UI.sortSelect(state,[{value:'difference',label:'Largest absolute change'},{value:'ratio',label:'Largest % cut'}]);
+  /* Each sort opens in its headline direction: the biggest absolute change first, or the smallest 2028-as-%-of-2024 (the deepest % cut) first. The column-heading button still flips the % order. */
+  sort.querySelector('select').addEventListener('change',e=>state.set({direction:e.target.value==='ratio'?'asc':'desc'}));
   /* A shared linear axis in US$ answers "how big". It cannot answer "how much did
      it change" for a donor spending a fraction of a percent of the largest donor's
      total, because that fraction is a few pixels wide whatever the mark shape or
@@ -140,4 +142,4 @@
   
   document.getElementById('fullscreenBtn').addEventListener('click',()=>document.fullscreenElement?document.exitFullscreen():root.requestFullscreen?.());render();window.ODA_F1={state,rows:allRows};
 })();
-</script><script src="shared/cgd-embed.js?v=20261009a"></script></body></html>
+</script><script src="shared/cgd-embed.js?v=20261009c"></script></body></html>

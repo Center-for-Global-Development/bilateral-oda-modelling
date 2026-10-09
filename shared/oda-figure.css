@@ -542,6 +542,7 @@
 .viz-wrapper .oda-topbar .plain-select { width: auto; field-sizing: content; max-width: 100%; border-color: transparent; padding-left: 4px; color: var(--cgd-teal); font-weight: 600; }
 .viz-wrapper .oda-topbar .plain-select:hover,
 .viz-wrapper .oda-topbar .plain-select:focus-visible { border-color: var(--border); }
-.viz-wrapper .oda-topbar .segmented { width: auto; }
+.viz-wrapper .oda-topbar .segmented { width: auto; flex: none; }
+.viz-wrapper .oda-topbar .segmented > button { flex: 0 0 auto; }
 /* Figure number on the title line, preview page only. */
 .viz-wrapper h1 .oda-fig-num { color: var(--cgd-dark-gray); font-weight: 600; }
