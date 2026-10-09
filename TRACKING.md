@@ -1073,8 +1073,9 @@ Proposed changes for the owner to accept or reject, one commit each:
   increase, gold only for emphasis, 2024 in muted grey-teal against the
   projection in dark teal, income groups as one ordered teal ramp, green for
   recipient-need rules.
-* **F8b added** as an alternative to F8 (largest donor per recipient, 2024 vs
-  selected year). F8 is unchanged.
+* **F8 replaced by F8b** in `preview.html` (largest donor per recipient, 2024
+  vs selected year, shown as Figure 8). The original F8 showed one recipient at
+  a time, and nobody pages through 141 recipients. Its file is kept.
 * F4 rebuilt as sector bars with Ukraine split out; F5 plotted against GNI per
   capita with population-sized bubbles; F6 sorted by recipient size with a %/US$
   toggle; takeaway titles and descriptive subtitles; controls under the chart,
