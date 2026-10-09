@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The most underprioritised countries are extremely underprioritised</title>
+<title>25 countries get less than half the aid their poverty warrants under almost every allocation rule</title>
 <link rel="stylesheet" href="shared/cgd-figure.css?v=20261008a">
 <link rel="stylesheet" href="shared/cgd-responsive.css?v=20261008a">
 <link rel="stylesheet" href="shared/oda-figure.css?v=20261008a">
@@ -96,7 +96,7 @@
 <main id="vizRoot" class="viz-wrapper">
   <div class="header-row">
     <div class="title-block">
-      <h1 id="vizTitle">The most underprioritised countries are extremely underprioritised</h1>
+      <h1 id="vizTitle">25 countries get less than half the aid their poverty warrants under almost every allocation rule</h1>
       <p class="viz-sub" id="vizSub"></p>
     </div>
     <button class="fullscreen-btn desktop-only" id="fullscreenBtn" type="button"
@@ -525,7 +525,7 @@
     const s=state.get(); try { await payload.blobs(blobNames(s)); if(version!==renderVersion)return;
       const model=buildRows(s), domain=allDomain(s,model.metric); lastModel=model;lastDomain=domain; renderCurrent();
       const grouping=`grouped by ${s.objective} prioritisation`;
-      document.getElementById('vizSub').textContent=`${metricLabel(model.metric)} in ${s.year}, across ten allocation rules.`;
+      document.getElementById('vizSub').textContent=`${metricLabel(model.metric)}, by recipient, ${s.year}, under each of the ten allocation rules`;
       document.getElementById('tagline').textContent=`${M.MEASURE_LABEL[s.measure]} measure; ${grouping}.`;
       UI.renderNotes('notes',{visible:[
         model.rows.length < RECIPIENTS.length ? `${model.rows.length} of ${RECIPIENTS.length} recipients shown.` : '',
