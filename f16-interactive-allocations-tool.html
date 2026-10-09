@@ -135,33 +135,8 @@
     </div>
     <button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="View fullscreen"><svg class="icon-expand" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5" stroke="currentColor" stroke-width="1.8"/></svg><svg class="icon-compress" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5" stroke="currentColor" stroke-width="1.8"/></svg></button>
   </div>
-  <div class="controls oda-controls-wide" id="controls"></div>
-  <section class="objective-block" aria-labelledby="objectiveHeading">
-    <div class="objective-head">
-      <h2 id="objectiveHeading">Objective</h2>
-      <div class="objective-buttons" id="objectiveButtons"></div>
-    </div>
-    <div class="blend-panel" id="blendPanel" hidden>
-      <div class="triangle-wrap"><svg id="triangle" viewBox="0 0 360 255" role="img" aria-label="Blend poverty, humanitarian risk and fiscal vulnerability"></svg></div>
-      <div class="weights" id="weights"></div>
-      <!-- How much of the movable envelope the objective is allowed to move.
-           It applies in every objective mode, not only in the blend, so its
-           value is also stated in the summary under the chart whenever it is
-           below 100% and this panel is closed. -->
-      <div class="intensity-row" id="intensityRow">
-        <label for="intensityInput">Reallocate</label>
-        <input type="range" id="intensityInput" min="0" max="100" step="5" value="50"
-               aria-describedby="intensityHelp">
-        <output id="intensityOut">50%</output>
-        <p class="intensity-help" id="intensityHelp">
-          Share of this donor&rsquo;s bilateral ODA budget the objective may redistribute
-          versus projected allocations. Note ODA to Ukraine is held static.
-        </p>
-      </div>
-    </div>
-    <p class="availability" id="objectiveAvailability"></p>
-    <p class="validation" id="validation" role="alert" hidden></p>
-  </section>
+  
+  
   <section class="panel" id="chartPanel">
     <div class="panel-top">
       <h2 class="panel-title" id="panelTitle">Change by recipient under allocation objective function</h2>
@@ -187,6 +162,31 @@
     </div>
     <div class="chart-area" id="chartArea"><svg id="chart" role="img" aria-labelledby="panelTitle"></svg></div>
     <p class="summary" id="summary" aria-live="polite"></p>
+  </section><div class="controls oda-controls-wide" id="controls"></div><section class="objective-block" aria-labelledby="objectiveHeading">
+    <div class="objective-head">
+      <h2 id="objectiveHeading">Objective</h2>
+      <div class="objective-buttons" id="objectiveButtons"></div>
+    </div>
+    <div class="blend-panel" id="blendPanel" hidden>
+      <div class="triangle-wrap"><svg id="triangle" viewBox="0 0 360 255" role="img" aria-label="Blend poverty, humanitarian risk and fiscal vulnerability"></svg></div>
+      <div class="weights" id="weights"></div>
+      <!-- How much of the movable envelope the objective is allowed to move.
+           It applies in every objective mode, not only in the blend, so its
+           value is also stated in the summary under the chart whenever it is
+           below 100% and this panel is closed. -->
+      <div class="intensity-row" id="intensityRow">
+        <label for="intensityInput">Reallocate</label>
+        <input type="range" id="intensityInput" min="0" max="100" step="5" value="50"
+               aria-describedby="intensityHelp">
+        <output id="intensityOut">50%</output>
+        <p class="intensity-help" id="intensityHelp">
+          Share of this donor&rsquo;s bilateral ODA budget the objective may redistribute
+          versus projected allocations. Note ODA to Ukraine is held static.
+        </p>
+      </div>
+    </div>
+    <p class="availability" id="objectiveAvailability"></p>
+    <p class="validation" id="validation" role="alert" hidden></p>
   </section>
   <p class="visible-note" id="discretionNote" aria-live="polite" hidden></p>
   <p class="visible-note" id="noPriorityNote" aria-live="polite" hidden></p>

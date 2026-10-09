@@ -33,15 +33,7 @@
     </button>
   </div>
 
-  <div class="controls" id="controls" aria-label="Chart controls">
-    <div class="control-group oda-advanced">
-      <button class="advanced-toggle" id="advancedBtn" type="button"
-              aria-expanded="false" aria-controls="advancedPanel">Advanced</button>
-      <div class="advanced-panel" id="advancedPanel" hidden>
-        <label for="excludeMicro"><input type="checkbox" id="excludeMicro">Exclude microstates (population under 1 million)</label>
-      </div>
-    </div>
-  </div>
+  
 
   <section class="panel">
     <div class="panel-header">
@@ -55,7 +47,15 @@
   </section>
 
   
-  <div id="notes"></div>
+  <div class="controls" id="controls" aria-label="Chart controls">
+    <div class="control-group oda-advanced">
+      <button class="advanced-toggle" id="advancedBtn" type="button"
+              aria-expanded="false" aria-controls="advancedPanel">Advanced</button>
+      <div class="advanced-panel" id="advancedPanel" hidden>
+        <label for="excludeMicro"><input type="checkbox" id="excludeMicro">Exclude microstates (population under 1 million)</label>
+      </div>
+    </div>
+  </div><div id="notes"></div>
   <div class="tooltip" id="tooltip" hidden></div>
 </div>
 

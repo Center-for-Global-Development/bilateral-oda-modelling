@@ -106,21 +106,9 @@
     </button>
   </div>
 
-  <section class="desktop-controls" aria-label="Table controls">
-    <div class="controls" id="desktopPrimary"><div class="metric-row" id="desktopMetric"></div></div>
-  </section>
+  
 
-  <section class="mobile-controls controls" aria-label="Table controls">
-    <div class="mobile-control-row oda-span-row">
-      <div class="control-group"><label class="control-label" for="mobileShow">Show</label>
-        <select class="plain-select oda-select-wide" id="mobileShow"></select></div>
-    </div>
-    <div class="mobile-pair oda-span-row">
-      <div class="control-group"><span class="control-label">Year</span>
-        <div class="mobile-year" id="mobileYear"></div></div>
-      <div id="mobileMeasure"></div>
-    </div>
-  </section>
+  
 
   <div class="control-group oda-advanced oda-span-row" id="advancedGroup">
     <button class="advanced-toggle desktop-only" id="advancedBtn" type="button"
@@ -132,7 +120,19 @@
   <p class="tagline" id="tagline"></p>
   <section id="tableArea" aria-live="polite"></section>
   
-  <div id="notes"></div>
+  <section class="desktop-controls" aria-label="Table controls">
+    <div class="controls" id="desktopPrimary"><div class="metric-row" id="desktopMetric"></div></div>
+  </section><section class="mobile-controls controls" aria-label="Table controls">
+    <div class="mobile-control-row oda-span-row">
+      <div class="control-group"><label class="control-label" for="mobileShow">Show</label>
+        <select class="plain-select oda-select-wide" id="mobileShow"></select></div>
+    </div>
+    <div class="mobile-pair oda-span-row">
+      <div class="control-group"><span class="control-label">Year</span>
+        <div class="mobile-year" id="mobileYear"></div></div>
+      <div id="mobileMeasure"></div>
+    </div>
+  </section><div id="notes"></div>
 </main>
 
 <script src="shared/dom.js?v=20261008a"></script>
