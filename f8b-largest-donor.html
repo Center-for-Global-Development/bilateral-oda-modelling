@@ -123,7 +123,8 @@
       const x0 = pos(d.n0), x1 = pos(d.n1), colour = d.n1 > d.n0 ? UP : d.n1 < d.n0 ? DOWN : 'var(--cgd-dark-gray)';
       if (d.n0 !== d.n1) svg.append(svgEl('line', { x1: `${x0}%`, x2: `${x1}%`, y1: 11, y2: 11, stroke: colour, 'stroke-width': 2.5 }));
       svg.append(svgEl('circle', { cx: `${x0}%`, cy: 11, r: 5, fill: BASE, stroke: '#fff', 'stroke-width': 1.5 }));
-      svg.append(svgEl('circle', { cx: `${x1}%`, cy: 11, r: 5.5, fill: NOW, stroke: '#fff', 'stroke-width': 1.5 }));
+      const nowDot = svgEl('circle', { cx: `${x1}%`, cy: 11, r: 5.5, fill: NOW, stroke: '#fff', 'stroke-width': 1.5 });
+      svg.append(nowDot);
       const change = d.n1 - d.n0;
       const ch = element('div', { className: 'db-change', text: change > 0 ? `+${change}` : change < 0 ? `−${-change}` : '0' });
       ch.style.color = colour;
@@ -134,6 +135,16 @@
       row.addEventListener('pointerenter', () => showTip(d, row, s));
       row.addEventListener('pointerleave', () => { tooltip.hidden = true; });
       host.append(row);
+      /* Arrowhead just short of the later dot, pointing the way the count moved.
+         Drawn once the row is in the page so the plot's pixel width is known;
+         a move too short to fit one keeps just the coloured line. */
+      const plotW = svg.getBoundingClientRect().width, gap = Math.abs(x1 - x0) / 100 * plotW;
+      if (d.n0 !== d.n1 && gap >= 16) {
+        const dir = d.n1 > d.n0 ? 1 : -1, tip = -dir * 6.5, base = tip - dir * 7;
+        const head = svgEl('svg', { x: `${x1}%`, y: 0, overflow: 'visible' });
+        head.append(svgEl('polygon', { points: `${tip},11 ${base},6 ${base},16`, fill: colour }));
+        svg.insertBefore(head, nowDot);
+      }
       if (s.open === d.code) host.append(detail(d, s));
     }
     const axis = document.getElementById('axisSvg'); axis.replaceChildren();
