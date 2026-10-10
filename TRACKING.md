@@ -1073,6 +1073,12 @@ Proposed changes for the owner to accept or reject, one commit each:
   increase, gold only for emphasis, 2024 in muted grey-teal against the
   projection in dark teal, income groups as one ordered teal ramp, green for
   recipient-need rules.
+* **F2 removed from `preview.html`.** Low traceability mostly reflects in-donor
+  and global spending, not opaque reporting. Across 30 donors the fully
+  specified share is uncorrelated with the overall QuODA 2021 score
+  (r = -0.13) and correlates +0.65 with QuODA's 'share of ODA spent in partner
+  countries'. Better as one line of scope caveat: about a third of 2024
+  bilateral ODA is assigned to no country or region. File kept.
 * **F13 removed from `preview.html`.** Its headline ('the US could reallocate
   up to 38%') is the gap between allocation rules applied to one fixed
   envelope, an artefact of the rules rather than a choice anyone faces. File
