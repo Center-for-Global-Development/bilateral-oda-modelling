@@ -1084,6 +1084,11 @@ Proposed changes for the owner to accept or reject, one commit each:
   envelope, an artefact of the rules rather than a choice anyone faces. File
   kept.
 * **F12 sorted by 2024 bilateral ODA**, largest recipients first.
+* **F7 replaced by F7b** in `preview.html`: each sector's share of bilateral
+  ODA, 2024 vs selected year, as a dumbbell, with a Ukraine included/excluded
+  switch (all donors only). The treemap showed one year, so its title's change
+  could not be seen. Outside Ukraine no sector's share moves more than
+  1.7 points by 2028 under S1. File kept.
 * **F8 replaced by F8b** in `preview.html` (largest donor per recipient, 2024
   vs selected year, shown as Figure 8). The original F8 showed one recipient at
   a time, and nobody pages through 141 recipients. Its file is kept.

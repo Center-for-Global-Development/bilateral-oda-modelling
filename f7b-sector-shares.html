@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en" data-cgd-interactive-name="oda-f7b-sector-shares">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Governance’s share of bilateral aid falls from 16% to 9%, but outside Ukraine no sector’s share moves more than 2 points</title>
+<link rel="stylesheet" href="shared/cgd-figure.css?v=20261010a"><link rel="stylesheet" href="shared/cgd-responsive.css?v=20261010a"><link rel="stylesheet" href="shared/oda-figure.css?v=20261010a">
+<style>
+  /* Dumbbell rows: sector | 2024 share -> selected-year share | change in
+     percentage points. One grid for heading, rows and axis. */
+  .db-head,.db-row,.db-axis{display:grid;grid-template-columns:minmax(130px,220px) minmax(160px,1fr) 64px;gap:8px;align-items:center}
+  .db-head{font-size:11px;font-weight:600;color:var(--cgd-dark-gray);padding:4px 5px;border-bottom:1px solid var(--cgd-border)}
+  .db-head span:last-child,.db-change{text-align:right}
+  .db-row{min-height:28px;padding:1px 5px;border-bottom:1px solid var(--cgd-light-gray)}
+  .db-row:hover,.db-row:focus-visible{background:var(--cgd-offwhite)}
+  .db-name{font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .db-plot svg{display:block;width:100%;height:22px;overflow:visible}
+  .db-change{font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+  .db-axis{padding:0 5px}.db-axis svg{display:block;width:100%;height:22px;overflow:visible}
+  .legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11.5px}.legend-item{display:inline-flex;align-items:center;gap:5px}
+  .tooltip{position:absolute;z-index:20;max-width:280px}
+  /* Phones: the sector name takes its own line above the dots. */
+  @media(max-width:520px){.db-head,.db-row,.db-axis{grid-template-columns:minmax(110px,1fr) 46px;gap:2px 6px}.db-head span:first-child,.db-axis span:first-child{display:none}.db-name{grid-column:1 / -1;white-space:normal;font-size:11.5px;padding-top:3px}.db-change{font-size:11px}}
+</style></head>
+<body><main id="vizRoot" class="viz-wrapper" data-oda-top="Allocation rule|Ukraine"><div class="header-row"><div class="title-block"><h1 id="vizTitle">Governance’s share of bilateral aid falls from 16% to 9%, but outside Ukraine no sector’s share moves more than 2 points</h1><p class="viz-sub" id="vizSub"></p></div>
+<button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="View fullscreen"><svg class="icon-expand" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5" stroke="currentColor" stroke-width="1.8"/></svg><svg class="icon-compress" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5" stroke="currentColor" stroke-width="1.8"/></svg></button></div>
+<section class="panel"><div class="panel-header"><div class="legend" id="legend"></div></div><div class="chart-area" id="chartArea"><div class="db-head"><span>Sector</span><span>Share of gross bilateral ODA</span><span>Change</span></div><div id="rows" role="list"></div><div class="db-axis"><span></span><svg id="axisSvg" aria-hidden="true"></svg><span></span></div></div></section>
+<div class="controls" id="controls"></div><div id="notes"></div><div class="tooltip" id="tooltip" hidden></div></main>
+<script src="shared/dom.js?v=20261010a"></script><script src="shared/chart-core.js?v=20261010a"></script><script src="shared/set-config.js?v=20261010a"></script><script src="shared/oda-payload.js?v=20261010a"></script><script src="shared/oda-model.js?v=20261010a"></script><script src="shared/oda-ui.js?v=20261010a"></script>
+<script>
+/* F7b (replaces the F7 treemap) — how the sector mix of bilateral ODA changes.
+
+   For each sector, its share of all gross bilateral ODA in 2024 and in the
+   selected year, as a dumbbell with an arrow. The treemap showed only one year,
+   so its title's 16% -> 9% change could not be seen (Tufte audit, 9 October
+   2026). For all donors, Ukraine can be excluded: it holds 43% of 2024
+   government-and-civil-society and 68% of budget-support ODA, and without it
+   the mix barely moves. A single donor cannot be split by recipient AND sector
+   from the aggregate blobs, so the Ukraine switch applies to all donors only. */
+(async () => {
+  'use strict';
+  window.CGD_READY = false;
+  const { element, svgEl } = window.CGDDom, P = window.ODAPayload, M = window.ODAModel, UI = window.ODAUI;
+  const root = document.getElementById('vizRoot'), chartArea = document.getElementById('chartArea');
+  let payload;
+  try { payload = await P.load(); } catch (error) { P.renderFailState(chartArea, error); window.CGD_READY = true; return; }
+
+  const BASE = '#85A5AD', NOW = '#0B4C5B', UP = '#2D99B5', DOWN = '#D15553', UKRAINE = 'UKR';
+  const years = M.displayYears(payload);
+  const state = UI.createState({ scenario: 'S1', measure: 'gross', year: 2028, donor: 'ALL', ukraine: 'with' }, { onChange: scheduleRender });
+
+  function setVizSub(s) {
+    const who = s.donor === 'ALL' ? 'all donors' : payload.donorName(s.donor);
+    const ukr = s.donor === 'ALL' && s.ukraine === 'without' ? ', excluding Ukraine' : '';
+    document.getElementById('vizSub').textContent =
+      `Each sector’s share of gross bilateral ODA from ${who}${ukr}, 2024 and ${s.year}, under ${M.scenarioInfo(s.scenario).name.toLowerCase()}`;
+  }
+  state.subscribe(setVizSub); setVizSub(state.get());
+
+  const ukrBox = element('div', { className: 'segmented', attributes: { role: 'group', 'aria-label': 'Ukraine' } });
+  for (const [v, l] of [['with', 'Included'], ['without', 'Excluded']]) {
+    const b = element('button', { text: l, attributes: { type: 'button', 'data-ukr': v } });
+    b.addEventListener('click', () => state.set({ ukraine: v }));
+    ukrBox.append(b);
+  }
+  const ukrGroup = UI.controlGroup('Ukraine', ukrBox);
+  const syncUkr = s => {
+    ukrBox.querySelectorAll('button').forEach(b => {
+      b.setAttribute('aria-pressed', String(b.dataset.ukr === s.ukraine));
+      b.disabled = s.donor !== 'ALL';
+    });
+    ukrGroup.title = s.donor !== 'ALL' ? 'Available for all donors only' : '';
+  };
+  state.subscribe(syncUkr); syncUkr(state.get());
+
+  const donorSelect = element('select', { className: 'plain-select oda-select-wide' });
+  donorSelect.append(element('option', { text: 'All donors', attributes: { value: 'ALL' } }));
+  payload.axes.donor.slice().sort((a, b) => payload.donorName(a).localeCompare(payload.donorName(b)))
+    .forEach(d => donorSelect.append(element('option', { text: payload.donorName(d), attributes: { value: d } })));
+  donorSelect.value = state.get().donor;
+  donorSelect.addEventListener('change', () => state.set({ donor: donorSelect.value }));
+  state.subscribe(s => { donorSelect.value = s.donor; });
+
+  document.getElementById('controls').append(UI.scenarioSelect(state), ukrGroup, UI.yearControl(state, years),
+    UI.controlGroup('Donor', donorSelect, { id: 'donorSelect' }));
+
+  async function ensure(s) {
+    const names = s.donor === 'ALL' ? [...M.seriesBlobNames('sector', s), ...M.seriesBlobNames('recipient_sector', s)]
+                                    : M.seriesBlobNames('donor_sector', s);
+    await payload.blobs(names);
+  }
+
+  function rows(s) {
+    const out = [];
+    for (const sec of payload.axes.sector) {
+      let b, n;
+      if (s.donor === 'ALL') {
+        b = M.valueAt(payload, 'sector', { ...s, year: 2024 }, { sector: sec });
+        n = M.valueAt(payload, 'sector', s, { sector: sec });
+        if (s.ukraine === 'without') {
+          b -= M.valueAt(payload, 'recipient_sector', { ...s, year: 2024 }, { recipient: UKRAINE, sector: sec }) || 0;
+          n -= M.valueAt(payload, 'recipient_sector', s, { recipient: UKRAINE, sector: sec }) || 0;
+        }
+      } else {
+        b = M.valueAt(payload, 'donor_sector', { ...s, year: 2024 }, { donor: s.donor, sector: sec });
+        n = M.valueAt(payload, 'donor_sector', s, { donor: s.donor, sector: sec });
+      }
+      out.push({ sec, name: payload.sectorName(sec), b: Math.max(0, b || 0), n: Math.max(0, n || 0) });
+    }
+    const tb = out.reduce((a, r) => a + r.b, 0), tn = out.reduce((a, r) => a + r.n, 0);
+    for (const r of out) { r.s0 = tb > 0 ? r.b / tb : 0; r.s1 = tn > 0 ? r.n / tn : 0; }
+    return { list: out.filter(r => r.b > 0 || r.n > 0).sort((a, c) => c.s1 - a.s1 || c.s0 - a.s0), tb, tn };
+  }
+
+  const tooltip = document.getElementById('tooltip');
+  function showTip(r, target, s) {
+    tooltip.replaceChildren(element('strong', { text: r.name }),
+      element('div', { text: `2024: ${M.percent(r.s0, { decimals: 1 })} (${M.usd(r.b)})` }),
+      element('div', { text: `${s.year}: ${M.percent(r.s1, { decimals: 1 })} (${M.usd(r.n)})` }));
+    tooltip.hidden = false;
+    const bb = target.getBoundingClientRect(), rb = root.getBoundingClientRect();
+    tooltip.style.left = `${Math.min(rb.width - tooltip.offsetWidth - 8, Math.max(8, bb.left - rb.left + 8))}px`;
+    tooltip.style.top = `${bb.bottom - rb.top + 4}px`;
+  }
+
+  function render() {
+    const s = state.get(), { list, tb, tn } = rows(s), host = document.getElementById('rows');
+    host.replaceChildren(); tooltip.hidden = true;
+    const max = Math.max(0.01, ...list.map(r => Math.max(r.s0, r.s1)));
+    const step = max > 0.25 ? 0.1 : 0.05, hi = Math.ceil(max / step) * step, pos = v => v / hi * 100;
+    for (const r of list) {
+      const pp = (r.s1 - r.s0) * 100, colour = pp >= 0.05 ? UP : pp <= -0.05 ? DOWN : 'var(--cgd-dark-gray)';
+      const row = element('div', { className: 'db-row', attributes: { role: 'listitem', tabindex: '0',
+        'aria-label': `${r.name}: ${M.percent(r.s0, { decimals: 1 })} of bilateral ODA in 2024, ${M.percent(r.s1, { decimals: 1 })} in ${s.year}` } });
+      const svg = svgEl('svg', { 'aria-hidden': 'true' }), x0 = pos(r.s0), x1 = pos(r.s1);
+      if (Math.abs(pp) >= 0.05) svg.append(svgEl('line', { x1: `${x0}%`, x2: `${x1}%`, y1: 11, y2: 11, stroke: colour, 'stroke-width': 2.5 }));
+      svg.append(svgEl('circle', { cx: `${x0}%`, cy: 11, r: 5, fill: BASE, stroke: '#fff', 'stroke-width': 1.5 }));
+      const nowDot = svgEl('circle', { cx: `${x1}%`, cy: 11, r: 5.5, fill: NOW, stroke: '#fff', 'stroke-width': 1.5 });
+      svg.append(nowDot);
+      const ch = element('div', { className: 'db-change', text: Math.abs(pp) < 0.05 ? '0 pp' : `${pp > 0 ? '+' : '−'}${Math.abs(pp).toFixed(1)} pp` });
+      ch.style.color = colour;
+      row.append(element('div', { className: 'db-name', text: M.sectorShortName(payload, r.sec) }), element('div', { className: 'db-plot' }, [svg]), ch);
+      row.addEventListener('pointerenter', () => showTip(r, row, s));
+      row.addEventListener('pointerleave', () => { tooltip.hidden = true; });
+      row.addEventListener('focus', () => showTip(r, row, s));
+      row.addEventListener('blur', () => { tooltip.hidden = true; });
+      host.append(row);
+      /* Arrowhead just short of the later dot, once the plot width is known. */
+      const gap = Math.abs(x1 - x0) / 100 * svg.getBoundingClientRect().width;
+      if (gap >= 16) {
+        const dir = r.s1 > r.s0 ? 1 : -1, tip = -dir * 6.5, base = tip - dir * 7;
+        const head = svgEl('svg', { x: `${x1}%`, y: 0, overflow: 'visible' });
+        head.append(svgEl('polygon', { points: `${tip},11 ${base},6 ${base},16`, fill: colour }));
+        svg.insertBefore(head, nowDot);
+      }
+    }
+    const axis = document.getElementById('axisSvg'); axis.replaceChildren();
+    const tickStep = step * (window.innerWidth <= 520 && hi / step > 4 ? 2 : 1);
+    for (let v = 0; v <= hi + 1e-9; v += tickStep) {
+      const t = svgEl('text', { x: `${pos(v)}%`, y: 14, 'text-anchor': v === 0 ? 'start' : v >= hi - 1e-9 ? 'end' : 'middle', class: 'axis' });
+      t.textContent = `${Math.round(v * 100)}%`; axis.append(t);
+    }
+    const legend = document.getElementById('legend'); legend.replaceChildren();
+    for (const [label, colour] of [['2024', BASE], [String(s.year), NOW]]) {
+      const dot = element('span'); Object.assign(dot.style, { width: '10px', height: '10px', borderRadius: '50%', background: colour, display: 'inline-block' });
+      legend.append(element('span', { className: 'legend-item' }, [dot, element('span', { text: label })]));
+    }
+    UI.renderNotes('notes', { visible: [
+      `Total gross bilateral ODA ${s.donor === 'ALL' && s.ukraine === 'without' ? 'excluding Ukraine ' : ''}falls from ${M.usd(tb)} in 2024 to ${M.usd(tn)} in ${s.year}; shares are of each year’s total.`],
+      notes: ['Ukraine received 43% of 2024 government-and-civil-society and 68% of general-budget-support bilateral ODA. The Ukraine switch is available for all donors only.',
+              UI.STANDARD_NOTES.prices] });
+    window.CGD_READY = true;
+  }
+
+  let frame = null, version = 0;
+  function scheduleRender() {
+    if (frame) cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(async () => {
+      frame = null; const v = ++version;
+      try { await ensure(state.get()); if (v === version) render(); }
+      catch (error) { if (v === version) P.renderFailState(chartArea, error); window.CGD_READY = true; }
+    });
+  }
+  try { await ensure(state.get()); } catch (error) { P.renderFailState(chartArea, error); window.CGD_READY = true; return; }
+  render();
+  document.getElementById('fullscreenBtn').addEventListener('click', () => document.fullscreenElement ? document.exitFullscreen() : root.requestFullscreen?.());
+  window.ODA_F7B = { state, rows: () => rows(state.get()) };
+})();
+</script><script src="shared/cgd-embed.js?v=20261010a"></script></body></html>
